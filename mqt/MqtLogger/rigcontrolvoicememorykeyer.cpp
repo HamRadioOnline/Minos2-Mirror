@@ -5,6 +5,7 @@
 #include "txvmrigsetupdialog.h"
 #include "txvmrigbuttondialog.h"
 #include "rigcontrolvoicememorykeyer.h"
+#include "MTrace.h"
 
 using namespace voiceKeyerCommon;
 
@@ -315,3 +316,7 @@ int RigControlVoiceMemoryKeyer::editButton(VoiceKeyerParams *vmData, QString tit
 
 
 
+void RigControlVoiceMemoryKeyer::logMessage(QString msg)
+{
+    trace(QString("[TxVmButtonsFrame - RigControlVoiceMemoryKeyer] %1").arg(msg));
+}

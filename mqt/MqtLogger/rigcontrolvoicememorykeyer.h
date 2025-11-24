@@ -85,6 +85,7 @@ private:
 
 
     void getRadioCommonData(int &usePttForEom, int &userNumberButtons, int radioMaxNumButtons);
+    void logMessage(QString msg);
 };
 
 #endif // RIGCONTROLVOICEMEMORYKEYER_H
