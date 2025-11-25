@@ -806,7 +806,9 @@ int PcCWMessageKeyer::editButton(VoiceKeyerParams *vmData, QString title)
 
 
 
+
 void PcCWMessageKeyer::logMessage(QString msg)
 {
     trace(QString("[TxVmButtonsFrame - PcCWMessageKeyer] %1").arg(msg));
 }
+

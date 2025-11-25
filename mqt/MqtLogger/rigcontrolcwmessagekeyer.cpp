@@ -222,7 +222,6 @@ void  RigControlCwMessageKeyer::sendCwFreeTextMsg(QString message)
     tslf->sendRigTxCwMessage(cwMessageToTx);
 }
 
-
 QString RigControlCwMessageKeyer::parseMacrosInMessage(TSingleLogFrame *tslf, QString mess)
 {
     // make sure screenContact is up to date
@@ -381,7 +380,6 @@ QString RigControlCwMessageKeyer::parseMacrosInMessage(TSingleLogFrame *tslf, QS
     return txMess;
 
 }
-
 
 
 

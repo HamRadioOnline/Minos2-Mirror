@@ -1105,14 +1105,15 @@ bool TxVmButtonsFrame::checkRadioAndKeyerState()
     }
     else if (voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl] && !isCwMemTypeAvail(selectedRadio))
     {
-        QString msg = tr("rigControl Cw Selected, but not available for this radio");
+
+        QString msg = tr("rigControl CW Keyer selected, but not available for this radio");
         logMessage(QString(msg));
         showTemporaryErrorMessage(msg, ERROR_MSG_TIMEOUT_DURATION);
         return false;
     }
     else if (voiceKeyerType == keyerTypes[VoiceKeyerId::PcCwKeyer] && !isPcCwKeyerLoaded())
     {
-        QString msg = tr("PC DTR Selected, but CW DTR Server is not available");
+        QString msg = tr("PC CW DTR Server is not available.");
         logMessage(QString(msg));
         showTemporaryErrorMessage(msg, ERROR_MSG_TIMEOUT_DURATION);
         return false;
