@@ -290,4 +290,5 @@ void fillPortsInfo(QComboBox* comportSel);
 void getListOfComports(QStringList &listOfAvailComports);
 bool isComportAvail(const QString comport);
 
+
 #endif // RIGCOMMON_H

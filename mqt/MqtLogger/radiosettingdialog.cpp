@@ -259,6 +259,26 @@ void RadioSettingDialog::initialise()
         ui->radioWriteSettingsGroupBox->setDisabled(true);
     }
     //===========================================================================================================
+
+    // handle keyer PTT Cancel options
+
+    fillPortsInfo(ui->keyerCancelComportComboBox);
+    fillComportPTTCancelInputLines(ui->voiceMsgCancelInputLineComboBox);
+    fillComportPTTCancelInputLines(ui->CwMsgCancelInputLineComboBox);
+
+    connect(ui->keyerCancelComportComboBox, &QComboBox::currentTextChanged, this, [=]() { onKeyerCancelComportChanged();});
+
+    connect(ui->voiceMsgCancelInputLineComboBox, &QComboBox::currentTextChanged, this, [=]() {onVoiceMsgCancelInputLineChanged();});
+
+    connect(ui->CwMsgCancelInputLineComboBox, &QComboBox::currentTextChanged, this, [=]() {onVoiceMsgCancelInputLineChanged();});
+
+    connect(ui->voiceMessageCancelCheckBox, &QCheckBox::stateChanged, this, [=]() {onVoiceMessageCancelCheckBoxChanged();});
+
+    connect(ui->cwMessageCancelCheckBox, &QCheckBox::stateChanged, this, [=]() {onCwMessageCancelCheckBoxChanged();});
+
+
+
+    //===========================================================================================================
     ui->enableBandSwChkBox->setChecked(readEnableBandSwitchFromIni());
 
 
@@ -946,6 +966,33 @@ bool RadioSettingDialog::loggerIniSettingsGetBool(const QString key)
     config.endGroup();
 
     return state;
+}
+
+
+void RadioSettingDialog::fillComportPTTCancelInputLines(QComboBox* comportInputLinesCb)
+{
+    QStringList pttCancelInputNames {"CTS", "DSR", "DCD"};
+    comportInputLinesCb->clear();
+    comportInputLinesCb->addItem("");
+
+    comportInputLinesCb->addItems(pttCancelInputNames);
+}
+
+void RadioSettingDialog::onKeyerCancelComportChanged()
+{
+
+}
+void RadioSettingDialog::onVoiceMsgCancelInputLineChanged()
+{
+
+}
+void RadioSettingDialog::onVoiceMessageCancelCheckBoxChanged()
+{
+
+}
+void RadioSettingDialog::onCwMessageCancelCheckBoxChanged()
+{
+
 }
 
 QString RadioSettingDialog::CONFIGURATION_FILEPATH_LOGGER()

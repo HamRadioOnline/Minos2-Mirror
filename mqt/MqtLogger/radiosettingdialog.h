@@ -12,6 +12,7 @@
 #include <QFrame>
 #include <QSettings>
 #include <QLineEdit>
+#include <QComboBox>
 #include "BandList.h"
 #include "rigcontrolcommonconstants.h"
 #include "voicekeyerCommonConstants.h"
@@ -87,6 +88,12 @@ private slots:
     void onDeleteVoiceMemoryButtonRadiosPushButtonClicked();
     void onDeleteCwMemoryButtonRadiosPushButtonClicked();
     void onRadioReadOnlyCheckBoxClicked();
+
+    void onKeyerCancelComportChanged();
+    void onVoiceMessageCancelCheckBoxChanged();
+    void onVoiceMsgCancelInputLineChanged();
+    void onCwMessageCancelCheckBoxChanged();
+
 private:
     Ui::RadioSettingDialog *ui;
 
@@ -156,6 +163,7 @@ private:
     void writeContestChangeRestoreContestModeSavedSettingFlag(const bool state);
     void writeContestChangeIgnorePreviousFreqFlagSavedSettingFlag(const bool state);
     void writeIgnorePresetFreqFlagSavedSettingFlag(const bool state);
+    void fillComportPTTCancelInputLines(QComboBox *comportInputLinesCb);
 };
 
 #endif // RADIOSETTINGDIALOG_H

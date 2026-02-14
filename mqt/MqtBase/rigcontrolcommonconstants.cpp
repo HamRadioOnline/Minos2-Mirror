@@ -423,6 +423,114 @@ void writeSerialComportBandSwitchDataToIni(QString comport)
     config.setValue(BANDSWITCH_COMPORT_KEY_TEXT, comport);
 }
 
+// PTT Cancel Message Comport
+
+QString readPTTCancelComportFromIni()
+{
+    QString fileName = PTT_CANCEL_INI_FILENAME();
+
+    QSettings config(fileName, QSettings::IniFormat);
+    QString value = config.value(PTT_CANCEL_COMPORT_TEXT, "").toString();
+    return value;
+
+}
+
+void writePTTCancelCompotToIni(QString comport)
+{
+    QString fileName = PTT_CANCEL_INI_FILENAME();
+
+    QSettings config(fileName, QSettings::IniFormat);
+    config.setValue(PTT_CANCEL_COMPORT_TEXT, comport);
+
+}
+
+// PTT Cancel Voice Message Enable
+
+bool readPTTCancelVoiceEnableFromIni()
+{
+    QString fileName = PTT_CANCEL_INI_FILENAME();
+
+    QSettings config(fileName, QSettings::IniFormat);
+    bool value = config.value(PTT_CANCEL_VOICE_ENABLE_TEXT, false).toBool();
+    return value;
+
+}
+
+void writePTTCancelCancelVoiceEnableToIni(bool enable)
+{
+    QString fileName = PTT_CANCEL_INI_FILENAME();
+
+    QSettings config(fileName, QSettings::IniFormat);
+    config.setValue(PTT_CANCEL_VOICE_ENABLE_TEXT, enable);
+
+}
+
+
+// PTT Cancel Voice Input Line name
+
+QString readPTTCancelVoiceInputLineFromIni()
+{
+    QString fileName = PTT_CANCEL_INI_FILENAME();
+
+    QSettings config(fileName, QSettings::IniFormat);
+    QString value = config.value(PTT_CANCEL_VOICE_INPUT_LINE_NAME_TEXT, "").toString();
+    return value;
+
+}
+
+void writePTTCancelVoiceInputLineToIni(QString lineName)
+{
+    QString fileName = PTT_CANCEL_INI_FILENAME();
+
+    QSettings config(fileName, QSettings::IniFormat);
+    config.setValue(PTT_CANCEL_VOICE_INPUT_LINE_NAME_TEXT, lineName);
+
+}
+
+
+
+// PTT Cancel Cw Message Enable
+
+bool readPTTCancelCwEnableFromIni()
+{
+    QString fileName = PTT_CANCEL_INI_FILENAME();
+
+    QSettings config(fileName, QSettings::IniFormat);
+    bool value = config.value(PTT_CANCEL_CW_ENABLE_TEXT, false).toBool();
+    return value;
+
+}
+
+void writePTTCancelCanceCwEnableToIni(bool enable)
+{
+    QString fileName = PTT_CANCEL_INI_FILENAME();
+
+    QSettings config(fileName, QSettings::IniFormat);
+    config.setValue(PTT_CANCEL_CW_ENABLE_TEXT, enable);
+
+}
+
+// PTT Cancel Cw Input Line name
+
+QString readPTTCancelCwInputLineFromIni()
+{
+    QString fileName = PTT_CANCEL_INI_FILENAME();
+
+    QSettings config(fileName, QSettings::IniFormat);
+    QString value = config.value(PTT_CANCEL_VOICE_INPUT_LINE_NAME_TEXT, "").toString();
+    return value;
+
+}
+
+void writePTTCancelCwInputLineToIni(QString lineName)
+{
+    QString fileName = PTT_CANCEL_INI_FILENAME();
+
+    QSettings config(fileName, QSettings::IniFormat);
+    config.setValue(PTT_CANCEL_VOICE_INPUT_LINE_NAME_TEXT, lineName);
+
+}
+
 
 
 QString RIG_CONFIGURATION_FILEPATH_LOGGER()
@@ -437,6 +545,11 @@ QString RIG_CONFIGURATION_FILEPATH_LOCAL()
 QString BANDSWITCH_INI_FILENAME()
 {
     return getDirectoryLocation(dlConfiguration) + "/BandSwitchData.ini";
+}
+
+QString PTT_CANCEL_INI_FILENAME()
+{
+    return getDirectoryLocation(dlConfiguration) + "/TxKeyer/CommonParams/PTTCancel.ini";
 }
 
 QString TRANSVERT_PATH_LOCAL()

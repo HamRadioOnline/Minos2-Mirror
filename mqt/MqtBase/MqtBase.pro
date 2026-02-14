@@ -114,6 +114,7 @@ SOURCES += \
     ScreenContact.cpp \
     StartConfig.cpp \
     serialdata.cpp \
+    serialportcontrollinewatcher.cpp \
     serialtvswitch.cpp \
     spotbasedata.cpp \
     toolbuttonupdown.cpp \
@@ -224,6 +225,7 @@ HEADERS += \
     StartConfig.h \
     serialCommonData.h \
     serialdata.h \
+    serialportcontrollinewatcher.h \
     serialtvswitch.h \
     spotbasedata.h \
     toolbuttonupdown.h \

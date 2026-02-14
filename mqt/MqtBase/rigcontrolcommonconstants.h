@@ -129,6 +129,14 @@ inline const QString BANDSWITCH_ENABLE_KEY_TEXT = "bandSwEnable";
 inline const QString BANDSWITCH_SERIAL_ENABLE_KEY_TEXT = "bandSwSerialEnable";
 inline const QString BANDSWITCH_COMPORT_KEY_TEXT = "comport";
 
+QString PTT_CANCEL_INI_FILENAME();
+inline const QString PTT_CANCEL_COMPORT_TEXT = "pttCancelComport";
+inline const QString PTT_CANCEL_VOICE_ENABLE_TEXT = "pttCancelVoiceEnabled";
+inline const QString PTT_CANCEL_VOICE_INPUT_LINE_NAME_TEXT = "pttCancelVoiceInputLine";
+inline const QString PTT_CANCEL_CW_ENABLE_TEXT = "pttCancelCwEnabled";
+inline const QString PTT_CANCEL_CW_INPUT_LINE_NAME_TEXT = "pttCancelCwInputLine";
+
+
 namespace freqPresetData {
 
 inline const QString PRESET_MODE_CW = "CW";
