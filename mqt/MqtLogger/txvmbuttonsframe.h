@@ -230,6 +230,13 @@ private:
     void showTemporaryErrorMessage(const QString &msg, int timeoutMs, const QColor &colour = QColorConstants::Svg::red);
 
     void setButtonsJustification(bool leftJustify);
+    bool keyerCancelSettingsChanged(QSharedPointer<RadioSettingsDialogChangeFlag> logRadioSettingsFlags);
+    void configureSerialControlLineWatcher();
+    void setVisibleKeyerCancelIndicator(bool visible);
+    void setKeyerCancelControlLineText(const QString text);
+
+
+    void setPTTCancelLineIndicatorOnOff(bool state);
 private slots:
 
     void onVoiceKeyerSelect(int idx);
@@ -251,6 +258,7 @@ private slots:
     void onCwEntryReturnPressed();
     void setRadioParams();
     void onCwMacroTextProcessed(const QString &cwTextSent);
+    void onKeyerControlLineTriggered(SerialPortControlLineWatcher::ControlFunction function, bool active);
 };
 
 

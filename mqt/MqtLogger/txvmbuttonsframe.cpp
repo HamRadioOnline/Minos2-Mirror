@@ -93,6 +93,10 @@ TxVmButtonsFrame::TxVmButtonsFrame(QWidget *parent) :
     connect(ui->vmSetupPb, &QPushButton::clicked, this, &TxVmButtonsFrame::onVmSetupClicked);
     connect(ui->vmStopPb, &QPushButton::clicked, this, &TxVmButtonsFrame::onVmStopClicked);
 
+    setVisibleKeyerCancelIndicator(false);
+    serialControlLineWatcher = new SerialPortControlLineWatcher(this);
+    connect(serialControlLineWatcher, &SerialPortControlLineWatcher::controlLineTriggered, this, &TxVmButtonsFrame::onKeyerControlLineTriggered);
+
     voiceKeyerFactory->populateComboKeyerList(ui->voiceKeyerSelect, voiceKeyerName);
     connect(ui->voiceKeyerSelect, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &TxVmButtonsFrame::onVoiceKeyerSelect);
 
@@ -228,7 +232,7 @@ void TxVmButtonsFrame::onVmSetupClicked()
 void TxVmButtonsFrame::logRadioSettingsChanged(QSharedPointer<RadioSettingsDialogChangeFlag> logRadioSettingsFlags)
 {
     trace("TxVmButtonsFrame::logRadioSettingsChanged");
-    Q_UNUSED(logRadioSettingsFlags)
+
 
     if (voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl] || voiceKeyerType == keyerTypes[VoiceKeyerId::PcCwKeyer] || voiceKeyerType == keyerTypes[VoiceKeyerId::RigControl] || voiceKeyerType == keyerTypes[VoiceKeyerId::InternalVoiceKeyer])
     {
@@ -250,11 +254,138 @@ void TxVmButtonsFrame::logRadioSettingsChanged(QSharedPointer<RadioSettingsDialo
             setEomLabelText(txVoiceKeyer->getSelectedEomType());
         }
 
-
+        if (keyerCancelSettingsChanged(logRadioSettingsFlags))
+        {
+            configureSerialControlLineWatcher();
+        }
 
         txVoiceKeyer->voiceKeyerInit(txVoiceKeyer->numButtons);
 
         loadButtonData();
+    }
+}
+
+
+bool TxVmButtonsFrame::keyerCancelSettingsChanged(QSharedPointer<RadioSettingsDialogChangeFlag> logRadioSettingsFlags)
+{
+    return logRadioSettingsFlags->pttCancelKeyerComportChanged ||
+            logRadioSettingsFlags->pttCancelKeyerVoiceEnableChanged ||
+            logRadioSettingsFlags->pttCancelKeyerVoiceInputLineChanged ||
+            logRadioSettingsFlags->pttCancelKeyerCWEnableChange ||
+           logRadioSettingsFlags->pttCancelKeyerCwInputLineChanged;
+}
+
+void TxVmButtonsFrame::configureSerialControlLineWatcher()
+{
+    if (readPTTCancelVoiceEnableFromIni() || readPTTCancelCwEnableFromIni())
+    {
+        if (!readPTTCancelComportFromIni().isEmpty())
+        {
+            serialControlLineWatcher->setComPort(readPTTCancelComportFromIni());
+
+            if (readPTTCancelVoiceEnableFromIni())
+            {
+                serialControlLineWatcher->setLineAllocation(
+                    readPTTCancelVoiceInputLineFromIni(),
+                    SerialPortControlLineWatcher::ControlFunction::Voice);
+                serialControlLineWatcher->enableLine(
+                   readPTTCancelVoiceInputLineFromIni(),
+                   true);
+                serialControlLineWatcher->setInvert(
+                    SerialPortControlLineWatcher::ControlFunction::Voice,
+                    readPTTCancelVoiceInvertControlLineState());
+                serialControlLineWatcher->startTimer();
+
+                if (voiceKeyerType == keyerTypes[VoiceKeyerId::RigControl])
+                {
+                    setVisibleKeyerCancelIndicator(true);
+                    setKeyerCancelControlLineText(readPTTCancelVoiceInputLineFromIni());
+                }
+
+
+
+            }
+
+            if (readPTTCancelCwEnableFromIni())
+            {
+                serialControlLineWatcher->setLineAllocation(
+                    readPTTCancelCwInputLineFromIni(),
+                    SerialPortControlLineWatcher::ControlFunction::CW);
+                serialControlLineWatcher->enableLine(
+                    readPTTCancelCwInputLineFromIni(),
+                    true);
+                serialControlLineWatcher->setInvert(
+                    SerialPortControlLineWatcher::ControlFunction::CW,
+                    readPTTCancelCwInvertControlLineState());
+                serialControlLineWatcher->startTimer();
+
+                if (voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl])
+                {
+                    setVisibleKeyerCancelIndicator(true);
+                    setKeyerCancelControlLineText(readPTTCancelCwInputLineFromIni());
+                }
+
+            }
+        }
+    }
+    else
+    {
+        if (serialControlLineWatcher->isTimerActive())
+        {
+            serialControlLineWatcher->stopTimer();
+            setVisibleKeyerCancelIndicator(false);
+        }
+    }
+
+
+
+}
+
+
+void TxVmButtonsFrame::onKeyerControlLineTriggered(SerialPortControlLineWatcher::ControlFunction function,
+                                                   bool active)
+{
+    if (readPTTCancelVoiceEnableFromIni() || readPTTCancelCwEnableFromIni())
+    {
+        setPTTCancelLineIndicatorOnOff(active);
+
+
+        if (function == SerialPortControlLineWatcher::ControlFunction::Voice && voiceKeyerType == keyerTypes[VoiceKeyerId::RigControl])
+        {
+            onVmStopClicked();
+        }
+        else if (function == SerialPortControlLineWatcher::ControlFunction::CW  && voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl])
+        {
+            onVmStopClicked();
+        }
+    }
+
+
+}
+
+void TxVmButtonsFrame::setVisibleKeyerCancelIndicator(bool visible)
+{
+    ui->pttCancelControlDisplay->setVisible(visible);
+    ui->pttCancelIndicator->setVisible(visible);
+    ui->pttCancelLabel->setVisible(visible);
+    ui->pttCancelVertLine->setVisible(visible);
+}
+
+void TxVmButtonsFrame::setKeyerCancelControlLineText(const QString text)
+{
+    ui->pttCancelControlDisplay->clear();
+    ui->pttCancelControlDisplay->setText(text);
+}
+
+void TxVmButtonsFrame::setPTTCancelLineIndicatorOnOff(bool state)
+{
+    if (state)
+    {
+        ui->pttCancelIndicator->setStyleSheet(STATUS_INDICATOR_CONNECT_STYLE);
+    }
+    else
+    {
+        ui->pttCancelIndicator->setStyleSheet(STATUS_INDICATOR_DISCONNECT_STYLE);
     }
 }
 
@@ -324,24 +455,6 @@ void TxVmButtonsFrame::createKeyer(QString voiceKeyerName)
 
                 vmKeyParamList.clear();
                 buttonNumSent = NO_VM_BUTTON_ON;
-
-                if (voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl]
-                    || voiceKeyerType == keyerTypes[VoiceKeyerId::RigControl]
-                    || voiceKeyerType == keyerTypes[VoiceKeyerId::PcCwKeyer])
-                {
-
-
-
-                }
-                else
-                {
-                    if (serialControlLineWatcher)
-                    {
-                        serialControlLineWatcher->deleteLater();
-                    }
-                }
-
-
 
                 if (voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl] || voiceKeyerType == keyerTypes[VoiceKeyerId::RigControl])
                 {

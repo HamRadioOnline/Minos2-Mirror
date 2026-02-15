@@ -487,6 +487,24 @@ void writePTTCancelVoiceInputLineToIni(QString lineName)
 
 }
 
+// Invert Control Line State
+
+bool readPTTCancelVoiceInvertControlLineState()
+{
+    QString fileName = PTT_CANCEL_INI_FILENAME();
+    QSettings config(fileName, QSettings::IniFormat);
+    bool value = config.value(PTT_CANCEL_VOICE_INVERT_LINE_NAME_TEXT, false).toBool();
+    return value;
+
+}
+void writePTTCancelVoiceInvertControlLineState(bool state)
+{
+    QString fileName = PTT_CANCEL_INI_FILENAME();
+    QSettings config(fileName, QSettings::IniFormat);
+    config.setValue(PTT_CANCEL_VOICE_INVERT_LINE_NAME_TEXT, state);
+
+
+}
 
 
 // PTT Cancel Cw Message Enable
@@ -532,6 +550,24 @@ void writePTTCancelCwInputLineToIni(QString lineName)
 }
 
 
+
+
+bool readPTTCancelCwInvertControlLineState()
+{
+    QString fileName = PTT_CANCEL_INI_FILENAME();
+    QSettings config(fileName, QSettings::IniFormat);
+    bool value = config.value(PTT_CANCEL_CW_INVERT_LINE_NAME_TEXT, false).toBool();
+    return value;
+
+}
+void writePTTCancelCwInvertControlLineState(bool state)
+{
+    QString fileName = PTT_CANCEL_INI_FILENAME();
+    QSettings config(fileName, QSettings::IniFormat);
+    config.setValue(PTT_CANCEL_CW_INVERT_LINE_NAME_TEXT, state);
+
+
+}
 
 QString RIG_CONFIGURATION_FILEPATH_LOGGER()
 {

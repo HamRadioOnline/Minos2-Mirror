@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SERIALPORTCONTROLLINEWATCHER_H
+#define SERIALPORTCONTROLLINEWATCHER_H
 
 #include <QObject>
 #include <QtSerialPort/QSerialPort>
@@ -9,7 +10,6 @@ class SerialPortControlLineWatcher : public QObject
 {
     Q_OBJECT
 public:
-    // Nested enum for logical function
     enum class ControlFunction {
         None,
         Voice,
@@ -17,39 +17,51 @@ public:
     };
     Q_ENUM(ControlFunction)
 
-    explicit SerialPortControlLineWatcher(QSerialPort* port, QObject* parent = nullptr);
+    explicit SerialPortControlLineWatcher(QObject* parent = nullptr);
+    ~SerialPortControlLineWatcher() override;
 
-    // Assign a line to Voice or CW
+    // Set or change COM port dynamically
+    void setComPort(const QString& portName);
+
+    // Assign a line to Voice/CW
     void setLineAllocation(const QString& lineName, ControlFunction func);
+    void setInvert(ControlFunction func, bool inv);
 
-    // Enable/disable monitoring for a line
+    // Enable/disable a line
     void enableLine(const QString& lineName, bool enable);
+    bool isLineEnabled(const QString &line);
+
+    // Reset all lines (useful when switching keyer type)
+    void resetLines();
+
+    void startTimer();
+    void stopTimer();
+    bool isTimerActive();
+
+
 
 signals:
-    // Fully qualified enum type for Qt moc
-    void controlLineTriggered(QString lineName,
-                              SerialPortControlLineWatcher::ControlFunction function,
+    void controlLineTriggered(SerialPortControlLineWatcher::ControlFunction function,
                               bool active);
+
 
 private slots:
     void pollLines();
 
 private:
-    bool readLine(const QString& line, QSerialPort::PinoutSignals pinSignals);
+    bool readLine(const QString& line, const QSerialPort::PinoutSignals& pinSignals);
 
-    QSerialPort* serialPort;
+    QSerialPort* serialPort = nullptr;
     QTimer pollTimer;
 
-    // Mapping: line name → logical function (Voice/CW)
+    // Line state tracking
     QMap<QString, ControlFunction> lineAssignments;
-
-    // Enabled/disabled state
     QMap<QString, bool> enabled;
-
-    // Last known states
     QMap<QString, bool> lastState;
+    QMap<ControlFunction, bool> invertFunction;
 
-    // Line → QSerialPort::PinoutSignals map
+
+    // Line → QSerialPort::PinoutSignal map
     inline static const QMap<QString, QSerialPort::PinoutSignal> lineMap = {
 #if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
         {"CTS", QSerialPort::ClearToSendSignal},
@@ -63,4 +75,10 @@ private:
         {"RI",  QSerialPort::RingIndicator}
 #endif
     };
+
 };
+
+
+
+
+#endif // SERIALPORTCONTROLLINEWATCHER_H

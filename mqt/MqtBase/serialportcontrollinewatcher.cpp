@@ -12,44 +12,103 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-
-
 #include "serialportcontrollinewatcher.h"
 #include <QDebug>
 
-
-
-
-SerialPortControlLineWatcher::SerialPortControlLineWatcher(QSerialPort* port,
-                                                           QObject* parent)
-    : QObject(parent), serialPort(port)
+SerialPortControlLineWatcher::SerialPortControlLineWatcher(QObject* parent)
+    : QObject(parent)
 {
-    if (!serialPort) {
-        qWarning() << "Null serial port";
-        return;
-    }
-
-    // Initialise state maps
-    for (auto it = lineMap.constBegin(); it != lineMap.constEnd(); ++it) {
-        const QString& k = it.key();
+    // Initialize maps
+    for (const auto& k : lineMap.keys())
+    {
         enabled[k] = false;
         lastState[k] = false;
         lineAssignments[k] = ControlFunction::None;
     }
 
+    invertFunction[ControlFunction::Voice] = false;
+    invertFunction[ControlFunction::CW] = false;
+
+
     // Polling timer
-    pollTimer.setInterval(50); // 50ms = 20 Hz
+    pollTimer.setInterval(50); // 20 Hz
     connect(&pollTimer, &QTimer::timeout, this, &SerialPortControlLineWatcher::pollLines);
+
+}
+
+void SerialPortControlLineWatcher::setInvert(ControlFunction func, bool inv)
+{
+    invertFunction[func] = inv;
+}
+
+
+void SerialPortControlLineWatcher::startTimer()
+{
     pollTimer.start();
 }
 
-void SerialPortControlLineWatcher::setLineAllocation(const QString& line,
-                                                     ControlFunction func)
+void SerialPortControlLineWatcher::stopTimer()
 {
-    if (!lineMap.contains(line)) return;
+    pollTimer.stop();
+}
 
-    // Prevent assigning same function to multiple lines
-    if (lineAssignments.values().contains(func)) return;
+bool SerialPortControlLineWatcher::isTimerActive()
+{
+    return pollTimer.isActive();
+}
+
+SerialPortControlLineWatcher::~SerialPortControlLineWatcher()
+{
+    if (serialPort)
+    {
+        serialPort->close();
+        serialPort->deleteLater();
+    }
+}
+
+void SerialPortControlLineWatcher::setComPort(const QString& portName)
+{
+    // Clean up old port
+    if (serialPort)
+    {
+        serialPort->close();
+        serialPort->deleteLater();
+    }
+
+    if (portName.isEmpty())
+    {
+        serialPort = nullptr;
+        return;
+    }
+
+    // Create new port
+    serialPort = new QSerialPort(this);
+    serialPort->setPortName(portName);
+
+    if (!serialPort->open(QIODevice::ReadWrite))
+    {
+        qWarning() << "Failed to open serial port:" << portName;
+        serialPort->deleteLater();
+        serialPort = nullptr;
+    }
+    else
+    {
+        qDebug() << "Serial port opened:" << portName;
+    }
+}
+
+void SerialPortControlLineWatcher::setLineAllocation(const QString& line, ControlFunction func)
+{
+    if (!lineMap.contains(line))
+    {
+         return;
+    }
+
+    // Prevent assigning the same function to multiple lines
+    if (lineAssignments.values().contains(func))
+    {
+        return;
+    }
 
     lineAssignments[line] = func;
     enabled[line] = true;
@@ -57,33 +116,68 @@ void SerialPortControlLineWatcher::setLineAllocation(const QString& line,
 
 void SerialPortControlLineWatcher::enableLine(const QString& line, bool en)
 {
-    if (lineMap.contains(line))
-        enabled[line] = en;
+    if (!lineMap.contains(line))
+    {
+        return;
+    }
+
+    enabled[line] = en;
+}
+
+bool SerialPortControlLineWatcher::isLineEnabled(const QString &line)
+{
+    return enabled[line];
+}
+
+void SerialPortControlLineWatcher::resetLines()
+{
+    for (const auto& k : lineMap.keys())
+    {
+        enabled[k] = false;
+        lastState[k] = false;
+        lineAssignments[k] = ControlFunction::None;
+    }
 }
 
 void SerialPortControlLineWatcher::pollLines()
 {
-    if (!serialPort || !serialPort->isOpen()) return;
+    if (!serialPort || !serialPort->isOpen())
+        return;
 
     auto pinSignals = serialPort->pinoutSignals();
 
-    for (const auto& line : enabled.keys()) {
-        if (!enabled[line]) continue;
+    for (const auto& line : enabled.keys())
+    {
+        if (!enabled[line])
+            continue;
 
         bool state = readLine(line, pinSignals);
 
-        if (state != lastState[line]) {
-            lastState[line] = state;
-            emit controlLineTriggered(line, lineAssignments.value(line, ControlFunction::None), state);
+        // Map line → logical function
+        ControlFunction func =
+            lineAssignments.value(line, ControlFunction::None);
+
+        // Apply invert per function
+        if (invertFunction.value(func, false))
+            state = !state;
+
+        // Rising-edge detect (after invert!)
+        if (state && !lastState[line])
+        {
+            emit controlLineTriggered(func, true);
         }
+
+        lastState[line] = state;
     }
 }
 
-bool SerialPortControlLineWatcher::readLine(const QString& line,
-                                            QSerialPort::PinoutSignals pinSignals)
+bool SerialPortControlLineWatcher::readLine(const QString& line, const QSerialPort::PinoutSignals& pinSignals)
 {
     auto it = lineMap.find(line);
-    if (it == lineMap.end()) return false;
+    if (it == lineMap.end())
+    {
+        return false;
+    }
 
     return pinSignals.testFlag(it.value());
 }

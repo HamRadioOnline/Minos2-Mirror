@@ -135,6 +135,8 @@ inline const QString PTT_CANCEL_VOICE_ENABLE_TEXT = "pttCancelVoiceEnabled";
 inline const QString PTT_CANCEL_VOICE_INPUT_LINE_NAME_TEXT = "pttCancelVoiceInputLine";
 inline const QString PTT_CANCEL_CW_ENABLE_TEXT = "pttCancelCwEnabled";
 inline const QString PTT_CANCEL_CW_INPUT_LINE_NAME_TEXT = "pttCancelCwInputLine";
+inline const QString PTT_CANCEL_VOICE_INVERT_LINE_NAME_TEXT = "pttCancelVoiceInvertInputLine";
+inline const QString PTT_CANCEL_CW_INVERT_LINE_NAME_TEXT  = "pttCancelVoiceInvertInputLine";
 
 
 QString readPTTCancelComportFromIni();
@@ -146,6 +148,12 @@ void writePTTCancelVoiceInputLineToIni(QString lineName);
 bool readPTTCancelCwEnableFromIni();
 void writePTTCancelCanceCwEnableToIni(bool enable);
 QString readPTTCancelCwInputLineFromIni();
+
+bool readPTTCancelVoiceInvertControlLineState();
+void writePTTCancelVoiceInvertControlLineState(bool state);
+bool readPTTCancelCwInvertControlLineState();
+void writePTTCancelCwInvertControlLineState(bool state);
+
 
 namespace freqPresetData {
 

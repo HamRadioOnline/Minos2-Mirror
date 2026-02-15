@@ -96,6 +96,8 @@ private slots:
     void onCwMessageCancelCheckBoxClicked();
     void onVoiceMsgCancelInputLineChanged();
     void onCwMsgCancelInputLineChanged();
+    void onVoiceCancelInvertLineClicked();
+    void onCwCancelInvertLineClicked();
 private:
     Ui::RadioSettingDialog *ui;
 
@@ -178,6 +180,9 @@ private:
 
     bool validationError(const QString &text, std::initializer_list<QWidget *> widgets);
     void clearValidationUi();
+    void loadKeyerCancelSettings();
+    void setEnabledCancelVoiceMessageElements(bool enabled);
+    void setEnabledCancelCwMessageElements(bool enabled);
 };
 
 #endif // RADIOSETTINGDIALOG_H
