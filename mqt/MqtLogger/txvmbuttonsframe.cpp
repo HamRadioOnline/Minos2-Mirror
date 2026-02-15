@@ -102,9 +102,6 @@ TxVmButtonsFrame::TxVmButtonsFrame(QWidget *parent) :
 
     qApp->installEventFilter(this); // look for esc key to stop playing
 
-
-
-
 }
 
 TxVmButtonsFrame::~TxVmButtonsFrame()
@@ -327,6 +324,22 @@ void TxVmButtonsFrame::createKeyer(QString voiceKeyerName)
 
                 vmKeyParamList.clear();
                 buttonNumSent = NO_VM_BUTTON_ON;
+
+                if (voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl]
+                    || voiceKeyerType == keyerTypes[VoiceKeyerId::RigControl]
+                    || voiceKeyerType == keyerTypes[VoiceKeyerId::PcCwKeyer])
+                {
+
+
+
+                }
+                else
+                {
+                    if (serialControlLineWatcher)
+                    {
+                        serialControlLineWatcher->deleteLater();
+                    }
+                }
 
 
 

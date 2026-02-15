@@ -49,6 +49,11 @@ void OptionsDialog::reject()
 }
 void OptionsDialog::accept()
 {
+    if (!rdc->checkKeyerCancelSettings())
+    {
+        return; // keyer cancel settings error
+    }
+
     doCloseEvent();
     QDialog::accept();
 }

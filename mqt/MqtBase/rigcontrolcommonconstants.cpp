@@ -435,7 +435,7 @@ QString readPTTCancelComportFromIni()
 
 }
 
-void writePTTCancelCompotToIni(QString comport)
+void writePTTCancelComportToIni(QString comport)
 {
     QString fileName = PTT_CANCEL_INI_FILENAME();
 
@@ -456,7 +456,7 @@ bool readPTTCancelVoiceEnableFromIni()
 
 }
 
-void writePTTCancelCancelVoiceEnableToIni(bool enable)
+void writePTTCancelVoiceEnableToIni(bool enable)
 {
     QString fileName = PTT_CANCEL_INI_FILENAME();
 

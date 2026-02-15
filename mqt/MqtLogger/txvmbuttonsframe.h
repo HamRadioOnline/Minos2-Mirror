@@ -12,6 +12,7 @@
 #include "voicekeyerfactory.h"
 #include "rigcontrolcommonconstants.h"
 #include "cwspeedcontrol.h"
+#include "serialportcontrollinewatcher.h"
 
 class QToolButton;
 class QMenu;
@@ -118,6 +119,8 @@ private:
 
     QSharedPointer<VoiceKeyerBase> txVoiceKeyer;
     VoiceKeyerFactory* voiceKeyerFactory;
+
+     SerialPortControlLineWatcher* serialControlLineWatcher = nullptr;
 
     BaseContestLog *ct = nullptr;
 

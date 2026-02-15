@@ -137,6 +137,16 @@ inline const QString PTT_CANCEL_CW_ENABLE_TEXT = "pttCancelCwEnabled";
 inline const QString PTT_CANCEL_CW_INPUT_LINE_NAME_TEXT = "pttCancelCwInputLine";
 
 
+QString readPTTCancelComportFromIni();
+void writePTTCancelComportToIni(QString comport);
+bool readPTTCancelVoiceEnableFromIni();
+void writePTTCancelVoiceEnableToIni(bool enable);
+QString readPTTCancelVoiceInputLineFromIni();
+void writePTTCancelVoiceInputLineToIni(QString lineName);
+bool readPTTCancelCwEnableFromIni();
+void writePTTCancelCanceCwEnableToIni(bool enable);
+QString readPTTCancelCwInputLineFromIni();
+
 namespace freqPresetData {
 
 inline const QString PRESET_MODE_CW = "CW";
@@ -325,6 +335,12 @@ public:
         serialComport = false;
         saveVoiceMemoryButtonByRadioName = false;
         cqRit = false;
+        pttCancelKeyerComportChanged = false;
+        pttCancelKeyerVoiceInputLineChanged = false;
+        pttCancelKeyerVoiceEnableChanged = false;
+        pttCancelKeyerCwInputLineChanged = false;
+        pttCancelKeyerCWEnableChange = false;
+
     }
 
     bool isChanged()
@@ -343,7 +359,12 @@ public:
         enableSerialBandSwitch ||
         serialComport ||
         saveVoiceMemoryButtonByRadioName ||
-        cqRit;
+        cqRit ||
+        pttCancelKeyerComportChanged ||
+        pttCancelKeyerVoiceInputLineChanged ||
+        pttCancelKeyerVoiceEnableChanged ||
+        pttCancelKeyerCwInputLineChanged ||
+        pttCancelKeyerCWEnableChange;
     }
 
 
@@ -362,7 +383,11 @@ public:
     bool serialComport;
     bool saveVoiceMemoryButtonByRadioName;
     bool cqRit;
-
+    bool pttCancelKeyerComportChanged;
+    bool pttCancelKeyerVoiceInputLineChanged;
+    bool pttCancelKeyerVoiceEnableChanged;
+    bool pttCancelKeyerCwInputLineChanged;
+    bool pttCancelKeyerCWEnableChange;
 
 
 

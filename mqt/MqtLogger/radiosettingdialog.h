@@ -66,6 +66,7 @@ public:
     bool check();
     void cancel();
 
+    bool checkKeyerCancelSettings();
 
 
 private slots:
@@ -89,11 +90,12 @@ private slots:
     void onDeleteCwMemoryButtonRadiosPushButtonClicked();
     void onRadioReadOnlyCheckBoxClicked();
 
-    void onKeyerCancelComportChanged();
-    void onVoiceMessageCancelCheckBoxChanged();
-    void onVoiceMsgCancelInputLineChanged();
-    void onCwMessageCancelCheckBoxChanged();
 
+
+    void onVoiceMessageCancelCheckBoxClicked();
+    void onCwMessageCancelCheckBoxClicked();
+    void onVoiceMsgCancelInputLineChanged();
+    void onCwMsgCancelInputLineChanged();
 private:
     Ui::RadioSettingDialog *ui;
 
@@ -105,6 +107,7 @@ private:
     bool checking = false;
     bool errorShown = false;
     bool cancelled = false;
+
 
     QList<QLineEdit*> cwPresetLineEditList;
 
@@ -164,6 +167,17 @@ private:
     void writeContestChangeIgnorePreviousFreqFlagSavedSettingFlag(const bool state);
     void writeIgnorePresetFreqFlagSavedSettingFlag(const bool state);
     void fillComportPTTCancelInputLines(QComboBox *comportInputLinesCb);
+
+    void savePttCancelKeyerSettings();
+    void checkKeyerCancelComportChanged();
+    void checkVoiceMessageCancelCheckBoxChanged();
+    void checkVoiceMsgCancelInputLineChanged();
+    void checkCwMessageCancelCheckBoxChanged();
+
+
+
+    bool validationError(const QString &text, std::initializer_list<QWidget *> widgets);
+    void clearValidationUi();
 };
 
 #endif // RADIOSETTINGDIALOG_H

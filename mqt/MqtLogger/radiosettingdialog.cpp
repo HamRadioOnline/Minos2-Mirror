@@ -266,16 +266,16 @@ void RadioSettingDialog::initialise()
     fillComportPTTCancelInputLines(ui->voiceMsgCancelInputLineComboBox);
     fillComportPTTCancelInputLines(ui->CwMsgCancelInputLineComboBox);
 
-    connect(ui->keyerCancelComportComboBox, &QComboBox::currentTextChanged, this, [=]() { onKeyerCancelComportChanged();});
+    ui->voiceMsgCancelInputLineComboBox->setEnabled(readPTTCancelVoiceEnableFromIni());
+    ui->voicmessageCancelLabel->setEnabled(readPTTCancelVoiceEnableFromIni());
+    ui->CwMsgCancelInputLineComboBox->setEnabled(readPTTCancelCwEnableFromIni());
+    ui->cwMessageCancelLabel->setEnabled(readPTTCancelCwEnableFromIni());
 
+
+    connect(ui->voiceMessageCancelCheckBox, &QCheckBox::clicked, this, [=]() {onVoiceMessageCancelCheckBoxClicked();});
     connect(ui->voiceMsgCancelInputLineComboBox, &QComboBox::currentTextChanged, this, [=]() {onVoiceMsgCancelInputLineChanged();});
-
-    connect(ui->CwMsgCancelInputLineComboBox, &QComboBox::currentTextChanged, this, [=]() {onVoiceMsgCancelInputLineChanged();});
-
-    connect(ui->voiceMessageCancelCheckBox, &QCheckBox::stateChanged, this, [=]() {onVoiceMessageCancelCheckBoxChanged();});
-
-    connect(ui->cwMessageCancelCheckBox, &QCheckBox::stateChanged, this, [=]() {onCwMessageCancelCheckBoxChanged();});
-
+    connect(ui->cwMessageCancelCheckBox, &QCheckBox::clicked, this, [=]() {onCwMessageCancelCheckBoxClicked();});
+    connect(ui->CwMsgCancelInputLineComboBox, &QComboBox::currentTextChanged, this, [=]() {onCwMsgCancelInputLineChanged();});
 
 
     //===========================================================================================================
@@ -358,7 +358,11 @@ void RadioSettingDialog::cancel()
 
 void RadioSettingDialog::finalise()
 {
-    saveSettings();
+
+
+
+    saveSettings();  // to ini file
+
     if (turnOffColourRadioFreqDial.finalise())
     {
         logRadioSettingsChangeFlag->operatingFreqColor = true;
@@ -753,6 +757,7 @@ void RadioSettingDialog::saveSettings()
     saveBandSwCheckBoxes();
     saveVoiceMemoryButtonByRadioNameCheckBox();
     saveCwMemoryButtonByRadioNameCheckBox();
+    savePttCancelKeyerSettings();
 }
 
 
@@ -978,21 +983,172 @@ void RadioSettingDialog::fillComportPTTCancelInputLines(QComboBox* comportInputL
     comportInputLinesCb->addItems(pttCancelInputNames);
 }
 
-void RadioSettingDialog::onKeyerCancelComportChanged()
-{
 
+void RadioSettingDialog::savePttCancelKeyerSettings()
+{
+    checkKeyerCancelComportChanged();
+    checkVoiceMsgCancelInputLineChanged();
+    checkVoiceMsgCancelInputLineChanged();
+    checkVoiceMessageCancelCheckBoxChanged();
+    checkCwMessageCancelCheckBoxChanged();
 }
+
+bool RadioSettingDialog::checkKeyerCancelSettings()
+{
+    // clear previous visuals
+    clearValidationUi();
+
+    bool voiceEnabled = ui->voiceMessageCancelCheckBox->isChecked();
+    bool cwEnabled    = ui->cwMessageCancelCheckBox->isChecked();
+
+    QString comport = ui->keyerCancelComportComboBox->currentText();
+    QString voiceLine = ui->voiceMsgCancelInputLineComboBox->currentText();
+    QString cwLine    = ui->CwMsgCancelInputLineComboBox->currentText();
+
+    // Rule: if either enabled → comport required
+    if ((voiceEnabled || cwEnabled) && comport.isEmpty())
+    {
+        return validationError(
+            tr("A COM port must be selected when keyer cancel monitoring is enabled."),
+            { ui->keyerCancelComportComboBox });
+    }
+
+    // Rule: voice enabled → line required
+    if (voiceEnabled && voiceLine.isEmpty())
+    {
+        return validationError(
+            tr("Select a control line for Voice Keyer cancel."),
+            { ui->voiceMsgCancelInputLineComboBox });
+    }
+
+    // Rule: cw enabled → line required
+    if (cwEnabled && cwLine.isEmpty())
+    {
+        return validationError(
+            tr("Select a control line for CW Keyer cancel."),
+            { ui->CwMsgCancelInputLineComboBox });
+    }
+
+    // Rule: both enabled → lines must differ
+    if (voiceEnabled && cwEnabled && voiceLine == cwLine)
+    {
+        return validationError(
+            tr("Voice and CW Keyer cancel cannot use the same control line."),
+            { ui->voiceMsgCancelInputLineComboBox,
+             ui->CwMsgCancelInputLineComboBox });
+    }
+
+    return true;
+}
+
+bool RadioSettingDialog::validationError(const QString& text,
+                                     std::initializer_list<QWidget*> widgets)
+{
+    ui->validationLabel->setText(text);
+    ui->validationLabel->show();
+
+    for (auto w : widgets)
+    {
+        w->setStyleSheet("border: 2px solid red;");
+    }
+
+    return false;
+}
+
+void RadioSettingDialog::clearValidationUi()
+{
+    ui->validationLabel->hide();
+    ui->validationLabel->clear();
+
+    QList<QWidget*> fields = {
+        ui->keyerCancelComportComboBox,
+        ui->voiceMsgCancelInputLineComboBox,
+        ui->CwMsgCancelInputLineComboBox
+    };
+
+    for (auto w : fields)
+        w->setStyleSheet("");
+}
+
+
+
+void RadioSettingDialog::checkKeyerCancelComportChanged()
+{
+    if (ui->keyerCancelComportComboBox->currentText() != readPTTCancelComportFromIni())
+    {
+        writePTTCancelComportToIni(ui->keyerCancelComportComboBox->currentText());
+        logRadioSettingsChangeFlag->pttCancelKeyerComportChanged = true;
+    }
+}
+void RadioSettingDialog::checkVoiceMsgCancelInputLineChanged()
+{
+    if (ui->voiceMsgCancelInputLineComboBox->currentText() != readPTTCancelVoiceInputLineFromIni())
+    {
+        writePTTCancelVoiceInputLineToIni(ui->voiceMsgCancelInputLineComboBox->currentText());
+        logRadioSettingsChangeFlag->pttCancelKeyerVoiceInputLineChanged = true;
+    }
+}
+void RadioSettingDialog::checkVoiceMessageCancelCheckBoxChanged()
+{
+    if (ui->voiceMessageCancelCheckBox->isChecked() != readPTTCancelVoiceEnableFromIni())
+    {
+       writePTTCancelVoiceEnableToIni(ui->voiceMessageCancelCheckBox->isChecked());
+       logRadioSettingsChangeFlag->pttCancelKeyerVoiceEnableChanged = true;
+    }
+}
+void RadioSettingDialog::checkCwMessageCancelCheckBoxChanged()
+{
+    if (ui->cwMessageCancelCheckBox->isChecked() != readPTTCancelCwEnableFromIni())
+    {
+        writePTTCancelCanceCwEnableToIni(ui->cwMessageCancelCheckBox->isChecked());
+        logRadioSettingsChangeFlag->pttCancelKeyerCWEnableChange = true;
+    }
+}
+
 void RadioSettingDialog::onVoiceMsgCancelInputLineChanged()
 {
-
+    if (!ui->voiceMsgCancelInputLineComboBox->currentText().isEmpty())
+    {
+        checkKeyerCancelSettings();
+    }
 }
-void RadioSettingDialog::onVoiceMessageCancelCheckBoxChanged()
+void RadioSettingDialog::onCwMsgCancelInputLineChanged()
 {
-
+    if (!ui->CwMsgCancelInputLineComboBox->currentText().isEmpty())
+    {
+       checkKeyerCancelSettings();
+    }
 }
-void RadioSettingDialog::onCwMessageCancelCheckBoxChanged()
-{
 
+void RadioSettingDialog::onVoiceMessageCancelCheckBoxClicked()
+{
+    if (ui->voiceMessageCancelCheckBox->isChecked())
+    {
+        ui->voiceMsgCancelInputLineComboBox->setEnabled(true);
+        ui->voicmessageCancelLabel->setEnabled(true);
+    }
+    else
+    {
+        ui->voiceMsgCancelInputLineComboBox->setEnabled(false);
+        ui->voicmessageCancelLabel->setEnabled(false);
+    }
+
+    checkKeyerCancelSettings();
+}
+void RadioSettingDialog::onCwMessageCancelCheckBoxClicked()
+{
+    if (ui->cwMessageCancelCheckBox->isChecked())
+    {
+        ui->CwMsgCancelInputLineComboBox->setEnabled(true);
+        ui->cwMessageCancelLabel->setEnabled(true);
+    }
+    else
+    {
+        ui->CwMsgCancelInputLineComboBox->setEnabled(false);
+        ui->cwMessageCancelLabel->setEnabled(false);
+    }
+
+    checkKeyerCancelSettings();
 }
 
 QString RadioSettingDialog::CONFIGURATION_FILEPATH_LOGGER()
