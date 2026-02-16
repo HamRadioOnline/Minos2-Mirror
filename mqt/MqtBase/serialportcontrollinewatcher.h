@@ -41,8 +41,11 @@ public:
 
 
 signals:
-    void controlLineTriggered(SerialPortControlLineWatcher::ControlFunction function,
-                              bool active);
+signals:
+    void controlLineTriggered(ControlFunction func);          // rising edge only
+    void controlLineLevelChanged(ControlFunction func, bool); // level for indicator
+
+
 
 
 private slots:

@@ -96,6 +96,7 @@ TxVmButtonsFrame::TxVmButtonsFrame(QWidget *parent) :
     setVisibleKeyerCancelIndicator(false);
     serialControlLineWatcher = new SerialPortControlLineWatcher(this);
     connect(serialControlLineWatcher, &SerialPortControlLineWatcher::controlLineTriggered, this, &TxVmButtonsFrame::onKeyerControlLineTriggered);
+    connect(serialControlLineWatcher, &SerialPortControlLineWatcher::controlLineLevelChanged, this, &TxVmButtonsFrame::onKeyerControlLineLevelChanged);
 
     voiceKeyerFactory->populateComboKeyerList(ui->voiceKeyerSelect, voiceKeyerName);
     connect(ui->voiceKeyerSelect, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &TxVmButtonsFrame::onVoiceKeyerSelect);
@@ -283,48 +284,45 @@ void TxVmButtonsFrame::configureSerialControlLineWatcher()
         {
             serialControlLineWatcher->setComPort(readPTTCancelComportFromIni());
 
-            if (readPTTCancelVoiceEnableFromIni())
+            if (voiceKeyerType == keyerTypes[VoiceKeyerId::RigControl])
             {
-                serialControlLineWatcher->setLineAllocation(
-                    readPTTCancelVoiceInputLineFromIni(),
-                    SerialPortControlLineWatcher::ControlFunction::Voice);
-                serialControlLineWatcher->enableLine(
-                   readPTTCancelVoiceInputLineFromIni(),
-                   true);
-                serialControlLineWatcher->setInvert(
-                    SerialPortControlLineWatcher::ControlFunction::Voice,
-                    readPTTCancelVoiceInvertControlLineState());
-                serialControlLineWatcher->startTimer();
-
-                if (voiceKeyerType == keyerTypes[VoiceKeyerId::RigControl])
+               if (readPTTCancelVoiceEnableFromIni())
                 {
+                    serialControlLineWatcher->setLineAllocation(
+                        readPTTCancelVoiceInputLineFromIni(),
+                        SerialPortControlLineWatcher::ControlFunction::Voice);
+                    serialControlLineWatcher->enableLine(
+                       readPTTCancelVoiceInputLineFromIni(),
+                       true);
+                    serialControlLineWatcher->setInvert(
+                        SerialPortControlLineWatcher::ControlFunction::Voice,
+                        readPTTCancelVoiceInvertControlLineState());
+                    serialControlLineWatcher->startTimer();
+
                     setVisibleKeyerCancelIndicator(true);
                     setKeyerCancelControlLineText(readPTTCancelVoiceInputLineFromIni());
                 }
-
-
-
             }
 
-            if (readPTTCancelCwEnableFromIni())
+            if (voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl] ||
+                voiceKeyerType == keyerTypes[VoiceKeyerId::PcCwKeyer])
             {
-                serialControlLineWatcher->setLineAllocation(
-                    readPTTCancelCwInputLineFromIni(),
-                    SerialPortControlLineWatcher::ControlFunction::CW);
-                serialControlLineWatcher->enableLine(
-                    readPTTCancelCwInputLineFromIni(),
-                    true);
-                serialControlLineWatcher->setInvert(
-                    SerialPortControlLineWatcher::ControlFunction::CW,
-                    readPTTCancelCwInvertControlLineState());
-                serialControlLineWatcher->startTimer();
-
-                if (voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl])
+                if (readPTTCancelCwEnableFromIni())
                 {
+                    serialControlLineWatcher->setLineAllocation(
+                        readPTTCancelCwInputLineFromIni(),
+                        SerialPortControlLineWatcher::ControlFunction::CW);
+                    serialControlLineWatcher->enableLine(
+                        readPTTCancelCwInputLineFromIni(),
+                        true);
+                    serialControlLineWatcher->setInvert(
+                        SerialPortControlLineWatcher::ControlFunction::CW,
+                        readPTTCancelCwInvertControlLineState());
+                    serialControlLineWatcher->startTimer();
+
                     setVisibleKeyerCancelIndicator(true);
                     setKeyerCancelControlLineText(readPTTCancelCwInputLineFromIni());
                 }
-
             }
         }
     }
@@ -342,14 +340,10 @@ void TxVmButtonsFrame::configureSerialControlLineWatcher()
 }
 
 
-void TxVmButtonsFrame::onKeyerControlLineTriggered(SerialPortControlLineWatcher::ControlFunction function,
-                                                   bool active)
+void TxVmButtonsFrame::onKeyerControlLineTriggered(SerialPortControlLineWatcher::ControlFunction function)
 {
     if (readPTTCancelVoiceEnableFromIni() || readPTTCancelCwEnableFromIni())
     {
-        setPTTCancelLineIndicatorOnOff(active);
-
-
         if (function == SerialPortControlLineWatcher::ControlFunction::Voice && voiceKeyerType == keyerTypes[VoiceKeyerId::RigControl])
         {
             onVmStopClicked();
@@ -361,6 +355,12 @@ void TxVmButtonsFrame::onKeyerControlLineTriggered(SerialPortControlLineWatcher:
     }
 
 
+}
+
+void TxVmButtonsFrame::onKeyerControlLineLevelChanged(SerialPortControlLineWatcher::ControlFunction function,
+                                                      bool state)
+{
+    setPTTCancelLineIndicatorOnOff(state);
 }
 
 void TxVmButtonsFrame::setVisibleKeyerCancelIndicator(bool visible)
@@ -456,6 +456,13 @@ void TxVmButtonsFrame::createKeyer(QString voiceKeyerName)
                 vmKeyParamList.clear();
                 buttonNumSent = NO_VM_BUTTON_ON;
 
+                if (voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl] ||
+                    voiceKeyerType == keyerTypes[VoiceKeyerId::RigControl] ||
+                    voiceKeyerType == voiceKeyerType[VoiceKeyerId::PcCwKeyer])
+                {
+                    configureSerialControlLineWatcher();
+                }
+
                 if (voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl] || voiceKeyerType == keyerTypes[VoiceKeyerId::RigControl])
                 {
                     // convert to version 2 ini type
@@ -467,7 +474,9 @@ void TxVmButtonsFrame::createKeyer(QString voiceKeyerName)
 
                     txVoiceKeyer->voiceKeyerInit(txVoiceKeyer->numButtons);
 
-                    for (int i = 0; i < voiceMemButtonList.count(); i++)
+
+
+                   for (int i = 0; i < voiceMemButtonList.count(); i++)
                    {
                        VoiceKeyerParams vmData;
                        if (vmData.getType().isEmpty())
@@ -479,6 +488,8 @@ void TxVmButtonsFrame::createKeyer(QString voiceKeyerName)
                        txVoiceKeyer->readVmButtonParams(i, vmData);
                        vmKeyParamList.append(vmData);
                        setRunButtonText(i, vmData.getVmName());
+
+
 
                    }
 

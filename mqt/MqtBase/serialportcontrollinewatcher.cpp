@@ -161,11 +161,16 @@ void SerialPortControlLineWatcher::pollLines()
         if (invertFunction.value(func, false))
             state = !state;
 
-        // Rising-edge detect (after invert!)
-        if (state && !lastState[line])
-        {
-            emit controlLineTriggered(func, true);
+        // Level change → indicator update
+        if (state != lastState[line]) {
+            emit controlLineLevelChanged(func, state);
         }
+
+        // Rising edge → trigger cancel keyer
+        if (state && !lastState[line]) {
+            emit controlLineTriggered(func);
+        }
+
 
         lastState[line] = state;
     }

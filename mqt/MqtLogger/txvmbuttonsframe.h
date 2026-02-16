@@ -258,7 +258,8 @@ private slots:
     void onCwEntryReturnPressed();
     void setRadioParams();
     void onCwMacroTextProcessed(const QString &cwTextSent);
-    void onKeyerControlLineTriggered(SerialPortControlLineWatcher::ControlFunction function, bool active);
+    void onKeyerControlLineTriggered(SerialPortControlLineWatcher::ControlFunction function);
+    void onKeyerControlLineLevelChanged(SerialPortControlLineWatcher::ControlFunction function, bool state);
 };
 
 
