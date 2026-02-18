@@ -42,14 +42,28 @@ void PcCwKeyer::setWPM(int wpm)
 
 }
 
+void PcCwKeyer::setInverKeyDownFlag(const bool invertKeyDownFlag)
+{
+
+    worker->setInverKeyDownFlag(invertKeyDownFlag);
+
+}
+
+void PcCwKeyer::setInverPttDownFlag(const bool invertPttDownFlag)
+{
+    invertPttDown = invertPttDownFlag;
+}
+
 void PcCwKeyer::openComPort(const QString portName)
 {
     serial.setPortName(portName);
     serial.setBaudRate(QSerialPort::Baud9600);
+
     if (!serial.open(QIODevice::ReadWrite))
     {
 
         pttOn(false);
+        worker->clear();
         emit serialPortOpen(false);
         return;
     }
@@ -57,6 +71,9 @@ void PcCwKeyer::openComPort(const QString portName)
     connect(&serial, &QSerialPort::errorOccurred, this, &PcCwKeyer::handleSerialPortError);
 
     worker->setSerialPort(&serial);
+    pttOn(false);
+    worker->clear();
+
 
     emit serialPortOpen(true);
 }
@@ -163,9 +180,10 @@ void PcCwKeyer::abortTransmission()
     trace("CW transmission aborted.");
 }
 
-void PcCwKeyer::pttOn(bool on)
+void PcCwKeyer::pttOn(bool pttOn)
 {
-    serial.setRequestToSend(on);
+    bool pttState = invertPttDown ? !pttOn : pttOn;
+    serial.setRequestToSend(pttState);
 }
 
 void PcCwKeyer::handleSerialPortError(QSerialPort::SerialPortError error)

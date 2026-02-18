@@ -28,6 +28,7 @@
 
 CwWorker::CwWorker(QObject *parent) : QObject(parent)
 {
+
 #ifdef Q_OS_WIN
     timeBeginPeriod(1); // Request 1ms timer resolution
 #endif
@@ -46,25 +47,44 @@ void CwWorker::setSerialPort(QSerialPort *port)
     serial = port;
 }
 
+
+
+void CwWorker::setInverKeyDownFlag(const bool invertKeyDownFlag)
+{
+    invertDtrKeyDown = invertKeyDownFlag;
+
+}
+
+
+
+void CwWorker::setKeyOutput(bool keyDown)
+{
+    bool level = invertDtrKeyDown ? !keyDown : keyDown;
+    serial->setDataTerminalReady(level);
+}
+
 void CwWorker::enqueueAction(std::function<void()> func, int delayMs)
 {
     QMutexLocker locker(&mutex);
     actions.enqueue({func, delayMs});
 }
 
-void CwWorker::enqueueKey(bool on, int delayMs)
+void CwWorker::enqueueKey(bool keydown, int delayMs)
 {
 
-    enqueueAction([this, on]() {
+    enqueueAction([this, keydown]() {
         if (serial && serial->isOpen())
-            serial->setDataTerminalReady(on);
+            setKeyOutput(keydown);
     }, delayMs);
 }
 
 void CwWorker::clear()
 {
     QMutexLocker locker(&mutex);
-    serial->setDataTerminalReady(false);
+    if (serial && serial->isOpen()) {
+        bool idleLevel = invertDtrKeyDown ? true : false; // key-up = false logically
+        serial->setDataTerminalReady(idleLevel);
+    }
     actions.clear();
 }
 

@@ -42,6 +42,10 @@ public:
     void setPostTxDelayMs(int ms) { postTxDelayMs = ms; }
     void pttOn(bool on);
 
+
+    void setInverPttDownFlag(const bool invertPttDownFlag);
+
+    void setInverKeyDownFlag(const bool invertKeyDownFlag);
 signals:
     void serialPortOpen(bool);
     void serialPortError(const QString &message);
@@ -63,6 +67,8 @@ private:
     int postTxDelayMs = 250;
 
     bool pttPending = false;
+    bool invertDtrKeyDown = false;
+    bool invertPttDown = false;
 
 
     bool getPttPendingFlag() const { return pttPending; }
