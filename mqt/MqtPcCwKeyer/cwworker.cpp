@@ -54,6 +54,7 @@ void CwWorker::enqueueAction(std::function<void()> func, int delayMs)
 
 void CwWorker::enqueueKey(bool on, int delayMs)
 {
+
     enqueueAction([this, on]() {
         if (serial && serial->isOpen())
             serial->setDataTerminalReady(on);
