@@ -75,6 +75,16 @@ void KeyerIndicatorsWidget::setKeyerAvailableIndicatorOnOff(bool on)
 }
 
 
+void KeyerIndicatorsWidget::setKeyerAvailableSetToolTip(QString text)
+{
+    keyerAvailIndicator->setToolTip(text);
+}
+
+void KeyerIndicatorsWidget::setRepeatIndicatorVisible(bool visible)
+{
+    repeatIndicator->setVisible(visible);
+}
+
 
 
 void KeyerIndicatorsWidget::setRepeatIndicatorOnOff(bool on)

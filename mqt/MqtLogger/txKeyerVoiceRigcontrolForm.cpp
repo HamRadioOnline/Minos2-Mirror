@@ -53,6 +53,11 @@ void TxVoiceRigControlForm::setRepeatIndicatorOnOff(bool on)
     indicators.keyerIndicators->setRepeatIndicatorOnOff(on);
 }
 
+void TxVoiceRigControlForm::setRepeatIndicatorVisible(bool visible)
+{
+    indicators.keyerIndicators->setRepeatIndicatorVisible(visible);
+}
+
 void TxVoiceRigControlForm::setEOMLabelText(const QString text)
 {
     indicators.keyerIndicators->setEOMLabelText(text);
@@ -84,21 +89,4 @@ void TxVoiceRigControlForm::clearPttTypeText()
     indicators.pttIndicator->clearPttTypeText();
 }
 
-/*
-void TxVoiceRigControlForm::setErrorMessageDisplayText(const QString errormsg)
-{
-    keyerErrorMessageDisplay->setErrorMessage(errormsg);
-}
 
-void TxVoiceRigControlForm::clearErrorMessageDisplayText()
-{
-    keyerErrorMessageDisplay->clearErrorMessage();
-}
-
-
-void TxVoiceRigControlForm::showTemporaryErrorMessage(const QString &msg, int timeoutMs, const QColor &colour)
-{
-   keyerErrorMessageDisplay->showTemporaryErrorMessage(msg, timeoutMs, colour);
-}
-
-*/

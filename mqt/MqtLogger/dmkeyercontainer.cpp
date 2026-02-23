@@ -161,7 +161,7 @@ DMKeyerContainer::DMKeyerContainer(QWidget *parent)
                 addKeyerTab(name);
             }
 
-            int index = txKeyerCommonSettings.activeTab;
+            int index = txKeyerCommonSettings.activeTabNum;
 
             if (index < 0 || index >= tabWidget->count())
             {
@@ -194,7 +194,7 @@ void DMKeyerContainer::initialKeyerSelection()
 void DMKeyerContainer::onKeyerSelectChanged(int) // ignoring index
 {
 
-    QString keyerName = txKeyerSelect->currentText();
+    QString keyerName = txKeyerSelect->currentText(); // get selected keyer name
     if (keyerSettings->getCurrentKeyerName() != keyerName)
     {
 
@@ -202,10 +202,7 @@ void DMKeyerContainer::onKeyerSelectChanged(int) // ignoring index
 
         // save new keyertype
         saveTxKeyerCommonSettings(txKeyerCommonSettings);
-
-
-
-        emit keyerSelectChanged();
+        emit keyerSelectChanged();  // send new keyer name to dmbuttonframe
     }
 
 }
@@ -398,7 +395,7 @@ void DMKeyerContainer::onTabChanged(int index)
         return;
     }
 
-    txKeyerCommonSettings.activeTab = index;
+    txKeyerCommonSettings.activeTabNum = index;
     saveTxKeyerCommonSettings(txKeyerCommonSettings);
 
     if (index < 0 || index >= tabWidget->count())

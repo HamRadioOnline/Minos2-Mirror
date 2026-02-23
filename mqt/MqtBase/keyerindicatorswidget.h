@@ -21,6 +21,8 @@ public:
     void setEOMLabelText(const QString text);
 
     void clearEOMLabelText();
+    void setKeyerAvailableSetToolTip(QString text);
+    void setRepeatIndicatorVisible(bool visible);
 private:
 
     QGroupBox *indicatorGrpBox;

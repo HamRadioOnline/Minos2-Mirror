@@ -330,7 +330,7 @@ private:
     //void setVoiceNumMemButtonsVisible(int);
     void clearButtonLabels();
     void startKeyerMsg(int buttonNumber);
-    void createKeyer(QString voiceKeyerName);
+    void createKeyer();
     void setPttStatusIndicatorOnOff(bool on);
 
     //bool isCwMemTypeAvail(PubSubName psn);
@@ -429,7 +429,7 @@ private:
 
 
     void initKeyerSettings();
-    void setFrameStateForKeyer(QString keyerType);
+    void setFrameStateForKeyer(TxKeyerId txKeyerId);
 
 
     void buildFkeyButtons(int count);

@@ -296,12 +296,12 @@ TxKeyerCommonSettings TxKeyerCommon::loadTxKeyerCommonSettings()
 
     config.beginGroup(TX_KEYER_COMMON_PARAMS_GROUPNAME);
 
-    QString viewModeStr = config.value("ViewMode","Standalone").toString();
+    QString viewModeStr = config.value(VIEWMODE, STANDALONE_STR).toString();
 
-    settings.viewMode = (viewModeStr == "Tabbed") ? KeyerViewMode::Tabbed : KeyerViewMode::Standalone;
-    settings.standaloneKeyerName = config.value("StandaloneKeyerName", "").toString();
-    settings.tabbedKeyerNames = config.value("TabbedKeyers", QStringList()).toStringList();
-    settings.activeTab = config.value("ActiveTab", 0).toInt();
+    settings.viewMode = (viewModeStr == TABBED_STR) ? KeyerViewMode::Tabbed : KeyerViewMode::Standalone;
+    settings.standaloneKeyerName = config.value(STANDALONE_KEYER_NAME, "").toString();
+    settings.tabbedKeyerNames = config.value(TABBED_KEYER_NAMES, QStringList()).toStringList();
+    settings.activeTabNum = config.value(ACTIVE_TAB_NUM, 0).toInt();
 
     config.endGroup();
 
@@ -317,19 +317,19 @@ void TxKeyerCommon::saveTxKeyerCommonSettings(const TxKeyerCommonSettings &setti
     QSettings config(fileName, QSettings::IniFormat);
 
     config.beginGroup(TX_KEYER_COMMON_PARAMS_GROUPNAME);
-    config.setValue("ViewMode", settings.viewMode == KeyerViewMode::Tabbed ? "Tabbed" : "Standalone");
-    config.setValue("StandaloneKeyer", settings.standaloneKeyerName);
+    config.setValue(VIEWMODE, settings.viewMode == KeyerViewMode::Tabbed ? TABBED_STR : STANDALONE_STR);
+    config.setValue(STANDALONE_KEYER_NAME, settings.standaloneKeyerName);
 
     if (!settings.tabbedKeyerNames.isEmpty()) // dont save an empty list to prevent writing @invalid
     {
-        config.setValue("TabbedKeyers", settings.tabbedKeyerNames);
+        config.setValue(TABBED_KEYER_NAMES, settings.tabbedKeyerNames);
     }
     else
     {
-        config.remove("TabbedKeyers"); // ensures no @Invalid() in INI
+        config.remove(TABBED_KEYER_NAMES); // ensures no @Invalid() in INI
     }
 
-    config.setValue("ActiveTab", settings.activeTab);
+    config.setValue(ACTIVE_TAB_NUM, settings.activeTabNum);
     config.endGroup();
 }
 
