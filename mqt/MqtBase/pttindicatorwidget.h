@@ -15,8 +15,8 @@ class PttIndicatorWidget : public QFrame
 public:
     PttIndicatorWidget(QWidget *parent = nullptr);
 
-    void setPttEnabledIndicator(const bool on);
-    void setTxStatusIndicator(const bool on);
+    void setPttEnabledIndicatorOnOff(const bool on);
+    void setTxStatusIndicatorOnOff(const bool on);
     void setPttTypeText(const QString text);
     void clearPttTypeText();
 

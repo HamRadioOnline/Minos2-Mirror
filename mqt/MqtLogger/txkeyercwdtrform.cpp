@@ -103,13 +103,13 @@ void TxKeyerCwDtrForm::clearEOMLabelText()
 
 void TxKeyerCwDtrForm::setPttEnabledIndicatorOnOff(const bool on)
 {
-    indicators.pttIndicator->setPttEnabledIndicator(on);
+    indicators.pttIndicator->setPttEnabledIndicatorOnOff(on);
 }
 
 
 void TxKeyerCwDtrForm::setTxStatusIndicatorOnOff(const bool on)
 {
-    indicators.pttIndicator->setTxStatusIndicator(on);
+    indicators.pttIndicator->setTxStatusIndicatorOnOff(on);
 }
 
 void TxKeyerCwDtrForm::setPttTypeText(const QString &text)

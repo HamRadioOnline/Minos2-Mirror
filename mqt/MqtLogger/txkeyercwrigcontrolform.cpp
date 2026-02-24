@@ -84,13 +84,13 @@ void TxKeyerCwRigControlForm::clearEOMLabelText()
 
 void TxKeyerCwRigControlForm::setPttEnabledIndicatorOnOff(const bool on)
 {
-    indicators.pttIndicator->setPttEnabledIndicator(on);
+    indicators.pttIndicator->setPttEnabledIndicatorOnOff(on);
 }
 
 
 void TxKeyerCwRigControlForm::setTxStatusIndicatorOnOff(const bool on)
 {
-    indicators.pttIndicator->setTxStatusIndicator(on);
+    indicators.pttIndicator->setTxStatusIndicatorOnOff(on);
 }
 
 void TxKeyerCwRigControlForm::setPttTypeText(const QString &text)

@@ -338,7 +338,6 @@ private:
     void setAvailIndicatorOnOff(bool on);
     void setAvailIndicatorForRadioOnOff(PubSubName radName);
     void setRepeatIndicatorVisible(bool visible);
-    void setRepeatIndicatorForMessageOnOff(bool state);
     void setFrameState(QString voiceKeyerName);
     void setRepeatIndicatorOnOff(bool on);
     void pttStopMessage(bool state);
@@ -440,6 +439,7 @@ private:
     void selectKeyerUiForm(TxKeyerFormBase *uiForm);
 
     TxKeyerCommonSettings loadTxKeyerCommonSettings();
+    TxKeyerFormBase *currentForm() const;
 };
 
 #endif // DMBUTTONFRAME_H

@@ -36,7 +36,7 @@
 
 
 #include "dmbuttonframe.h"
-//#include "ui_dmbuttonframe.h"
+
 
 using namespace TxKeyerCommon;
 
@@ -62,12 +62,11 @@ const int ERROR_MSG_TIMEOUT_DURATION = 20000;
 
 DMButtonFrame::DMButtonFrame(TxKeyerFactory *txKeyerFactory_, DMKeyerContainer* keyerContainer_, QWidget *parent) :
     QFrame(parent),
-//    ui(new Ui::DMButtonFrame),
     fixedMode(false),
     txKeyerFactory(txKeyerFactory_),
     keyerContainer(keyerContainer_)
 {
-//    ui->setupUi(this);
+
 
     // create ui for this frame
 
@@ -354,42 +353,15 @@ void DMButtonFrame::setPttTypeText(serialCommonData::MINOS_PTT_TYPES pttType)
 
     QString eomText = serialCommonData::pttTypeStr[static_cast<int>(pttType)];
 
-    TxKeyerId txKeyerId = getTxKeyerIdFromDisplayName(getCurrentKeyerName());
+    currentForm()->clearEOMLabelText();
+    currentForm()->setEOMLabelText(eomText);
 
-    switch(txKeyerId)
-    {
-        case TxKeyerId::None:
-            break;
-        case TxKeyerId::RigControl:
-            break;
-        case TxKeyerId::CW_RigControl:
-            break;
-        case TxKeyerId::PcCwKeyer:
-            cwDtrForm->setEOMLabelText(eomText);
-            break;
-        default: return;
-    }
 
 }
 
 void DMButtonFrame::setPttEnabledIndicatorOnOff(bool on)
 {
-    TxKeyerId txKeyerId = getTxKeyerIdFromDisplayName(getCurrentKeyerName());
-
-    switch(txKeyerId)
-    {
-        case TxKeyerId::None:
-            break;
-        case TxKeyerId::RigControl:
-            break;
-        case TxKeyerId::CW_RigControl:
-            break;
-        case TxKeyerId::PcCwKeyer:
-            cwDtrForm->setPttEnabledIndicatorOnOff(on);
-            break;
-        default: return;
-
-    }
+    currentForm()->setPttEnabledIndicatorOnOff(on);
 }
 
 /*
@@ -861,6 +833,11 @@ void DMButtonFrame::selectKeyerUiForm(TxKeyerFormBase *uiForm)
     keyerFormsStack->updateGeometry();
 }
 
+TxKeyerFormBase* DMButtonFrame::currentForm() const
+{
+    return static_cast<TxKeyerFormBase*>(keyerFormsStack->currentWidget());
+}
+
 
 void DMButtonFrame::set_DigiMode_FrameState()
 {
@@ -955,6 +932,7 @@ void DMButtonFrame::set_rigControl_FrameState()
 
     logMessage(QString("Contest %1 Exists").arg(currentKeyerContestName));
     clearErrorMessage();
+    setMessagePlayingFlag(false);
     setupRigControl_Ui_Elements();
     displayButtons();
 
@@ -965,21 +943,12 @@ void DMButtonFrame::set_rigControl_FrameState()
 void DMButtonFrame::setupRigControl_Ui_Elements()
 {
 
-
-    // ui->pipCb->setVisible(selectedKeyerCap.getHasPip());
-    setTXStatusVisible(selectedKeyerCap.getHasTxStatus());
-
-    // ui->selectedRadioLabel->setVisible(true);
-    // ui->selectedRadioLabel->setText(keyerSettings->getSelectedRadio().key());
-
-
-    setMessagePlayingFlag(false);
-    setCwMessagePlayingVisible(false);
+    //setCwMessagePlayingVisible(false);
 
     setLogItButtonVisible(false);
 
 
-
+/*
     if (selectedKeyerCap.getHasAvailStatus())
     {
         setAvailIndicatorVisible(selectedKeyerCap.getHasAvailStatus());
@@ -997,25 +966,25 @@ void DMButtonFrame::setupRigControl_Ui_Elements()
 
     //setSaveButtonByRadionameText(keyerSettings->getSelectedRadio().getLocalName());
 
-
+*/
 
     txKeyer->setRadioParams(keyerSettings->getNumVoiceMessages(keyerSettings->getSelectedRadio()), keyerSettings->getSelectedRadio().getLocalName(), keyerSettings->getPttType(keyerSettings->getSelectedRadio()), keyerSettings->getPttEnabled(keyerSettings->getSelectedRadio()));
     txKeyer->txKeyerInit(txKeyer->numButtons);
-    setPttTypeLabelsVisible(true);
+    //setPttTypeLabelsVisible(true);
     setPttTypeText(keyerSettings->getPttType(keyerSettings->getSelectedRadio()));
     setPttEnabledIndicatorOnOff(keyerSettings->getPttEnabled(keyerSettings->getSelectedRadio()));
-    setEomTypeLabelsVisible(true);
+    //setEomTypeLabelsVisible(true);
     setEomLabelText(txKeyer->getSelectedEomType());
 
     //loadButtonData();
 
     if (!keyerSettings->getRigVoiceKeyerSupportStopFlag(keyerSettings->getSelectedRadio().getLocalName()))
     {
-       // ui->stopButton->setVisible(false);
+       stopButton->setVisible(false);
     }
     else
     {
-        //ui->stopButton->setVisible(true);
+        stopButton->setVisible(true);
     }
 
 }
@@ -1077,7 +1046,7 @@ void DMButtonFrame::setupCw_RigControl_Ui_Elements()
 {
 
     // ui->pipCb->setVisible(selectedKeyerCap.getHasPip());
-    setTXStatusVisible(selectedKeyerCap.getHasTxStatus());
+    //setTXStatusVisible(selectedKeyerCap.getHasTxStatus());
 
     // ui->selectedRadioLabel->setVisible(true);
     // ui->selectedRadioLabel->setText(keyerSettings->getSelectedRadio().key());
@@ -1099,7 +1068,7 @@ void DMButtonFrame::setupCw_RigControl_Ui_Elements()
         setAvailIndicatorVisible(false);
     }
 
-    setRepeatIndicatorVisible(selectedKeyerCap.getHasMessageRepeat());
+    //setRepeatIndicatorVisible(selectedKeyerCap.getHasMessageRepeat());
     txKeyer->setCwMemType(keyerSettings->getCwMemType(keyerSettings->getSelectedRadio()));
 
     txKeyer->setContest(ct);
@@ -1195,7 +1164,7 @@ void DMButtonFrame::set_Internal_FrameState()
 
     //ui->txKeyerSetupPb->setVisible(txKeyerCap.getSetupButton());
     // ui->pipCb->setVisible(selectedKeyerCap.getHasPip());
-    setTXStatusVisible(selectedKeyerCap.getHasTxStatus());
+    //setTXStatusVisible(selectedKeyerCap.getHasTxStatus());
 
     // ui->selectedRadioLabel->setVisible(false);
 
@@ -1208,7 +1177,7 @@ void DMButtonFrame::set_Internal_FrameState()
     setAvailIndicatorVisible(selectedKeyerCap.getHasAvailStatus());
 
 
-    setRepeatIndicatorVisible(selectedKeyerCap.getHasMessageRepeat());
+    //setRepeatIndicatorVisible(selectedKeyerCap.getHasMessageRepeat());
 
     // ui->stopButton->setVisible(true);
 
@@ -2170,46 +2139,15 @@ bool DMButtonFrame::isPcCwKeyerConnected()
 
 void DMButtonFrame::setAvailIndicatorOnOff(bool on)
 {
-    if (on)
-    {
-
-        // ui->availIndicator->setStyleSheet(STATUS_INDICATOR_CONNECT_STYLE);
-    }
-    else
-    {
-        // ui->availIndicator->setStyleSheet(STATUS_INDICATOR_DISCONNECT_STYLE);
-
-    }
-
-    if ( selectedKeyerCap.getTxKeyerId() == TxKeyerId::RigControl)
-    {
-        // ui->availIndicator->setToolTip(tr("Rig Voice Keyer Available"));
-    }
-    else if ( selectedKeyerCap.getTxKeyerId() == TxKeyerId::CW_RigControl)
-    {
-        // ui->availIndicator->setToolTip(tr("Rig CW Messages Available"));
-    }
-    else
-    {
-        // ui->availIndicator->setToolTip(tr(""));
-    }
+    currentForm()->setKeyerAvailableIndicatorOnOff(on);
 }
 
 void DMButtonFrame::setAvailIndicatorForRadioOnOff(PubSubName radName)
 {
-
-    if ( selectedKeyerCap.getTxKeyerId() == TxKeyerId::CW_RigControl)
-    {
-        //keyerFormsStack->currentWidget().->setKeyerAvailableIndicatorOnOff(keyerSettings->isCwMemTypeAvail(radName));
-
-    }
-    else if ( selectedKeyerCap.getTxKeyerId() == TxKeyerId::RigControl)
-    {
-        voiceRigControlForm->setKeyerAvailableIndicatorOnOff(keyerSettings->isVoiceMemAvail(radName));
-
-    }
+    currentForm()->setKeyerAvailableIndicatorOnOff(keyerSettings->isVoiceMemAvail(radName));
 }
 
+/*
 void DMButtonFrame::setRepeatIndicatorVisible(bool visible)
 {
     if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::RigControl)
@@ -2230,32 +2168,12 @@ void DMButtonFrame::setTXStatusVisible(bool visible)
         cwRigControlForm->setRepeatIndicatorOnOff(visible);
     }
 }
-
-void DMButtonFrame::setRepeatIndicatorForMessageOnOff(bool state)
-{
-    if (state)
-    {
-       // ui->repeatIndicator->setStyleSheet(STATUS_INDICATOR_CONNECT_STYLE);
-    }
-    else
-    {
-        //ui->repeatIndicator->setStyleSheet(STATUS_INDICATOR_DISCONNECT_STYLE);
-    }
-}
+*/
 
 
 void DMButtonFrame::setRepeatIndicatorOnOff(bool on)
 {
-    if (on)
-    {
-        // ui->repeatIndicator->setStyleSheet(STATUS_INDICATOR_CONNECT_STYLE);
-    }
-    else
-    {
-        // ui->repeatIndicator->setStyleSheet(STATUS_INDICATOR_DISCONNECT_STYLE);
-
-    }
-
+    currentForm()->setRepeatIndicatorOnOff(on);
 }
 
 
@@ -2321,20 +2239,8 @@ void DMButtonFrame::on_pipCb_stateChanged(int /*arg1*/)
 
 void DMButtonFrame::setPttStatusIndicatorOnOff(bool on)
 {
-    if (on)
-    {
-        setMessagePlayingFlag(true);
-       // ui->txStatusIndicator->setStyleSheet(STATUS_INDICATOR_CONNECT_STYLE);
-       // ui->txStatusIndicator->setToolTip(tr("TX On"));
-
-    }
-    else
-    {
-        setMessagePlayingFlag(false);
-        // ui->txStatusIndicator->setStyleSheet(STATUS_INDICATOR_DISCONNECT_STYLE);
-        // ui->txStatusIndicator->setToolTip(tr("TX Off"));
-    }
-
+    setMessagePlayingFlag(on);
+    currentForm()->setTxStatusIndicatorOnOff(on);
 }
 
 
@@ -2349,23 +2255,7 @@ void DMButtonFrame::setEomLabelText(TxKeyerCommon::KeyerEomTypes selectedEomType
 {
     QString eomTypeText = getEomText(selectedEomType);
 
-    TxKeyerId txKeyerId = getTxKeyerIdFromDisplayName(getCurrentKeyerName());
-
-    switch(txKeyerId)
-    {
-        case TxKeyerId::None:
-            break;
-        case TxKeyerId::RigControl:
-            break;
-        case TxKeyerId::CW_RigControl:
-            break;
-        case TxKeyerId::PcCwKeyer:
-            cwDtrForm->setEOMLabelText(eomTypeText);
-            break;
-        default: return;
-    }
-
-
+    currentForm()->setEOMLabelText(eomTypeText);
 }
 
 QString DMButtonFrame::getEomText(TxKeyerCommon::KeyerEomTypes selectedEomType)
@@ -2386,6 +2276,8 @@ QString DMButtonFrame::getEomText(TxKeyerCommon::KeyerEomTypes selectedEomType)
     {
         return "None";
     }
+
+    return "None";
 }
 
 

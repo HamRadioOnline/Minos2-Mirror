@@ -64,7 +64,7 @@ PttIndicatorWidget::PttIndicatorWidget(QWidget *parent)
 
 
 
-void PttIndicatorWidget::setPttEnabledIndicator(const bool on)
+void PttIndicatorWidget::setPttEnabledIndicatorOnOff(const bool on)
 {
     if (on)
     {
@@ -77,7 +77,7 @@ void PttIndicatorWidget::setPttEnabledIndicator(const bool on)
 
     }
 }
-void PttIndicatorWidget::setTxStatusIndicator(const bool on)
+void PttIndicatorWidget::setTxStatusIndicatorOnOff(const bool on)
 {
     if (on)
     {

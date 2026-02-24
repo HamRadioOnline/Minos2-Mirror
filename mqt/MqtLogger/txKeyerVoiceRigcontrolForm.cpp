@@ -70,13 +70,13 @@ void TxVoiceRigControlForm::clearEOMLabelText()
 
 void TxVoiceRigControlForm::setPttEnabledIndicatorOnOff(const bool on)
 {
-    indicators.pttIndicator->setPttEnabledIndicator(on);
+    indicators.pttIndicator->setPttEnabledIndicatorOnOff(on);
 }
 
 
 void TxVoiceRigControlForm::setTxStatusIndicatorOnOff(const bool on)
 {
-    indicators.pttIndicator->setTxStatusIndicator(on);
+    indicators.pttIndicator->setTxStatusIndicatorOnOff(on);
 }
 
 void TxVoiceRigControlForm::setPttTypeText(const QString &text)
