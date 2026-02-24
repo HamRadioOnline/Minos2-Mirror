@@ -1,21 +1,16 @@
-#ifndef TXKEYERVOICERIGCONTROLFORM_H
-#define TXKEYERVOICERIGCONTROLFORM_H
+#ifndef TXKEYERINTERNALFORM_H
+#define TXKEYERINTERNALFORM_H
 
-#include <QWidget>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-
-#include "keyerWidgetFactory.h"
 #include "txKeyerFormBase.h"
 
-
-class TxVoiceRigControlForm : public TxKeyerFormBase
+class TxKeyerInternalForm : public TxKeyerFormBase
 {
+
     Q_OBJECT
 
 public:
-    explicit TxVoiceRigControlForm(QWidget *parent = nullptr);
-    ~TxVoiceRigControlForm();
+    explicit TxKeyerInternalForm(QWidget *parent = nullptr);
+    ~TxKeyerInternalForm();
 
     void setKeyerAvailableIndicatorOnOff(bool on) override;
     void setKeyerAvailableVisible(bool visible) override;
@@ -32,18 +27,6 @@ public:
     void setPttTypeText(const QString &text) override;
     void clearPttTypeText() override;
 
-
-
-
-private:
-
-
-    QVBoxLayout *mainLayout;
-
-    QHBoxLayout *indicatorLayout;
-
-    KeyerIndicators indicators;
-
 };
 
-#endif // TXKEYERVOICERIGCONTROLFORM_H
+#endif // TXKEYERINTERNALFORM_H

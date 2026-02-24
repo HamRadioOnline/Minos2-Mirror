@@ -1,18 +1,19 @@
-#ifndef TXKEYERNONEFORM_H
-#define TXKEYERNONEFORM_H
+#ifndef TXKEYERFORMBASE_H
+#define TXKEYERFORMBASE_H
 
-#include "txKeyerFormBase.h"
+
 #include <QWidget>
+#include <QString>
 
-
-
-class TxKeyerNoneForm : public TxKeyerFormBase
+class TxKeyerFormBase : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit TxKeyerNoneForm(QWidget *parent = nullptr);
-    ~TxKeyerNoneForm();
+    explicit TxKeyerFormBase(QWidget *parent = nullptr)
+        : QWidget(parent) {}
+
+    virtual ~TxKeyerFormBase() = default;
 
     // Keyer indicators
     virtual void setKeyerAvailableIndicatorOnOff(bool) {}
@@ -42,8 +43,9 @@ public:
 
     virtual QString getCwEntryText() {return {};}
 
-private:
+signals:
 
+    void sendWpmToPcCwkeyer(int wpm);
+    void cwEntryReturnPressed();
 };
-
-#endif // TXKEYERNONEFORM_H
+#endif // TXKEYERFORMBASE_H

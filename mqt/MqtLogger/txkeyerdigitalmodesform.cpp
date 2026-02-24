@@ -1,8 +1,7 @@
 #include "txkeyerdigitalmodesform.h"
 
-
 TxKeyerDigitalModesForm::TxKeyerDigitalModesForm(QWidget *parent)
-    : QWidget(parent)
+    : TxKeyerFormBase(parent)
 {
     // create ui
 }

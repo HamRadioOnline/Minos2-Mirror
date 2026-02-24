@@ -4,7 +4,7 @@
 
 
 TxKeyerCwRigControlForm::TxKeyerCwRigControlForm(QWidget *parent)
-    : QWidget(parent)
+    : TxKeyerFormBase(parent)
 {
 
 
@@ -16,9 +16,6 @@ TxKeyerCwRigControlForm::TxKeyerCwRigControlForm(QWidget *parent)
     indicatorLayout->addWidget(indicators.pttIndicator);
     indicatorLayout->addStretch();
 
-    //keyerErrorMessageDisplay = KeyerWidgetFactory::createErrorMessage(this);
-    //keyerErrorMessageLayout = KeyerWidgetFactory::createRowLayout();
-    //keyerErrorMessageLayout->addWidget(keyerErrorMessageDisplay);
 
     cwMessagePlayingRow = KeyerWidgetFactory::createCwMessagePlayingRow(this);
 
@@ -75,7 +72,7 @@ void TxKeyerCwRigControlForm::setRepeatIndicatorOnOff(bool on)
     indicators.keyerIndicators->setRepeatIndicatorOnOff(on);
 }
 
-void TxKeyerCwRigControlForm::setEOMLabelText(const QString text)
+void TxKeyerCwRigControlForm::setEOMLabelText(const QString &text)
 {
     indicators.keyerIndicators->setEOMLabelText(text);
 }
@@ -96,7 +93,7 @@ void TxKeyerCwRigControlForm::setTxStatusIndicatorOnOff(const bool on)
     indicators.pttIndicator->setTxStatusIndicator(on);
 }
 
-void TxKeyerCwRigControlForm::setPttTypeText(const QString text)
+void TxKeyerCwRigControlForm::setPttTypeText(const QString &text)
 {
     indicators.pttIndicator->setPttTypeText(text);
 }
@@ -115,20 +112,5 @@ void TxKeyerCwRigControlForm::clearStoredMessagePlayingDisplay()
 {
     cwMessagePlayingRow.display->clear();
 }
-/*
-void TxKeyerCwRigControlForm::setErrorMessageDisplayText(const QString errormsg)
-{
-    keyerErrorMessageDisplay->setErrorMessage(errormsg);
-}
-
-void TxKeyerCwRigControlForm::clearErrorMessageDisplayText()
-{
-    keyerErrorMessageDisplay->clearErrorMessage();
-}
 
 
-void TxKeyerCwRigControlForm::showTemporaryErrorMessage(const QString &msg, int timeoutMs, const QColor &colour)
-{
-    keyerErrorMessageDisplay->showTemporaryErrorMessage(msg, timeoutMs, colour);
-}
-*/

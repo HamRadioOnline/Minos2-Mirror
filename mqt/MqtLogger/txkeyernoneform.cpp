@@ -1,14 +1,15 @@
 #include "txkeyernoneform.h"
-#include "ui_txkeyernoneform.h"
+#include "txKeyerFormBase.h"
+
 
 TxKeyerNoneForm::TxKeyerNoneForm(QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::TxKeyerNoneForm)
+    : TxKeyerFormBase(parent)
+
 {
-    ui->setupUi(this);
+
 }
 
 TxKeyerNoneForm::~TxKeyerNoneForm()
 {
-    delete ui;
+
 }

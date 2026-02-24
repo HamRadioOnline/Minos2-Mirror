@@ -8,7 +8,7 @@
 #include "cwspeedcontrol.h"
 #include "cwentrywidget.h"
 
-// Structs to group related widgets for convenience
+
 struct KeyerIndicators {
     KeyerIndicatorsWidget* keyerIndicators;
     PttIndicatorWidget* pttIndicator;

@@ -18,3 +18,7 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../KeyerBase/libKeyerBase.a
 unix:!mac{ LIBS += -lasound}
 win32{ LIBS += -lole32 -lwinmm -luuid -lksuser -ldsound -lUser32 -lmfplat -lmfuuid -lwmcodecdspuuid}
 
+HEADERS +=
+
+SOURCES +=
+

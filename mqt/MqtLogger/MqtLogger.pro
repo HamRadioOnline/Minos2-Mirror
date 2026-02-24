@@ -137,6 +137,8 @@ SOURCES += \
     txkeyercwdtrform.cpp \
     txkeyercwrigcontrolform.cpp \
     txkeyerdigitalmodesform.cpp \
+    txKeyerExternalForm.cpp \
+    txkeyerinternalform.cpp \
     txkeyernoneform.cpp \
     txvminternalbuttondialog.cpp \
     txvmrigbuttondialog.cpp \
@@ -245,13 +247,16 @@ HEADERS  += \
     clusterclientfilterdialog.h \
     clusterclientframe.h \
     txKeyerFactory.h \
+    txKeyerFormBase.h \
     txKeyerVoiceRigcontrolForm.h \
     txKeyerbase.h \
     txVmExternalButtonDialog.h \
+    txKeyerExternalForm.h \
     txVmInternalSetupDialog.h \
     txkeyercwdtrform.h \
     txkeyercwrigcontrolform.h \
     txkeyerdigitalmodesform.h \
+    txkeyerinternalform.h \
     txkeyernoneform.h \
     txvminternalbuttondialog.h \
     txvmrigbuttondialog.h \

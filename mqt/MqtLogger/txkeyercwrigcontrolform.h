@@ -3,10 +3,11 @@
 
 #include <QWidget>
 #include "cwentrywidget.h"
-#include "keyererrormessagewidget.h"
 #include "keyerWidgetFactory.h"
+#include "txKeyerFormBase.h"
 
-class TxKeyerCwRigControlForm : public QWidget
+
+class TxKeyerCwRigControlForm : public TxKeyerFormBase
 {
     Q_OBJECT
 
@@ -14,35 +15,29 @@ public:
     explicit TxKeyerCwRigControlForm(QWidget *parent = nullptr);
     ~TxKeyerCwRigControlForm();
 
-    void setCwFreeTextIndicatorOnOff(bool on);
-    void setCwSliderValue(int value);
+    void setCwFreeTextIndicatorOnOff(bool on) override;
+    void setCwSliderValue(int value) override;
 
-    QString getCwEntryText();
+    QString getCwEntryText() override;
 
-    void setKeyerAvailableIndicatorOnOff(bool on);
-    void setRepeatIndicatorOnOff(bool on);
-    void setEOMLabelText(const QString text);
-    void clearEOMLabelText();
-
-
-    void setPttEnabledIndicatorOnOff(const bool on);
-    void setTxStatusIndicatorOnOff(const bool on);
-    void setPttTypeText(const QString text);
-    void clearPttTypeText();
-    void setStoredMessagePlayingDisplay(const QString msg);
-
-    void clearStoredMessagePlayingDisplay();
-
-    void setErrorMessageDisplayText(const QString errormsg);
-    void clearErrorMessageDisplayText();
+    void setKeyerAvailableIndicatorOnOff(bool on) override;
+    void setRepeatIndicatorOnOff(bool on) override;
+    void setEOMLabelText(const QString &text) override;
+    void clearEOMLabelText() override;
 
 
-    void showTemporaryErrorMessage(const QString &msg, int timeoutMs, const QColor &colour);
-    void selectAllText();
-signals:
+    void setPttEnabledIndicatorOnOff(const bool on) override;
+    void setTxStatusIndicatorOnOff(const bool on) override;
+    void setPttTypeText(const QString &text) override;
+    void clearPttTypeText() override;
+    void setStoredMessagePlayingDisplay(const QString msg) override;
 
+    void clearStoredMessagePlayingDisplay() override;
 
-    void cwEntryReturnPressed();
+    //void setErrorMessageDisplayText(const QString errormsg)  override;
+
+    void selectAllText()  override;
+
 
 private:
 

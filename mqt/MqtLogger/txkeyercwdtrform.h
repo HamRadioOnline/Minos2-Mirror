@@ -5,11 +5,12 @@
 #include <QHBoxLayout>
 #include "cwentrywidget.h"
 #include "keyerWidgetFactory.h"
+#include "txKeyerFormBase.h"
 
 
 
 
-class TxKeyerCwDtrForm : public QWidget
+class TxKeyerCwDtrForm : public TxKeyerFormBase
 {
     Q_OBJECT
 
@@ -17,35 +18,27 @@ public:
     explicit TxKeyerCwDtrForm(QWidget *parent = nullptr);
     ~TxKeyerCwDtrForm();
 
-    void setCwFreeTextIndicatorOnOff(bool on);
-    void setCwSliderValue(int value);
-
-    QString getCwEntryText();
-
-    void setKeyerAvailableIndicatorOnOff(bool on);
-    void setRepeatIndicatorOnOff(bool on);
-    void setEOMLabelText(const QString text);
-    void clearEOMLabelText();
+    void setKeyerAvailableIndicatorOnOff(bool on)  override;
+    void setRepeatIndicatorOnOff(bool on)  override;
+    void setEOMLabelText(const QString &text)  override;
+    void clearEOMLabelText()  override;
 
 
-    void setPttEnabledIndicatorOnOff(const bool on);
-    void setTxStatusIndicatorOnOff(const bool on);
-    void setPttTypeText(const QString text);
-    void clearPttTypeText();
-    void setStoredMessagePlayingDisplay(const QString msg);
+    void setPttEnabledIndicatorOnOff(const bool on)  override;
+    void setTxStatusIndicatorOnOff(const bool on)  override;
+    void setPttTypeText(const QString &text)  override;
+    void clearPttTypeText()  override;
+    void setStoredMessagePlayingDisplay(const QString msg)  override;
 
-    void clearStoredMessagePlayingDisplay();
+    void clearStoredMessagePlayingDisplay()  override;
 
-//    void setErrorMessageDisplayText(const QString errormsg);
-//    void clearErrorMessageDisplayText();
+   void selectAllText() override;
 
+    void setCwFreeTextIndicatorOnOff(bool on) override;
+    void setCwSliderValue(int value)  override;
 
-//    void showTemporaryErrorMessage(const QString &msg, int timeoutMs, const QColor &colour);
-    void selectAllText();
-signals:
+    QString getCwEntryText() override;
 
-    void sendWpmToPcCwkeyer(int wpm);
-    void cwEntryReturnPressed();
 
 private:
 

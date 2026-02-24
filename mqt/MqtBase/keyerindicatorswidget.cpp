@@ -74,6 +74,11 @@ void KeyerIndicatorsWidget::setKeyerAvailableIndicatorOnOff(bool on)
     }
 }
 
+void KeyerIndicatorsWidget::setKeyerAvailableVisible(bool visible)
+{
+    keyerAvailIndicator->setVisible(visible);
+}
+
 
 void KeyerIndicatorsWidget::setKeyerAvailableSetToolTip(QString text)
 {
@@ -104,6 +109,11 @@ void KeyerIndicatorsWidget::setRepeatIndicatorOnOff(bool on)
 void KeyerIndicatorsWidget::setEOMLabelText(const QString text)
 {
     eomText->setText(text);
+}
+
+void KeyerIndicatorsWidget::setEOMLabelTextVisible(bool visible)
+{
+    eomText->setVisible(visible);
 }
 
 void KeyerIndicatorsWidget::clearEOMLabelText()

@@ -3,8 +3,9 @@
 #include "keyerWidgetFactory.h"
 
 
+
 TxVoiceRigControlForm::TxVoiceRigControlForm(QWidget *parent)
-    : QWidget(parent)
+    : TxKeyerFormBase(parent)
 {
 
     // create ui
@@ -16,15 +17,8 @@ TxVoiceRigControlForm::TxVoiceRigControlForm(QWidget *parent)
     indicatorLayout->addStretch();
 
 
-    //keyerErrorMessageDisplay = KeyerWidgetFactory::createErrorMessage(this);
-    //keyerErrorMessageLayout = KeyerWidgetFactory::createRowLayout(this);
-    //keyerErrorMessageLayout->addWidget(keyerErrorMessageDisplay);
-
-
-
     QVBoxLayout *mainLayout = KeyerWidgetFactory::createMainLayout(this);
     mainLayout->addLayout(indicatorLayout);
-    //mainLayout->addLayout(keyerErrorMessageLayout);
 
     setLayout(mainLayout);
 
@@ -48,6 +42,11 @@ void TxVoiceRigControlForm::setKeyerAvailableIndicatorOnOff(bool on)
     indicators.keyerIndicators->setKeyerAvailableIndicatorOnOff(on);
 }
 
+void TxVoiceRigControlForm::setKeyerAvailableVisible(bool visible)
+{
+    indicators.keyerIndicators->setKeyerAvailableVisible(visible);
+}
+
 void TxVoiceRigControlForm::setRepeatIndicatorOnOff(bool on)
 {
     indicators.keyerIndicators->setRepeatIndicatorOnOff(on);
@@ -58,7 +57,8 @@ void TxVoiceRigControlForm::setRepeatIndicatorVisible(bool visible)
     indicators.keyerIndicators->setRepeatIndicatorVisible(visible);
 }
 
-void TxVoiceRigControlForm::setEOMLabelText(const QString text)
+
+void TxVoiceRigControlForm::setEOMLabelText(const QString &text)
 {
     indicators.keyerIndicators->setEOMLabelText(text);
 }
@@ -79,7 +79,7 @@ void TxVoiceRigControlForm::setTxStatusIndicatorOnOff(const bool on)
     indicators.pttIndicator->setTxStatusIndicator(on);
 }
 
-void TxVoiceRigControlForm::setPttTypeText(const QString text)
+void TxVoiceRigControlForm::setPttTypeText(const QString &text)
 {
     indicators.pttIndicator->setPttTypeText(text);
 }

@@ -854,12 +854,7 @@ void DMButtonFrame::setFrameState(QString txKeyerName)
     }
 }*/
 
-void DMButtonFrame::selectKeyerUiForm(QWidget *uiForm)
-{
-    keyerFormsStack->setCurrentWidget(uiForm);
-    keyerFormsStack->setMinimumHeight(uiForm->sizeHint().height());
-    keyerFormsStack->updateGeometry();
-}
+
 
 void DMButtonFrame::set_DigiMode_FrameState()
 {
@@ -1786,12 +1781,12 @@ void DMButtonFrame::onRepeatPauseTimerTimeout()
 
 void DMButtonFrame::setWipeButtonVisible(bool visible)
 {
-    // ui->wipeButton->setVisible(visible);
+    wipeButton->setVisible(visible);
 }
 
 void DMButtonFrame::setLogItButtonVisible(bool visible)
 {
-    // ui->logitButton->setVisible(visible);
+    logitButton->setVisible(visible);
 }
 
 void DMButtonFrame::onActiveKeyerChanged()
@@ -2118,7 +2113,7 @@ void DMButtonFrame::setCwFreeTextIndicatorOnOff(bool on)
 
     if (txKeyerId == TxKeyerId::CW_RigControl)
     {
-
+        cwRigControlForm->setCwFreeTextIndicatorOnOff(on);
     }
     else if (txKeyerId == TxKeyerId::PcCwKeyer)
     {
@@ -2199,7 +2194,7 @@ void DMButtonFrame::setAvailIndicatorForRadioOnOff(PubSubName radName)
 
     if ( selectedKeyerCap.getTxKeyerId() == TxKeyerId::CW_RigControl)
     {
-        cwRigControlForm->setKeyerAvailableIndicatorOnOff(keyerSettings->isCwMemTypeAvail(radName));
+        //keyerFormsStack->currentWidget().->setKeyerAvailableIndicatorOnOff(keyerSettings->isCwMemTypeAvail(radName));
 
     }
     else if ( selectedKeyerCap.getTxKeyerId() == TxKeyerId::RigControl)

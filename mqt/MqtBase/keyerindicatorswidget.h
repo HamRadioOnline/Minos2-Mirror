@@ -17,12 +17,15 @@ public:
 
 
     void setKeyerAvailableIndicatorOnOff(bool on);
+    void setKeyerAvailableVisible(bool visible);
     void setRepeatIndicatorOnOff(bool on);
+    void setRepeatIndicatorVisible(bool visible);
     void setEOMLabelText(const QString text);
 
     void clearEOMLabelText();
+    void setEOMLabelTextVisible(bool visible);
     void setKeyerAvailableSetToolTip(QString text);
-    void setRepeatIndicatorVisible(bool visible);
+
 private:
 
     QGroupBox *indicatorGrpBox;

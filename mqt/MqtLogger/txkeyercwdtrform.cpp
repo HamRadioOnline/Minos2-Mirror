@@ -6,7 +6,7 @@
 #include "keyerWidgetFactory.h"
 
 TxKeyerCwDtrForm::TxKeyerCwDtrForm(QWidget *parent)
-    : QWidget(parent)
+    : TxKeyerFormBase(parent)
 {
 
 
@@ -17,11 +17,6 @@ TxKeyerCwDtrForm::TxKeyerCwDtrForm(QWidget *parent)
     indicatorLayout->addWidget(indicators.keyerIndicators);
     indicatorLayout->addWidget(indicators.pttIndicator);
     indicatorLayout->addStretch();
-
-    //keyerErrorMessageDisplay = KeyerWidgetFactory::createErrorMessage(this);
-    //keyerErrorMessageLayout = KeyerWidgetFactory::createRowLayout();
-    //keyerErrorMessageLayout->addWidget(keyerErrorMessageDisplay);
-
 
     cwSpeedSlider = KeyerWidgetFactory::createCwSpeedControl(this);
     cwSliderLayout = KeyerWidgetFactory::createRowLayout();
@@ -96,7 +91,7 @@ void TxKeyerCwDtrForm::setRepeatIndicatorOnOff(bool on)
     indicators.keyerIndicators->setRepeatIndicatorOnOff(on);
 }
 
-void TxKeyerCwDtrForm::setEOMLabelText(const QString text)
+void TxKeyerCwDtrForm::setEOMLabelText(const QString &text)
 {
     indicators.keyerIndicators->setEOMLabelText(text);
 }
@@ -117,7 +112,7 @@ void TxKeyerCwDtrForm::setTxStatusIndicatorOnOff(const bool on)
     indicators.pttIndicator->setTxStatusIndicator(on);
 }
 
-void TxKeyerCwDtrForm::setPttTypeText(const QString text)
+void TxKeyerCwDtrForm::setPttTypeText(const QString &text)
 {
     indicators.pttIndicator->setPttTypeText(text);
 }
@@ -136,20 +131,3 @@ void TxKeyerCwDtrForm::clearStoredMessagePlayingDisplay()
 {
     cwMessagePlayingRow.display->clear();
 }
-/*
-void TxKeyerCwDtrForm::setErrorMessageDisplayText(const QString errormsg)
-{
-    keyerErrorMessageDisplay->setErrorMessage(errormsg);
-}
-
-void TxKeyerCwDtrForm::clearErrorMessageDisplayText()
-{
-    keyerErrorMessageDisplay->clearErrorMessage();
-}
-
-
-void TxKeyerCwDtrForm::showTemporaryErrorMessage(const QString &msg, int timeoutMs, const QColor &colour)
-{
-    keyerErrorMessageDisplay->showTemporaryErrorMessage(msg, timeoutMs, colour);
-}
-*/

@@ -437,7 +437,7 @@ private:
     QString getEomText(TxKeyerCommon::KeyerEomTypes selectedEomType);
     void showTemporaryErrorMessage(const QString &msg, int timeoutMs, const QColor &colour = Qt::red);
 
-    void selectKeyerUiForm(QWidget *uiForm);
+    void selectKeyerUiForm(TxKeyerFormBase *uiForm);
 
     TxKeyerCommonSettings loadTxKeyerCommonSettings();
 };
