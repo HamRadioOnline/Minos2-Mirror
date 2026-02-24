@@ -113,4 +113,3 @@ void TxKeyerCwRigControlForm::clearStoredMessagePlayingDisplay()
     cwMessagePlayingRow.display->clear();
 }
 
-

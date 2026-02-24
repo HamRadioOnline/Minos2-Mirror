@@ -22,12 +22,16 @@ PttIndicatorWidget::PttIndicatorWidget(QWidget *parent)
     pttEnabledIndicator = new QPushButton();
     pttEnabledIndicator->setMaximumSize(16, 16);
     pttEnabledIndicator->setIconSize(QSize(16, 16));
+    pttEnabledIndicator->setAttribute(Qt::WA_TransparentForMouseEvents);
+    pttEnabledIndicator->setFocusPolicy(Qt::NoFocus);
     pttEnabledIndicator->setStyleSheet(STATUS_INDICATOR_DISCONNECT_STYLE);
 
     QLabel *txStatusLbl = new QLabel("TxStatus");
     txStatusIndicator = new QPushButton();
     txStatusIndicator->setMaximumSize(16, 16);
     txStatusIndicator->setIconSize(QSize(16, 16));
+    txStatusIndicator->setAttribute(Qt::WA_TransparentForMouseEvents); // prevent mouse actions
+    txStatusIndicator->setFocusPolicy(Qt::NoFocus);
     txStatusIndicator->setStyleSheet(STATUS_INDICATOR_DISCONNECT_STYLE);
 
     QLabel *typeLbl = new QLabel("Type: ");

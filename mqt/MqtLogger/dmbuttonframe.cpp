@@ -854,6 +854,12 @@ void DMButtonFrame::setFrameState(QString txKeyerName)
     }
 }*/
 
+void DMButtonFrame::selectKeyerUiForm(TxKeyerFormBase *uiForm)
+{
+    keyerFormsStack->setCurrentWidget(uiForm);
+    keyerFormsStack->setMinimumHeight(uiForm->sizeHint().height());
+    keyerFormsStack->updateGeometry();
+}
 
 
 void DMButtonFrame::set_DigiMode_FrameState()

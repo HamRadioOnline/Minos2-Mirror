@@ -22,12 +22,16 @@ KeyerIndicatorsWidget::KeyerIndicatorsWidget(QWidget *parent)
     keyerAvailIndicator = new QPushButton();
     keyerAvailIndicator->setMaximumSize(16, 16);
     keyerAvailIndicator->setIconSize(QSize(16, 16));
+    keyerAvailIndicator->setAttribute(Qt::WA_TransparentForMouseEvents);
+    keyerAvailIndicator->setFocusPolicy(Qt::NoFocus);
     keyerAvailIndicator->setStyleSheet(STATUS_INDICATOR_DISCONNECT_STYLE);
 
     QLabel *repeatLbl = new QLabel("Repeat");
     repeatIndicator = new QPushButton();
     repeatIndicator->setMaximumSize(16, 16);
     repeatIndicator->setIconSize(QSize(16, 16));
+    repeatIndicator->setAttribute(Qt::WA_TransparentForMouseEvents);
+    repeatIndicator->setFocusPolicy(Qt::NoFocus);
     repeatIndicator->setStyleSheet(STATUS_INDICATOR_DISCONNECT_STYLE);
 
     QLabel *eomLbl = new QLabel("EOM: ");

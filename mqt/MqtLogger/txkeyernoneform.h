@@ -14,33 +14,7 @@ public:
     explicit TxKeyerNoneForm(QWidget *parent = nullptr);
     ~TxKeyerNoneForm();
 
-    // Keyer indicators
-    virtual void setKeyerAvailableIndicatorOnOff(bool) {}
-    virtual void setKeyerAvailableVisible(bool) {}
 
-    virtual void setRepeatIndicatorOnOff(bool) {}
-    virtual void setRepeatIndicatorVisible(bool) {}
-
-    virtual void setEOMLabelText(const QString&) {}
-    virtual void clearEOMLabelText() {}
-
-    // PTT indicators
-    virtual void setPttEnabledIndicatorOnOff(bool) {}
-    virtual void setTxStatusIndicatorOnOff(bool) {}
-
-    virtual void setPttTypeText(const QString&) {}
-    virtual void clearPttTypeText() {}
-
-    virtual void setStoredMessagePlayingDisplay(const QString) {}
-
-    virtual void clearStoredMessagePlayingDisplay() {}
-
-    virtual void selectAllText() {}
-
-    virtual void setCwFreeTextIndicatorOnOff(bool) {};
-    virtual void setCwSliderValue(int) {}
-
-    virtual QString getCwEntryText() {return {};}
 
 private:
 

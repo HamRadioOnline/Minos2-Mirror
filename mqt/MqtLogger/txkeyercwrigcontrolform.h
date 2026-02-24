@@ -16,7 +16,7 @@ public:
     ~TxKeyerCwRigControlForm();
 
     void setCwFreeTextIndicatorOnOff(bool on) override;
-    void setCwSliderValue(int value) override;
+
 
     QString getCwEntryText() override;
 
