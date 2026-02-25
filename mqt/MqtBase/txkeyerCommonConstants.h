@@ -149,7 +149,7 @@ namespace TxKeyerCommon
     };
 
     const inline QString ACTIVE_TAB_NUM = "activeTabNum";
-    const inline QString STANDALONE_KEYER_NAME = "standaloneKeyerName";
+    const inline QString ACTIVE_KEYER_NAME = "activeKeyerName";
     const inline QString TABBED_KEYER_NAMES = "tabbedKeyerNames";
     const inline QString VIEWMODE = "viewMode";
     const inline QString TABBED_STR = "Tabbed";
@@ -159,7 +159,7 @@ namespace TxKeyerCommon
     {
         KeyerViewMode viewMode = KeyerViewMode::Standalone;
 
-        QString standaloneKeyerName;
+        QString activeKeyerName;
 
         QStringList tabbedKeyerNames = QStringList();
 

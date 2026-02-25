@@ -164,7 +164,7 @@ DMButtonFrame::DMButtonFrame(TxKeyerFactory *txKeyerFactory_, DMKeyerContainer* 
     connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::modeChange, this, &DMButtonFrame::onModeChange);
 
     connect(keyerContainer, &DMKeyerContainer::activeKeyerChanged, this, &DMButtonFrame::onActiveKeyerChanged);
-    connect(keyerContainer, &DMKeyerContainer::keyerSelectChanged, this, &DMButtonFrame::onTxKeyerSelectChanged);
+    //connect(keyerContainer, &DMKeyerContainer::keyerSelectChanged, this, &DMButtonFrame::onTxKeyerSelectChanged);
     connect(keyerContainer, &DMKeyerContainer::contestChanged, this, &DMButtonFrame::onContestChanged);
     connect(keyerContainer, &DMKeyerContainer::selectedRadioChanged, this, &DMButtonFrame::onSelectedRadioChanged);
     connect(keyerContainer, &DMKeyerContainer::isRadioConnectedChanged, this, &DMButtonFrame::onIsRadioConnectedChanged);
@@ -364,67 +364,38 @@ void DMButtonFrame::setPttEnabledIndicatorOnOff(bool on)
     currentForm()->setPttEnabledIndicatorOnOff(on);
 }
 
-/*
-void DMButtonFrame::onTxKeyerSetupClicked()
-{
-
-    if ((txKeyerType == keyerTypes[TxKeyerId::RigControl] && !isVoiceMemAvail(selectedRadio))
-        || (txKeyerType == keyerTypes[TxKeyerId::CW_RigControl] && !isCwMemTypeAvail(selectedRadio)))
-    {
-        logMessage(QString("Setup Selected rigControl Keyer Selected, but not available for this radio or no keyer selected"));
-        return;
-    }
-
-
-    if (txKeyerType != keyerTypes[TxKeyerId::None])
-    {
-        int oldnb = txKeyer->numButtons;
-
-
-        int maxNumOfVoiceMessages = MAXIMUM_BUTTONS;
-
-        if (txKeyerType == keyerTypes[TxKeyerId::RigControl])
-        {
-            maxNumOfVoiceMessages = getNumVoiceMessages(selectedRadio);
-        }
-
-
-
-        if (txKeyer->setup(txKeyerFactory, maxNumOfVoiceMessages, txKeyer->numButtons, selectedRadio.getLocalName()) == QDialog::Accepted)
-        {
-            if (txKeyer->numButtons != oldnb)
-            {
-                int columns = 4;
-                createButtonsForKeyer(txKeyer->numButtons, columns);
-
-            }
-
-            setEomLabelText(txKeyer->getSelectedEomType());
-
-        }
-    }
-
-
-}
-*/
 
 
 
 // also PcCwKeyer
 void DMButtonFrame::setRadioParams()
 {
+
+    if (!txKeyer) return;
+
     if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::CW_RigControl)
     {
-        txKeyer->setRadioParams(MAXIMUM_BUTTONS, keyerSettings->getSelectedRadio().getLocalName(), keyerSettings->getPttType(keyerSettings->getSelectedRadio()), keyerSettings->getPttEnabled(keyerSettings->getSelectedRadio()));
+        txKeyer->setRadioParams(MAXIMUM_BUTTONS,
+                                keyerSettings->getSelectedRadio().getLocalName(),
+                                keyerSettings->getPttType(keyerSettings->getSelectedRadio()),
+                                keyerSettings->getPttEnabled(keyerSettings->getSelectedRadio()));
     }
     else if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::RigControl)
     {
-        txKeyer->setRadioParams(keyerSettings->getNumVoiceMessages(keyerSettings->getSelectedRadio()), keyerSettings->getSelectedRadio().getLocalName(), keyerSettings->getPttType(keyerSettings->getSelectedRadio()), keyerSettings->getPttEnabled(keyerSettings->getSelectedRadio()));
+        txKeyer->setRadioParams(keyerSettings->getNumVoiceMessages(keyerSettings->getSelectedRadio()),
+                                keyerSettings->getSelectedRadio().getLocalName(),
+                                keyerSettings->getPttType(keyerSettings->getSelectedRadio()),
+                                keyerSettings->getPttEnabled(keyerSettings->getSelectedRadio()));
     }
     else if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::PcCwKeyer)
     {
-        txKeyer->setRadioParams(PC_CW_KEYER_MAXIMUM_BUTTONS, keyerSettings->getSelectedRadio().getLocalName(), serialCommonData::MINOS_PTT_TYPES::PTT_TYPE_NONE, false);
+        txKeyer->setRadioParams(PC_CW_KEYER_MAXIMUM_BUTTONS,
+                                keyerSettings->getSelectedRadio().getLocalName(),
+                                serialCommonData::MINOS_PTT_TYPES::PTT_TYPE_NONE,
+                                false);
     }
+
+
 }
 
 
@@ -537,7 +508,7 @@ void DMButtonFrame::onExtConnectTimer()
     }*/
 }
 
-
+/*
 void DMButtonFrame::onTxKeyerSelectChanged()
 {
 
@@ -565,7 +536,7 @@ void DMButtonFrame::onTxKeyerSelectChanged()
     else
     {
         selectedKeyerCap = txKeyerFactory->supportedTxKeyers()->value(txKeyerName);
-        selectedKeyerCap.setTxKeyerId(txKeyerId);
+
     }
 
 
@@ -574,7 +545,7 @@ void DMButtonFrame::onTxKeyerSelectChanged()
         {
             createKeyer();   // don't create a keyer when in Digimode
         }
-        //setFrameState(txKeyerName);
+
         setFrameStateForKeyer(txKeyerId);
     });
 
@@ -584,7 +555,7 @@ void DMButtonFrame::onTxKeyerSelectChanged()
     // ui->txKeyerSelect->repaint();   // or the combo doesn't update
 
 }
-
+*/
 void  DMButtonFrame::onCwMacroTextProcessed(const QString &cwTextSent)
 {
     clearCwMessagePlayingDisplay();
@@ -663,168 +634,62 @@ void DMButtonFrame::setFrameStateForKeyer(TxKeyerId txKeyerId)
 
     switch (txKeyerId)
     {
-    case TxKeyerId::RigControl:
+        case TxKeyerId::RigControl:
 
-        logMessage(QString("setFrameState =  Voice RigControl"));
-        set_rigControl_FrameState();
-        break;
+            logMessage(QString("setFrameState =  Voice RigControl"));
+            set_rigControl_FrameState();
+            break;
 
-    case TxKeyerId::CW_RigControl:
+        case TxKeyerId::CW_RigControl:
 
-        logMessage(QString("setFrameState =  CW RigControl"));
-        set_cwRigControl_FrameState();
-        break;
+            logMessage(QString("setFrameState =  CW RigControl"));
+            set_cwRigControl_FrameState();
+            break;
 
-    case TxKeyerId::PcCwKeyer:
+        case TxKeyerId::PcCwKeyer:
 
-        logMessage(QString("setFrameState =  CW DTR Keyer"));
-        set_pcCwKeyer_FrameState();
-        break;
+            logMessage(QString("setFrameState =  CW DTR Keyer"));
+            set_pcCwKeyer_FrameState();
+            break;
 
-    case TxKeyerId::InternalVoiceKeyer:
-        currentKeyerContestName = ct->internalVoiceKeyerCurrentFKeySetContest.getValue();
-        fkeyFileName = TX_KEYER_PATH().append(InternalKeyerConfigFilename);
-        break;
+        case TxKeyerId::InternalVoiceKeyer:
+            currentKeyerContestName = ct->internalVoiceKeyerCurrentFKeySetContest.getValue();
+            fkeyFileName = TX_KEYER_PATH().append(InternalKeyerConfigFilename);
+            break;
 
-    case TxKeyerId::DigitalModes:
+        case TxKeyerId::DigitalModes:
 
-        logMessage(QString("setFrameState =  Digtal Modes"));
-        set_DigiMode_FrameState();
-        break;
+            logMessage(QString("setFrameState =  Digtal Modes"));
+            set_DigiMode_FrameState();
+            break;
 
-    case TxKeyerId::None:
+        case TxKeyerId::None:
 
-        logMessage(QString("setFrameState =  None"));
-        set_None_FrameState();
-        return;
-        break;
+            logMessage(QString("setFrameState =  None"));
+            currentKeyerContestName.clear();
+            set_None_FrameState();
+            return;
+            break;
 
-    default:
+        case TxKeyerId::ExternalMqtKeyer:
+            return;
+            break;
 
+        case TxKeyerId::WinKeyer:
+            return;
+            break;
 
-        //txKeyParamList.clear();
-
-    currentKeyerContestName.clear();
-        set_None_FrameState();
-        return;     // exit.....
-        break;
+        case TxKeyerId::SerialControl:
+            return;
+            break;
     }
 
-    // Load the keyer configuration file
-    readSingleKeyerFile(fkeyFileName, selectedKeyerCap.getTxKeyerId());
 
-    // Apply the UI config map
-    //if (!keyerUiMap.count(txKeyerId)) return;
-    //const UiElementCfg &cfg = keyerUiMap[txKeyerId];
 
-    // setCWEntryElementsVisible(cfg.showCwEntryBox);
-    // setTXStatusVisible(cfg.showTxStatus);
-    // setKeyerIndicatorGroupBoxVisible(cfg.showKeyerIndicators);
-    // setPttIndicatorGroupBoxVisible(cfg.showPttIndicators);
-
-    // ui->stopButton->setVisible(cfg.showStopButton);
-    // ui->selectedRadioLabel->setVisible(cfg.showRadioLabel);
-    // ui->pipCb->setVisible(cfg.showPip);
-
-    // setAvailIndicatorVisible(cfg.showAvailIndicator);
-    // setRepeatIndicatorVisible(cfg.showRepeatIndicator);
-
-    // Handle CW speed slider dynamically
-    // if (cfg.showCwSpeedSlider)
-    // {
-
-    //     cwSpeedSlider->show();
-    // }
-    // else
-    // {
-
-    //    cwSpeedSlider->hide();
-    // }
-
-    // Radio & keyer setup
-    txKeyer->setContest(ct);
-    txKeyer->setRadioParams(
-        keyerSettings->getNumVoiceMessages(keyerSettings->getSelectedRadio()),
-        keyerSettings->getSelectedRadio().getLocalName(),
-        keyerSettings->getPttType(keyerSettings->getSelectedRadio()),
-        keyerSettings->getPttEnabled(keyerSettings->getSelectedRadio())
-        );
-
-    txKeyer->txKeyerInit(txKeyer->numButtons);
-
-    setPttTypeLabelsVisible(true);
-    setPttTypeText(keyerSettings->getPttType(keyerSettings->getSelectedRadio()));
-    setPttEnabledIndicatorOnOff(keyerSettings->getPttEnabled(keyerSettings->getSelectedRadio()));
-
-    setEomTypeLabelsVisible(true);
-    setEomLabelText(txKeyer->getSelectedEomType());
-
-    // setMessagePlayingFlag(cfg.showCwEntryBox);
-    // setCwMessagePlayingVisible(cfg.showCwEntryBox);
-
-    setLogItButtonVisible(true);
-
-    // Optional: initialize CW text entry if applicable
-    // if (cfg.showCwEntryBox)
-    // {
-    //    initCwTextEntryBox(
-    //         getCwRadioManufacturer(keyerSettings->getCwMemType(keyerSettings->getSelectedRadio())),
-    //         CWKEYER_RADIO_COMMON_PARAMS_FILENAME
-    //         );
-    // }
-
-    displayButtons();
 }
 
 
 
-/*
-void DMButtonFrame::setFrameState(QString txKeyerName)
-{
-
-    if (txKeyerNameToId(txKeyerName) == DigitalModes)
-    {
-
-        set_DigiMode_FrameState();
-        return;
-    }
-
-
-
-    //TxKeyerCapabilities voiceCap = txKeyerFactory->supportedTxKeyers()->value(txKeyerName);
-
-    if (txKeyer == nullptr)
-    {
-
-        set_None_FrameState();
-
-
-    }
-    else
-    {
-        if (txKeyerNameToId(txKeyerName) == RigControl)
-        {
-            set_rigControl_FrameState();
-        }
-        else if (txKeyerNameToId(txKeyerName) == CW_RigControl)
-        {
-            set_cwRigControl_FrameState();
-        }
-        else if (txKeyerNameToId(txKeyerName) == PcCwKeyer)
-        {
-            set_pcCwKeyer_FrameState();
-        }
-        else if (txKeyerNameToId(txKeyerName) == InternalVoiceKeyer)
-        {
-            set_Internal_FrameState();
-        }
-        else if (InternalVoiceKeyer == ExternalMqtKeyer)
-        {
-           set_External_FrameState();
-        }
-
-    }
-}*/
 
 void DMButtonFrame::selectKeyerUiForm(TxKeyerFormBase *uiForm)
 {
@@ -843,7 +708,6 @@ void DMButtonFrame::set_DigiMode_FrameState()
 {
     txKeyParamMap[TxKeyerId::DigitalModes].clear();
 
-    selectedKeyerCap.setTxKeyerId(TxKeyerId::DigitalModes);
     selectKeyerUiForm(digitalModesForm);
     clearButtonLabels();
 
@@ -881,8 +745,6 @@ void DMButtonFrame::set_None_FrameState()
 
     }
 
-     selectedKeyerCap.setTxKeyerId(TxKeyerId::None);
-
     selectKeyerUiForm(noneForm);
 
 }
@@ -891,7 +753,7 @@ void DMButtonFrame::set_None_FrameState()
 
 void DMButtonFrame::set_rigControl_FrameState()
 {
-    if (!ct)
+    if (!ct || !txKeyer)
     {
         return;
     }
@@ -942,41 +804,18 @@ void DMButtonFrame::set_rigControl_FrameState()
 
 void DMButtonFrame::setupRigControl_Ui_Elements()
 {
-
-    //setCwMessagePlayingVisible(false);
-
-    setLogItButtonVisible(false);
-
-
-/*
-    if (selectedKeyerCap.getHasAvailStatus())
+    if (!txKeyer)
     {
-        setAvailIndicatorVisible(selectedKeyerCap.getHasAvailStatus());
-        setAvailIndicatorForRadioOnOff(keyerSettings->getSelectedRadio());
-    }
-    else
-    {
-        setAvailIndicatorVisible(false);
+        return;
     }
 
-    //setRepeatIndicatorVisible(selectedKeyerCap.getHasMessageRepeat());
 
-    // ui->stopButton->setVisible(true);
+    setAvailIndicatorForRadioOnOff(keyerSettings->getSelectedRadio());
 
-
-    //setSaveButtonByRadionameText(keyerSettings->getSelectedRadio().getLocalName());
-
-*/
-
-    txKeyer->setRadioParams(keyerSettings->getNumVoiceMessages(keyerSettings->getSelectedRadio()), keyerSettings->getSelectedRadio().getLocalName(), keyerSettings->getPttType(keyerSettings->getSelectedRadio()), keyerSettings->getPttEnabled(keyerSettings->getSelectedRadio()));
-    txKeyer->txKeyerInit(txKeyer->numButtons);
-    //setPttTypeLabelsVisible(true);
     setPttTypeText(keyerSettings->getPttType(keyerSettings->getSelectedRadio()));
     setPttEnabledIndicatorOnOff(keyerSettings->getPttEnabled(keyerSettings->getSelectedRadio()));
     //setEomTypeLabelsVisible(true);
     setEomLabelText(txKeyer->getSelectedEomType());
-
-    //loadButtonData();
 
     if (!keyerSettings->getRigVoiceKeyerSupportStopFlag(keyerSettings->getSelectedRadio().getLocalName()))
     {
@@ -987,6 +826,13 @@ void DMButtonFrame::setupRigControl_Ui_Elements()
         stopButton->setVisible(true);
     }
 
+    setLogItButtonVisible(false);
+    setChooseFileVisible(false);
+
+    // Load the keyer configuration file
+    readSingleKeyerFile(fkeyFileName, selectedKeyerCap.getTxKeyerId());
+
+    displayButtons();
 }
 
 void DMButtonFrame::set_cwRigControl_FrameState()
@@ -1231,12 +1077,7 @@ void DMButtonFrame::set_External_FrameState()
 
 void DMButtonFrame::DMButtonFrame::updateFrameState()
 {
-    // if (!ui->txKeyerSelect->currentText().isEmpty())
-    // {
-    //   setFrameStateForKeyer(ui->txKeyerSelect->currentText());
-    // }
-
-
+    setFrameStateForKeyer(selectedKeyerCap.getTxKeyerId());
 }
 
 
@@ -1249,10 +1090,10 @@ void DMButtonFrame::setFixedKeyerName(const QString &keyerName)
 
     TxKeyerId txKeyerId = getTxKeyerIdFromDisplayName(keyerName);
     selectedKeyerCap = txKeyerFactory->supportedTxKeyers()->value(keyerName);
-    selectedKeyerCap.setTxKeyerId(txKeyerId);
+
     createKeyer();
 
-    setFrameStateForKeyer(txKeyerId);
+    setFrameStateForKeyer(selectedKeyerCap.getTxKeyerId());
     notifyComboChange = true;
 }
 
@@ -1764,8 +1605,15 @@ void DMButtonFrame::setLogItButtonVisible(bool visible)
     logitButton->setVisible(visible);
 }
 
+void DMButtonFrame::setChooseFileVisible(bool visible)
+{
+    chooseButton->setVisible(visible);
+}
+/*
 void DMButtonFrame::onActiveKeyerChanged()
 {
+    if (fixedMode)  return;
+
     QString activeKeyer = keyerSettings->getCurrentKeyerName();
 
     // Enable/disable widgets based on is Active
@@ -1796,6 +1644,41 @@ void DMButtonFrame::onContestChanged()
 
     // Other dynamic values can be updated here as needed
 }
+*/
+
+
+void DMButtonFrame::onActiveKeyerChanged()
+{
+    if (fixedMode) return;
+
+    QString activeKeyer = keyerContainer->getActiveKeyerName(); // always fetch from container
+
+    TxKeyerId txKeyerId = getTxKeyerIdFromDisplayName(activeKeyer);
+
+    txKeyer.clear();
+    selectedKeyerCap.clear();
+
+    if (txKeyerId == TxKeyerId::DigitalModes)
+    {
+        // flag we are in Digital Mode
+        selectedKeyerCap.setTxKeyerId(TxKeyerId::DigitalModes);
+    }
+    else
+    {
+        selectedKeyerCap = txKeyerFactory->supportedTxKeyers()->value(activeKeyer);
+    }
+
+    delayedAction(this, [=]{
+        if (txKeyerId != TxKeyerId::DigitalModes)
+        {
+            createKeyer(); // skip for DigitalModes
+        }
+        setFrameStateForKeyer(txKeyerId);
+    });
+
+    extKeyerConnectTimer->start(1000);
+}
+
 
 void DMButtonFrame::onLoggerRadioSettingsChanged()
 {

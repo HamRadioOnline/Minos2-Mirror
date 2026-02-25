@@ -226,7 +226,7 @@ private slots:
 
 
 private:
-//    Ui::DMButtonFrame *ui;
+
     LoggerContestLog *ct = nullptr;
     Frequency curFreq;
     QString fkeyFileName;
@@ -440,6 +440,7 @@ private:
 
     TxKeyerCommonSettings loadTxKeyerCommonSettings();
     TxKeyerFormBase *currentForm() const;
+    void setChooseFileVisible(bool visible);
 };
 
 #endif // DMBUTTONFRAME_H

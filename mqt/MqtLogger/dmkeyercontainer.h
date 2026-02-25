@@ -47,6 +47,10 @@ public:
     QSharedPointer<KeyerSettings> keyerSettings;
     TxKeyerCommon::TxKeyerCommonSettings txKeyerCommonSettings;
 
+    QString getActiveKeyerName() const;
+
+
+
 
     // Contest and radio settings (forwarded to active or all frames)
     void setContest(BaseContestLog *contest);
@@ -88,8 +92,6 @@ public:
     void showTemporaryErrorMessage(const QString &msg, int timeoutMs, const QColor &colour);
 signals:
 
-
-    void keyerSelectChanged();
 
     void activeKeyerChanged();
     void pttStatus(bool state);
@@ -139,12 +141,13 @@ private:
     void updateViewModeButton();
 
     // Tab management helpers
-    KeyerTab* createKeyerTab(const QString &keyerType);
+    KeyerTab* createKeyerTab(const QString &keyerName);
     void updateActiveTab(KeyerTab *newActiveTab);
-    bool isKeyerTypeInUse(const QString &keyerType) const;
-    QString getUniqueTabName(const QString &keyerType) const;
+    bool isKeyerNameInUse(const QString &keyerName) const;
     QStringList getAvailableKeyerNames() const;
-    void setupFrameConnections(DMButtonFrame *frame);
+
+
+    void setActiveKeyerName(const QString &name);
 
     // UI components
     QVBoxLayout *mainLayout;
@@ -156,6 +159,8 @@ private:
 
     QHBoxLayout *keyerErrorMessageLayout;
     KeyerErrorMessageWidget *keyerErrorMessageDisplay;
+
+    QString activeKeyerName;
 
 
     // Standalone mode widget
@@ -169,8 +174,8 @@ private:
     // Factory for creating keyers
     TxKeyerFactory *txKeyerFactory;
 
-    // Track which keyer types are in use (tabbed mode only)
-    QMap<QString, KeyerTab*> keyerTypesInUse;
+    // Track which keyer names are in use (tabbed mode only)
+    QMap<QString, KeyerTab*> keyerNamesInUse;
 
     // Active tab (tabbed mode only)
     KeyerTab *activeTab;
@@ -179,7 +184,7 @@ private:
     LoggerContestLog *currentContest;
     void logMessage(QString msg);
     void setContainerViewMode(const KeyerViewMode &viewMode);
-    void initialKeyerSelection();
+
 };
 
 
@@ -192,12 +197,12 @@ class KeyerTab : public QWidget
     Q_OBJECT
 
 public:
-    explicit KeyerTab(const QString &keyerType, TxKeyerFactory *txKeyerFactory, DMKeyerContainer *keyerContainer,
+    explicit KeyerTab(const QString &keyerName, TxKeyerFactory *txKeyerFactory, DMKeyerContainer *keyerContainer,
                       QWidget *parent = nullptr);
     ~KeyerTab();
 
     // Accessors
-    QString getKeyerType() const { return keyerType; }
+    QString getKeyerName() const { return keyerName; }
     DMButtonFrame* getFrame() const { return buttonFrame; }
     bool isActive() const { return active; }
 
@@ -207,7 +212,7 @@ public:
 
 
 private:
-    QString keyerType;
+    QString keyerName;
     bool active;
     DMButtonFrame *buttonFrame;
     QVBoxLayout *layout;
@@ -236,16 +241,6 @@ public:
     }
 
 
-
-    TxKeyerId getCurrentKeyerId() const { return currentKeyerId; }
-    void setCurrentKeyerId(TxKeyerId id) {
-        qDebug() << "set activeKeyerId " << static_cast<int>(id);
-        currentKeyerId = id;
-    }
-
-    QString getCurrentKeyerName()const {return currentKeyerName;}
-    void setCurrentKeyerName(const QString keyerName){ currentKeyerName = keyerName; }
-
     void setSelectedRadio(PubSubName selRadio){ selectedRadio = selRadio; }
     PubSubName getSelectedRadio(){ return selectedRadio; }
 
@@ -263,29 +258,20 @@ public:
 
     void setPttEnabled(bool state, PubSubName psn)
     {
-        RadioDetails rd;
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            rd.setPttEnabled(state);
-            allRadioDetails[psn] = rd;
+            allRadioDetails[psn].setPttEnabled(state);
         }
-        else
-        {
-            rd.setPttEnabled (state);
-            allRadioDetails[psn] = rd;
-        }
+
     }
 
 
     bool getPttEnabled(PubSubName psn)
     {
 
-        RadioDetails rd;
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            return rd.getPttEnabled();
+            return allRadioDetails[psn].getPttEnabled();
         }
 
 
@@ -295,20 +281,10 @@ public:
     void setPttType(int type, PubSubName psn)
     {
 
-        RadioDetails rd;
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            rd.setPttType(type);
-            allRadioDetails[psn] = rd;
+            allRadioDetails[psn].setPttType(type);
         }
-        else
-        {
-            rd.setPttType(type);
-            allRadioDetails[psn] = rd;
-        }
-
-
     }
 
     serialCommonData::MINOS_PTT_TYPES getPttType(PubSubName psn)
@@ -316,11 +292,9 @@ public:
 
         // convert int back to MINOS_PTT_TYPES
 
-        RadioDetails rd;
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            return static_cast<serialCommonData::MINOS_PTT_TYPES>(rd.getPttType());
+            return static_cast<serialCommonData::MINOS_PTT_TYPES>(allRadioDetails[psn].getPttType());
         }
 
 
@@ -334,27 +308,17 @@ public:
     void setVoiceMemAvail(bool avail, PubSubName psn)
     {
 
-        RadioDetails rd;
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            rd.setVoiceMemAvail(avail);
-            allRadioDetails[psn] = rd;
-        }
-        else
-        {
-            rd.setVoiceMemAvail(avail);
-            allRadioDetails[psn] = rd;
+            allRadioDetails[psn].setVoiceMemAvail(avail);
         }
     }
 
     bool isVoiceMemAvail(PubSubName psn)
     {
-        RadioDetails rd;
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            return rd.getVoiceMemAvail();
+            return allRadioDetails[psn].getVoiceMemAvail();
         }
 
         return false;
@@ -363,31 +327,18 @@ public:
     void setNumVoiceMessages(int numMsgs, PubSubName psn)
     {
 
-        RadioDetails rd;
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            rd.setNumVoiceMessages(numMsgs);
-            allRadioDetails[psn] = rd;
+            allRadioDetails[psn].setNumVoiceMessages(numMsgs);
         }
-        else
-        {
-            rd.setNumVoiceMessages(numMsgs);
-            allRadioDetails[psn] = rd;
-        }
-
-
     }
 
     // This is max number of voice messages available on a radio
     int getNumVoiceMessages(PubSubName psn)
     {
-
-        RadioDetails rd;
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            return rd.getNumVoiceMessages();
+            return allRadioDetails[psn].getNumVoiceMessages();
         }
         else
         {
@@ -397,34 +348,20 @@ public:
 
     void setRigVoiceKeyerSupportStopFlag(bool supportStopCmd, PubSubName psn)
     {
-
-
-        RadioDetails rd;
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            rd.setRigVoiceKeyerSupportStopCmd(supportStopCmd);
-            allRadioDetails[psn] = rd;
+            allRadioDetails[psn].setRigVoiceKeyerSupportStopCmd(supportStopCmd);
         }
-        else
-        {
-            rd.setRigVoiceKeyerSupportStopCmd(supportStopCmd);
-            allRadioDetails[psn] = rd;
-        }
-
-
-
     }
 
 
 
     bool getRigVoiceKeyerSupportStopFlag(PubSubName psn)
     {
-        RadioDetails rd;
+
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            return rd.getRigVoiceKeyerSupportStopCmd();
+            return allRadioDetails[psn].getRigVoiceKeyerSupportStopCmd();
         }
 
         return true;
@@ -434,33 +371,19 @@ public:
 
     void setRigCwKeyerSupportStopFlag(bool supportStopCmd, PubSubName psn)
     {
-
-
-        RadioDetails rd;
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            rd.setRigCwKeyerSupportStopCmd(supportStopCmd);
-            allRadioDetails[psn] = rd;
+            allRadioDetails[psn].setRigCwKeyerSupportStopCmd(supportStopCmd);
         }
-        else
-        {
-            rd.setRigCwKeyerSupportStopCmd(supportStopCmd);
-            allRadioDetails[psn] = rd;
-        }
-
-
-
     }
 
 
     bool getRigCwKeyerSupportStopFlag(PubSubName psn)
     {
-        RadioDetails rd;
+
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            return rd.getRigCwKeyerSupportStopCmd();
+            return allRadioDetails[psn].getRigCwKeyerSupportStopCmd();
         }
 
         return true;
@@ -469,32 +392,18 @@ public:
 
     void setRigModel(QString rigModel, PubSubName psn)
     {
-
-        RadioDetails rd;
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            rd.setRigModel(rigModel);
-            allRadioDetails[psn] = rd;
+            allRadioDetails[psn].setRigModel(rigModel);
         }
-        else
-        {
-            rd.setRigModel(rigModel);
-            allRadioDetails[psn] = rd;
-        }
-
-
-
 
     }
 
     QString getRigModel(PubSubName psn)
     {
-        RadioDetails rd;
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            return rd.getRigModel();
+            return allRadioDetails[psn].getRigModel();
         }
 
         return "";
@@ -505,19 +414,17 @@ public:
 
     bool isCwMemTypeAvail(PubSubName psn)
     {
-        RadioDetails rd;
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            if (rd.getCwMemType() == hamlibData::CW_MEMORY_TYPES::KENWOOD
-                || rd.getCwMemType() == hamlibData::CW_MEMORY_TYPES::YAESU
-                || rd.getCwMemType() == hamlibData::CW_MEMORY_TYPES::ICOM
-                || rd.getCwMemType() == hamlibData::CW_MEMORY_TYPES::ELECRAFT
-                || rd.getCwMemType() == hamlibData::CW_MEMORY_TYPES::FLEX_RADIO
-                || rd.getCwMemType() == hamlibData::CW_MEMORY_TYPES::FLEX_RADIO_APACHE
-                || rd.getCwMemType() == hamlibData::CW_MEMORY_TYPES::OPENHPSDR
-                || rd.getCwMemType() == hamlibData::CW_MEMORY_TYPES::QRPLABS
-                || rd.getCwMemType() == hamlibData::CW_MEMORY_TYPES::THETIS)
+           if (allRadioDetails[psn].getCwMemType() == hamlibData::CW_MEMORY_TYPES::KENWOOD
+                || allRadioDetails[psn].getCwMemType() == hamlibData::CW_MEMORY_TYPES::YAESU
+                || allRadioDetails[psn].getCwMemType() == hamlibData::CW_MEMORY_TYPES::ICOM
+                || allRadioDetails[psn].getCwMemType() == hamlibData::CW_MEMORY_TYPES::ELECRAFT
+                || allRadioDetails[psn].getCwMemType() == hamlibData::CW_MEMORY_TYPES::FLEX_RADIO
+                || allRadioDetails[psn].getCwMemType() == hamlibData::CW_MEMORY_TYPES::FLEX_RADIO_APACHE
+                || allRadioDetails[psn].getCwMemType() == hamlibData::CW_MEMORY_TYPES::OPENHPSDR
+                || allRadioDetails[psn].getCwMemType() == hamlibData::CW_MEMORY_TYPES::QRPLABS
+                || allRadioDetails[psn].getCwMemType() == hamlibData::CW_MEMORY_TYPES::THETIS)
             {
                 return true;
             }
@@ -533,38 +440,27 @@ public:
 
     void setCwMemType(int cwMemType, PubSubName psn)
     {
-
-
-        RadioDetails rd;
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            rd.setCwMemType(cwMemType);
-            allRadioDetails[psn] = rd;
+            allRadioDetails[psn].setCwMemType(cwMemType);
         }
-        else
-        {
-            rd.setCwMemType(cwMemType);
-            allRadioDetails[psn] = rd;
-        }
-
-
     }
 
 
 
     int getCwMemType(PubSubName psn)
     {
-        RadioDetails rd;
         if (allRadioDetails.contains(psn))
         {
-            rd = allRadioDetails[psn];
-            return rd.getCwMemType();
+            return allRadioDetails[psn].getCwMemType();
         }
 
         return hamlibData::CW_MEMORY_TYPES::NONE;
 
     }
+
+
+
 
     void setPcCwKeyerComport(QString comport){ pcCwKeyerComport = comport; }
     QString getPcCwKeyerComport(){ return pcCwKeyerComport; }
@@ -590,8 +486,6 @@ public:
 private:
 
     LoggerContestLog* currentContest = nullptr;
-    TxKeyerId currentKeyerId = TxKeyerId::None;
-    QString currentKeyerName = getTxKeyerDisplayName(TxKeyerId::None);
 
     // radio settings
 

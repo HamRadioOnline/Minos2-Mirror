@@ -299,7 +299,7 @@ TxKeyerCommonSettings TxKeyerCommon::loadTxKeyerCommonSettings()
     QString viewModeStr = config.value(VIEWMODE, STANDALONE_STR).toString();
 
     settings.viewMode = (viewModeStr == TABBED_STR) ? KeyerViewMode::Tabbed : KeyerViewMode::Standalone;
-    settings.standaloneKeyerName = config.value(STANDALONE_KEYER_NAME, "").toString();
+    settings.activeKeyerName = config.value(ACTIVE_KEYER_NAME, "").toString();
     settings.tabbedKeyerNames = config.value(TABBED_KEYER_NAMES, QStringList()).toStringList();
     settings.activeTabNum = config.value(ACTIVE_TAB_NUM, 0).toInt();
 
@@ -318,7 +318,7 @@ void TxKeyerCommon::saveTxKeyerCommonSettings(const TxKeyerCommonSettings &setti
 
     config.beginGroup(TX_KEYER_COMMON_PARAMS_GROUPNAME);
     config.setValue(VIEWMODE, settings.viewMode == KeyerViewMode::Tabbed ? TABBED_STR : STANDALONE_STR);
-    config.setValue(STANDALONE_KEYER_NAME, settings.standaloneKeyerName);
+    config.setValue(ACTIVE_KEYER_NAME, settings.activeKeyerName);
 
     if (!settings.tabbedKeyerNames.isEmpty()) // dont save an empty list to prevent writing @invalid
     {
