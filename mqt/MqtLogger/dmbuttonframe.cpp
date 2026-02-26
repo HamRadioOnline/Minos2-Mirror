@@ -982,11 +982,9 @@ void DMButtonFrame::setFixedKeyerName(const QString &keyerName)
 
     notifyComboChange = false;
 
-<<<<<<< .mine
-    selectedKeyerCap = txKeyerFactory->supportedTxKeyers()->value(keyerName);
-=======
+
     auto map = txKeyerFactory->supportedTxKeyers();
->>>>>>> .theirs
+
 
     if (!map->contains(keyerName))
     {
@@ -1508,21 +1506,7 @@ void DMButtonFrame::setChooseFileVisible(bool visible)
 }
 
 
-<<<<<<< .mine
 
-
-
-
-
-
-=======
-    // Enable/disable widgets based on is Active
-    TxKeyerId txKeyerId = getTxKeyerIdFromDisplayName(activeKeyer);
-    setFrameStateForKeyer(txKeyerId);
-}
-*/
-
->>>>>>> .theirs
 void DMButtonFrame::onContestChanged()
 {
     auto contest = keyerContainer->keyerSettings->getContest();
