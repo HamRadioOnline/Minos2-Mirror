@@ -164,7 +164,6 @@ DMButtonFrame::DMButtonFrame(TxKeyerFactory *txKeyerFactory_, DMKeyerContainer* 
     connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::modeChange, this, &DMButtonFrame::onModeChange);
 
     connect(keyerContainer, &DMKeyerContainer::activeKeyerChanged, this, &DMButtonFrame::onActiveKeyerChanged);
-    //connect(keyerContainer, &DMKeyerContainer::keyerSelectChanged, this, &DMButtonFrame::onTxKeyerSelectChanged);
     connect(keyerContainer, &DMKeyerContainer::contestChanged, this, &DMButtonFrame::onContestChanged);
     connect(keyerContainer, &DMKeyerContainer::selectedRadioChanged, this, &DMButtonFrame::onSelectedRadioChanged);
     connect(keyerContainer, &DMKeyerContainer::isRadioConnectedChanged, this, &DMButtonFrame::onIsRadioConnectedChanged);
@@ -209,27 +208,7 @@ DMButtonFrame::DMButtonFrame(TxKeyerFactory *txKeyerFactory_, DMKeyerContainer* 
     connect(extKeyerConnectTimer, &QTimer::timeout, this, &DMButtonFrame::onExtConnectTimer);
     connect(LogContainer->sendDM, &TSendDM::keyerReport, this, &DMButtonFrame::onExtConnectTimer);
 
-/*
 
-    QString fileName = VOICEKEYER_COMMON_PARAMS_PATH() + VOICEKEYER_COMMON_PARAMS_FILENAME;
-    QSettings config(fileName, QSettings::IniFormat);
-    config.beginGroup(VOICEKEYER_COMMON_PARAMS_GROUPNAME);
-
-    QString txKeyerName = config.value("KeyerName").toString();
-
-    //connect(ui->txKeyerSetupPb, &QPushButton::clicked, this, &DMButtonFrame::onTxKeyerSetupClicked);
-
-    txKeyerFactory->populateComboKeyerList(ui->txKeyerSelect, txKeyerName);
-
-    // we add digi modes to list, though it will not act as keyer
-    ui->txKeyerSelect->addItem(txKeyerNames[DigitalModes]);
-
-    connect(ui->txKeyerSelect, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &DMButtonFrame::onTxKeyerSelect);
-
-    logMessage(QString("start keyer name = %1").arg(ui->txKeyerSelect->currentText()));
-
-    onTxKeyerSelect(ui->txKeyerSelect->currentIndex());
-*/
     // If we haven't already done so, copy issue fkey file to a local copy
     // so that an installation can overwrite the original without losing
     // our changes.
@@ -508,54 +487,7 @@ void DMButtonFrame::onExtConnectTimer()
     }*/
 }
 
-/*
-void DMButtonFrame::onTxKeyerSelectChanged()
-{
 
-    if (fixedMode) return;
-
-
-    if (!notifyComboChange)
-        return;
-
-
-    QString txKeyerName = keyerSettings->getCurrentKeyerName();
-    logMessage(QString("onVoiceKeyerSelect - keyer select name = %1").arg(keyerSettings->getCurrentKeyerName()));
-
-     TxKeyerId txKeyerId = getTxKeyerIdFromDisplayName(txKeyerName);
-
-    txKeyer.clear();
-    selectedKeyerCap.clear();
-
-    if (txKeyerId == TxKeyerId::DigitalModes)
-    {
-        // flag we are in Digital Mode
-         selectedKeyerCap.setTxKeyerId(TxKeyerId::DigitalModes);
-
-    }
-    else
-    {
-        selectedKeyerCap = txKeyerFactory->supportedTxKeyers()->value(txKeyerName);
-
-    }
-
-
-    delayedAction(this, [=]{
-        if (txKeyerId != TxKeyerId::DigitalModes)
-        {
-            createKeyer();   // don't create a keyer when in Digimode
-        }
-
-        setFrameStateForKeyer(txKeyerId);
-    });
-
-
-    extKeyerConnectTimer->start(1000);
-
-    // ui->txKeyerSelect->repaint();   // or the combo doesn't update
-
-}
-*/
 void  DMButtonFrame::onCwMacroTextProcessed(const QString &cwTextSent)
 {
     clearCwMessagePlayingDisplay();
@@ -568,44 +500,7 @@ void  DMButtonFrame::onCwMacroTextProcessed(const QString &cwTextSent)
 
 }
 
-/*
-void DMButtonFrame::createKeyerForms()
-{
 
-    keyerFormsStack = new QStackedWidget(this);
-
-    // Create all the keyer forms
-    noneForm = new TxKeyerNoneForm(this);
-    voiceRigControlForm = new TxVoiceRigControlForm(this);
-    voiceRigControlForm->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-    cwRigControlForm = new TxKeyerCwRigControlForm(this);
-    cwDtrForm = new TxKeyerCwDtrForm(this);
-    digitalModesForm = new TxKeyerDigitalModesForm();
-
-    // Add forms to stacked widget
-    keyerFormsStack->addWidget(noneForm);           // Index 0
-    keyerFormsStack->addWidget(voiceRigControlForm); // Index 1
-    keyerFormsStack->addWidget(cwRigControlForm);    // Index 2
-    keyerFormsStack->addWidget(cwDtrForm);           // Index 3
-    keyerFormsStack->addWidget(digitalModesForm);    // index 4
-
-    keyerFormsStack->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    keyerFormsStack->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-
-    ui->mainContentLayout->addWidget(keyerFormsStack); // no stretch
-
-    // Connect signals from forms
-    connectFormSignals();
-
-    // Start with none form visible
-    selectKeyerUiForm(noneForm);
-
-
-    qDebug() << "Stacked widget created with" << keyerFormsStack->count() << "forms";
-}
-*/
 void DMButtonFrame::connectFormSignals()
 {
 
@@ -1084,11 +979,9 @@ void DMButtonFrame::DMButtonFrame::updateFrameState()
 void DMButtonFrame::setFixedKeyerName(const QString &keyerName)
 {
     fixedMode = true;
-    fixedKeyerType = keyerName; // ****************** this should be display name not type..??
 
     notifyComboChange = false;
 
-    TxKeyerId txKeyerId = getTxKeyerIdFromDisplayName(keyerName);
     selectedKeyerCap = txKeyerFactory->supportedTxKeyers()->value(keyerName);
 
     createKeyer();
@@ -1099,12 +992,7 @@ void DMButtonFrame::setFixedKeyerName(const QString &keyerName)
 
 QString DMButtonFrame::getCurrentKeyerName() const
 {
-    if (fixedMode)
-    {
-        return fixedKeyerType;
-    }
-
-    return keyerSettings->getCurrentKeyerName();
+    return keyerContainer->getActiveKeyerName();
 }
 
 
@@ -1112,11 +1000,6 @@ QString DMButtonFrame::getCurrentKeyerName() const
 
 void DMButtonFrame::initCwTextEntryBox(QString radioManufacturer, QString fileName)
 {
-    // ui->cwEntry->setVisible(true);
-    // ui->cwEntry->installEventFilter(this);
-
-    //
-
     QString cwMacroCharList;
     bool cwMacroCharOk;
     if (getRigCWKeyerMacroCharacter(TXKEYER_COMMON_PARAMS_PATH(), cwMacroCharList, radioManufacturer, CWKEYER_RADIO_COMMON_PARAMS_FILENAME))
@@ -1609,17 +1492,7 @@ void DMButtonFrame::setChooseFileVisible(bool visible)
 {
     chooseButton->setVisible(visible);
 }
-/*
-void DMButtonFrame::onActiveKeyerChanged()
-{
-    if (fixedMode)  return;
 
-    QString activeKeyer = keyerSettings->getCurrentKeyerName();
-
-    // Enable/disable widgets based on is Active
-    TxKeyerId txKeyerId = getTxKeyerIdFromDisplayName(activeKeyer);
-    setFrameStateForKeyer(txKeyerId);
-}
 
 void DMButtonFrame::onContestChanged()
 {
@@ -1644,7 +1517,7 @@ void DMButtonFrame::onContestChanged()
 
     // Other dynamic values can be updated here as needed
 }
-*/
+
 
 
 void DMButtonFrame::onActiveKeyerChanged()

@@ -179,8 +179,7 @@ private slots:
 
     // txVmButtonFrame
 
-    void onTxKeyerSelectChanged();
-    //void onTxKeyerSetupClicked();
+
     void onRepeatPauseTimerTimeout();
     void onMsgDurTimerTimeout();
     //void fKey(BaseContestLog *c, int e, int);

@@ -242,13 +242,17 @@ void DMKeyerContainer::setContainerViewMode(const KeyerViewMode &viewMode)
     emit containerModeChanged(viewMode);
 }
 
+
+
 void DMKeyerContainer::switchToStandaloneMode()
 {
     stackedWidget->setCurrentWidget(standaloneFrame);
+
     addKeyerButton->setVisible(false);
     txKeyerSelect->setVisible(true);
 
-    QString keyerType = standaloneFrame->getCurrentKeyerName();
+    QString keyerType = txKeyerSelect->currentText();
+
     if (keyerType != getActiveKeyerName())
     {
         setActiveKeyerName(keyerType);
