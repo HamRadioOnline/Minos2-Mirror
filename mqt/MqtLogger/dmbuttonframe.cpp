@@ -164,7 +164,6 @@ DMButtonFrame::DMButtonFrame(TxKeyerFactory *txKeyerFactory_, DMKeyerContainer* 
     connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::modeChange, this, &DMButtonFrame::onModeChange);
 
     connect(keyerContainer, &DMKeyerContainer::activeKeyerChanged, this, &DMButtonFrame::onActiveKeyerChanged);
-    //connect(keyerContainer, &DMKeyerContainer::keyerSelectChanged, this, &DMButtonFrame::onTxKeyerSelectChanged);
     connect(keyerContainer, &DMKeyerContainer::contestChanged, this, &DMButtonFrame::onContestChanged);
     connect(keyerContainer, &DMKeyerContainer::selectedRadioChanged, this, &DMButtonFrame::onSelectedRadioChanged);
     connect(keyerContainer, &DMKeyerContainer::isRadioConnectedChanged, this, &DMButtonFrame::onIsRadioConnectedChanged);
@@ -1080,31 +1079,33 @@ void DMButtonFrame::DMButtonFrame::updateFrameState()
     setFrameStateForKeyer(selectedKeyerCap.getTxKeyerId());
 }
 
-
 void DMButtonFrame::setFixedKeyerName(const QString &keyerName)
 {
     fixedMode = true;
-    fixedKeyerType = keyerName; // ****************** this should be display name not type..??
 
     notifyComboChange = false;
 
-    TxKeyerId txKeyerId = getTxKeyerIdFromDisplayName(keyerName);
-    selectedKeyerCap = txKeyerFactory->supportedTxKeyers()->value(keyerName);
+    auto map = txKeyerFactory->supportedTxKeyers();
+
+    if (!map->contains(keyerName))
+    {
+        qDebug() << "Unknown keyer:" << keyerName;
+        notifyComboChange = true;
+        return;
+    }
+
+    selectedKeyerCap = map->value(keyerName);
 
     createKeyer();
 
     setFrameStateForKeyer(selectedKeyerCap.getTxKeyerId());
+
     notifyComboChange = true;
 }
 
 QString DMButtonFrame::getCurrentKeyerName() const
 {
-    if (fixedMode)
-    {
-        return fixedKeyerType;
-    }
-
-    return keyerSettings->getCurrentKeyerName();
+    return keyerContainer->getActiveKeyerName();
 }
 
 
@@ -1620,6 +1621,7 @@ void DMButtonFrame::onActiveKeyerChanged()
     TxKeyerId txKeyerId = getTxKeyerIdFromDisplayName(activeKeyer);
     setFrameStateForKeyer(txKeyerId);
 }
+*/
 
 void DMButtonFrame::onContestChanged()
 {
@@ -1644,7 +1646,7 @@ void DMButtonFrame::onContestChanged()
 
     // Other dynamic values can be updated here as needed
 }
-*/
+
 
 
 void DMButtonFrame::onActiveKeyerChanged()
@@ -1653,26 +1655,20 @@ void DMButtonFrame::onActiveKeyerChanged()
 
     QString activeKeyer = keyerContainer->getActiveKeyerName(); // always fetch from container
 
+    logMessage(QString("onActiveKeyerChanged - keyer name = %1").arg(keyerContainer->getActiveKeyerName()));
+
     TxKeyerId txKeyerId = getTxKeyerIdFromDisplayName(activeKeyer);
 
     txKeyer.clear();
     selectedKeyerCap.clear();
 
-    if (txKeyerId == TxKeyerId::DigitalModes)
-    {
-        // flag we are in Digital Mode
-        selectedKeyerCap.setTxKeyerId(TxKeyerId::DigitalModes);
-    }
-    else
-    {
-        selectedKeyerCap = txKeyerFactory->supportedTxKeyers()->value(activeKeyer);
-    }
+    selectedKeyerCap = txKeyerFactory->supportedTxKeyers()->value(activeKeyer);
+
 
     delayedAction(this, [=]{
-        if (txKeyerId != TxKeyerId::DigitalModes)
-        {
-            createKeyer(); // skip for DigitalModes
-        }
+
+        createKeyer();
+
         setFrameStateForKeyer(txKeyerId);
     });
 

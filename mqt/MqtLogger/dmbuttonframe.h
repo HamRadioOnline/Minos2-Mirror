@@ -179,7 +179,7 @@ private slots:
 
     // txVmButtonFrame
 
-    void onTxKeyerSelectChanged();
+    //void onTxKeyerSelectChanged();
     //void onTxKeyerSetupClicked();
     void onRepeatPauseTimerTimeout();
     void onMsgDurTimerTimeout();
@@ -247,7 +247,7 @@ private:
 
     bool fixedMode =false;      // false: Standalone mode with visible combo box
                                 // true: Tab mode with hidden combo box, fixed keyer type
-    QString fixedKeyerType;
+
 
     QString dataSender;
     QString curMode;
