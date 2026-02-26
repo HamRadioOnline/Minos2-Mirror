@@ -975,18 +975,32 @@ void DMButtonFrame::DMButtonFrame::updateFrameState()
     setFrameStateForKeyer(selectedKeyerCap.getTxKeyerId());
 }
 
-
 void DMButtonFrame::setFixedKeyerName(const QString &keyerName)
 {
     fixedMode = true;
+ 
 
     notifyComboChange = false;
 
+<<<<<<< .mine
     selectedKeyerCap = txKeyerFactory->supportedTxKeyers()->value(keyerName);
+=======
+    auto map = txKeyerFactory->supportedTxKeyers();
+>>>>>>> .theirs
+
+    if (!map->contains(keyerName))
+    {
+        qDebug() << "Unknown keyer:" << keyerName;
+        notifyComboChange = true;
+        return;
+    }
+
+    selectedKeyerCap = map->value(keyerName);
 
     createKeyer();
 
     setFrameStateForKeyer(selectedKeyerCap.getTxKeyerId());
+
     notifyComboChange = true;
 }
 
@@ -1494,6 +1508,21 @@ void DMButtonFrame::setChooseFileVisible(bool visible)
 }
 
 
+<<<<<<< .mine
+
+
+
+
+
+
+=======
+    // Enable/disable widgets based on is Active
+    TxKeyerId txKeyerId = getTxKeyerIdFromDisplayName(activeKeyer);
+    setFrameStateForKeyer(txKeyerId);
+}
+*/
+
+>>>>>>> .theirs
 void DMButtonFrame::onContestChanged()
 {
     auto contest = keyerContainer->keyerSettings->getContest();
@@ -1526,26 +1555,20 @@ void DMButtonFrame::onActiveKeyerChanged()
 
     QString activeKeyer = keyerContainer->getActiveKeyerName(); // always fetch from container
 
+    logMessage(QString("onActiveKeyerChanged - keyer name = %1").arg(keyerContainer->getActiveKeyerName()));
+
     TxKeyerId txKeyerId = getTxKeyerIdFromDisplayName(activeKeyer);
 
     txKeyer.clear();
     selectedKeyerCap.clear();
 
-    if (txKeyerId == TxKeyerId::DigitalModes)
-    {
-        // flag we are in Digital Mode
-        selectedKeyerCap.setTxKeyerId(TxKeyerId::DigitalModes);
-    }
-    else
-    {
-        selectedKeyerCap = txKeyerFactory->supportedTxKeyers()->value(activeKeyer);
-    }
+    selectedKeyerCap = txKeyerFactory->supportedTxKeyers()->value(activeKeyer);
+
 
     delayedAction(this, [=]{
-        if (txKeyerId != TxKeyerId::DigitalModes)
-        {
-            createKeyer(); // skip for DigitalModes
-        }
+
+        createKeyer();
+
         setFrameStateForKeyer(txKeyerId);
     });
 
