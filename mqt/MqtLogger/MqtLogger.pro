@@ -84,6 +84,7 @@ SOURCES += \
     contestdetails.cpp \
     defdirsdlg.cpp \
     deletedradioforvoicecwmemorybuttonsdialog.cpp \
+    digitalmodetxkeyer.cpp \
     districtframe.cpp \
     dmbuttonframe.cpp \
     dmkeyercontainer.cpp \
@@ -201,6 +202,7 @@ HEADERS  += \
     contestdetails.h \
     defdirsdlg.h \
     deletedradioforvoicecwmemorybuttonsdialog.h \
+    digitalmodetxkeyer.h \
     districtframe.h \
     dmbuttonframe.h \
     dmkeyercontainer.h \

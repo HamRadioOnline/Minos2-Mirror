@@ -22,6 +22,7 @@
 #include "InternalVoiceTxKeyer.h"
 #include "ExternalMqtKeyer.h"
 #include "winkeyertxkeyer.h"
+#include "digitalmodetxkeyer.h"
 #include "tlogcontainer.h"
 #include "SendRPCDM.h"
 
@@ -35,6 +36,7 @@ TxKeyerFactory::TxKeyerFactory(QObject *parent) : QObject(parent)
     InternalVoiceTxKeyer::registerTxKeyer(&txKeyersList);
     ExternalMqtKeyer::registerTxKeyer(&txKeyersList);
     WinKeyerTxKeyer::registerTxKeyer(&txKeyersList);
+    DigitalModeTxKeyer::registerTxKeyer(&txKeyersList);
 }
 
 
@@ -80,6 +82,10 @@ TxKeyerBase* TxKeyerFactory::createTxKeyer(TxKeyerId txKeyerId)
     else if (txKeyerId == TxKeyerId::WinKeyer)
     {
         return new WinKeyerTxKeyer(this);
+    }
+    else if (txKeyerId == TxKeyerId::DigitalModes)
+    {
+        return new DigitalModeTxKeyer(this);
     }
 
     return nullptr;
