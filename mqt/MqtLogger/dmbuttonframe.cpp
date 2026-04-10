@@ -525,7 +525,21 @@ void DMButtonFrame::connectFormSignals()
 
 void DMButtonFrame::setFrameStateForKeyer(TxKeyerId txKeyerId)
 {
-    if (!ct) return;
+    if (!ct || !txKeyer)
+    {
+        if (!ct)
+        {
+            logMessage(QString("setFrameStateForKeyer- contest is empty"));
+        }
+        else if (!txKeyer)
+        {
+            logMessage(QString("setFrameStateForKeyer- txKeyer is empty"));
+
+        }
+
+        return;
+
+    }
 
     switch (txKeyerId)
     {
