@@ -1011,9 +1011,17 @@ void DMButtonFrame::setFixedKeyerName(const QString &keyerName)
 
     createKeyer();
 
-    setFrameStateForKeyer(selectedKeyerCap.getTxKeyerId());
+    if (txKeyer)
+    {
+        setFrameStateForKeyer(selectedKeyerCap.getTxKeyerId());
 
-    notifyComboChange = true;
+        notifyComboChange = true;
+
+    }
+    else
+    {
+        logMessage(QString("standalone - failed to create Keyer %1").arg(keyerName));
+    }
 }
 
 QString DMButtonFrame::getCurrentKeyerName() const
@@ -1562,15 +1570,30 @@ void DMButtonFrame::onActiveKeyerChanged()
 
     selectedKeyerCap = txKeyerFactory->supportedTxKeyers()->value(activeKeyer);
 
+// ************************* this delay should be moved to the keyer code itself - probably external keyer...
+//  delayedAction(this, [=]{
 
-    delayedAction(this, [=]{
+//      createKeyer();
 
-        createKeyer();
+//      setFrameStateForKeyer(txKeyerId);
+//  });
 
-        setFrameStateForKeyer(txKeyerId);
-    });
+//  extKeyerConnectTimer->start(1000);
 
-    extKeyerConnectTimer->start(1000);
+
+    createKeyer();
+
+    if (txKeyer)
+    {
+       setFrameStateForKeyer(txKeyerId);
+    }
+    else
+    {
+
+       logMessage(QString("tabMode - failed to create Keyer %1").arg(activeKeyer));
+    }
+
+
 }
 
 
