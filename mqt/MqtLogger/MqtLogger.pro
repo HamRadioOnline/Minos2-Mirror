@@ -204,7 +204,6 @@ HEADERS  += \
     deletedradioforvoicecwmemorybuttonsdialog.h \
     digitalmodetxkeyer.h \
     districtframe.h \
-    dmbuttonframe.h \
     dmkeyercontainer.h \
     dxccframe.h \
     freqlineedit.h \
@@ -292,7 +291,6 @@ FORMS    += \
     defdirsdlg.ui \
     deletedradioforvoicecwmemorybuttonsdialog.ui \
     districtframe.ui \
-    dmbuttonframe.ui \
     dxccframe.ui \
     LocCalcFrame.ui \
     locframe.ui \

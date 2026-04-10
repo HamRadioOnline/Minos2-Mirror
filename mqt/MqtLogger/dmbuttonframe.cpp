@@ -17,7 +17,6 @@
 
 #include "MinosRPC.h"
 #include "SendRPCDM.h"
-#include "delayedaction.h"
 #include "fileutils.h"
 #include "tlogcontainer.h"
 #include "tsinglelogframe.h"
@@ -679,7 +678,7 @@ void DMButtonFrame::set_rigControl_FrameState()
 
     logMessage(QString("Set RigControl Frame State for Contest Name %1, Radio %2").arg(currentKeyerContestName, keyerSettings->getSelectedRadio().key()));
 
-    int checkContestRadioErrorCode = CHECK_RAD_CONT_CONTEST_OK;
+                                                                                                                                                                                             int checkContestRadioErrorCode = CHECK_RAD_CONT_CONTEST_OK;
     if (!checkContestAndRadioAvailable(checkContestRadioErrorCode))    // check keyer, contest and radio if applicable have been retrieved from json file
     {
         // error
@@ -705,7 +704,6 @@ void DMButtonFrame::set_rigControl_FrameState()
     clearErrorMessage();
     setMessagePlayingFlag(false);
     setupRigControl_Ui_Elements();
-    displayButtons();
 
 
 }
@@ -2437,7 +2435,7 @@ QStringList DMButtonFrame::getContestNamesForKeyerType(const QString &keyerType)
 }
 
 
-/*
+
 void DMButtonFrame::populateRadioNameCombo(const QString &contestName)
 {
 
@@ -2465,7 +2463,6 @@ void DMButtonFrame::onFkeysetComboSelected()
     populateRadioNameCombo(currentName);
 }
 
-*/
 
 
 QStringList DMButtonFrame::getRadioNamesForSelectedContestName(const QString &contestName)
