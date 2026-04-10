@@ -204,6 +204,7 @@ HEADERS  += \
     deletedradioforvoicecwmemorybuttonsdialog.h \
     digitalmodetxkeyer.h \
     districtframe.h \
+    dmbuttonframe.h \
     dmkeyercontainer.h \
     dxccframe.h \
     freqlineedit.h \

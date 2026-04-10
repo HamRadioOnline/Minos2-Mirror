@@ -114,17 +114,21 @@ DMButtonFrame::DMButtonFrame(TxKeyerFactory *txKeyerFactory_, DMKeyerContainer* 
     stopButton = new QPushButton(tr("Stop"));
     stopButton->setObjectName("stopButton");
     stopButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(stopButton, &QPushButton::clicked, this, &DMButtonFrame::on_stopButton_clicked);
 
     chooseButton = new QPushButton(tr("Choose File"));
     chooseButton->setObjectName("choosButton");
     chooseButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(chooseButton, &QPushButton::clicked, this, &DMButtonFrame::on_chooseButton_clicked);
 
     configEditButton = new QPushButton(tr("Config/Edit"));
     configEditButton->setObjectName("configEditButton");
     configEditButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(configEditButton, &QPushButton::clicked, this, &DMButtonFrame::on_configEditButton_clicked);
 
     fkeysetCombo = new QComboBox;
     fkeysetCombo->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    connect(fkeysetCombo, &QComboBox::currentTextChanged, this, &DMButtonFrame::on_fkeysetCombo_textActivated);
 
     selectedRadioLabel = new QLabel();
     selectedRadioLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -149,8 +153,6 @@ DMButtonFrame::DMButtonFrame(TxKeyerFactory *txKeyerFactory_, DMKeyerContainer* 
     frameLayout->addLayout(mainContentLayout);
     frameLayout->addLayout(FkeyGridLayout);
     frameLayout->addLayout(mainPushButtonsLayout);
-
-    QMetaObject::connectSlotsByName(this);
 
 
     keyerSettings = keyerContainer->keyerSettings;
@@ -2435,35 +2437,35 @@ QStringList DMButtonFrame::getContestNamesForKeyerType(const QString &keyerType)
 }
 
 
-
+/*
 void DMButtonFrame::populateRadioNameCombo(const QString &contestName)
 {
 
-    ui->radioSelectCombo->clear();
+    radioSelectCombo->clear();
 
     QStringList radioList = getRadioNamesForSelectedContestName(contestName);
-    ui->radioSelectCombo->addItems(radioList);
-    ui->radioSelectCombo->setCurrentText(selectedRadio.getLocalName());
+    radioSelectCombo->addItems(radioList);
+    radioSelectCombo->setCurrentText(selectedRadio.getLocalName());
 
 }
 
 void DMButtonFrame::connectFkeySetComboToPopulateRadioNameCombo()
 {
-    disconnect(ui->fkeysetCombo, &QComboBox::currentTextChanged, this, &DMButtonFrame::onFkeysetComboSelected);
+    dsconnect(fkeysetCombo, &QComboBox::currentTextChanged, this, &DMButtonFrame::onFkeysetComboSelected);
 }
 
 
 void DMButtonFrame::disConnectFkeySetComboToPopulateRadioNameCombo()
 {
-    connect(ui->fkeysetCombo, &QComboBox::currentTextChanged, this, &DMButtonFrame::onFkeysetComboSelected);
+    connect(fkeysetCombo, &QComboBox::currentTextChanged, this, &DMButtonFrame::onFkeysetComboSelected);
 }
 
 void DMButtonFrame::onFkeysetComboSelected()
 {
-    populateRadioNameCombo(currentName);
+    populateRadioNameCombo(currentContestName);
 }
 
-
+*/
 
 QStringList DMButtonFrame::getRadioNamesForSelectedContestName(const QString &contestName)
 {
@@ -3185,6 +3187,53 @@ void DMButtonFrame::on_configEditButton_clicked()
     }
 }
 
+
+
+
+
+void DMButtonFrame::on_fkeysetCombo_textActivated(const QString &arg1)
+{
+    if (ignoreFkComboSignal)
+        return;
+
+    currentKeyerContestName = arg1;
+
+    if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::RigControl)
+    {
+        ct->rigControlCurrentFKeySetContest.setValue(currentKeyerContestName);
+
+    }
+    else  if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::CW_RigControl)
+    {
+        ct->cwRigControlCurrentFKeySetContest.setValue(currentKeyerContestName);
+
+    }
+    else  if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::SerialControl)
+    {
+        ct->serialControlCurrentFKeySetContest.setValue(currentKeyerContestName);
+    }
+    else  if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::PcCwKeyer)
+    {
+        ct->pcCwKeyerCurrentFKeySetContest.setValue(currentKeyerContestName);
+    }
+    else  if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::DigitalModes)
+    {
+        ct->digitalModesCurrentFKeySetContest.setValue(currentKeyerContestName);
+    }
+    else  if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::InternalVoiceKeyer)
+    {
+        ct->internalVoiceKeyerCurrentFKeySetContest.setValue(currentKeyerContestName);
+    }
+    else  if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::ExternalMqtKeyer)
+    {
+        ct->externalVoiceKeyerCurrentFKeySetContest.setValue(currentKeyerContestName);
+    }
+
+    ct->commonSave(false);
+
+    displayButtons();
+}
+
 void DMButtonFrame::on_logitButton_clicked()
 {
     // simulate "Enter" key
@@ -3260,48 +3309,10 @@ QString DMButtonFrame::getFKeysString() const
 
 }
 
-void DMButtonFrame::on_fkeysetCombo_textActivated(const QString &arg1)
-{
-    if (ignoreFkComboSignal)
-        return;
 
-    currentKeyerContestName = arg1;
 
-    if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::RigControl)
-    {
-        ct->rigControlCurrentFKeySetContest.setValue(currentKeyerContestName);
 
-    }
-    else  if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::CW_RigControl)
-    {
-        ct->cwRigControlCurrentFKeySetContest.setValue(currentKeyerContestName);
 
-    }
-    else  if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::SerialControl)
-    {
-        ct->serialControlCurrentFKeySetContest.setValue(currentKeyerContestName);
-    }
-    else  if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::PcCwKeyer)
-    {
-        ct->pcCwKeyerCurrentFKeySetContest.setValue(currentKeyerContestName);
-    }
-    else  if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::DigitalModes)
-    {
-        ct->digitalModesCurrentFKeySetContest.setValue(currentKeyerContestName);
-    }
-    else  if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::InternalVoiceKeyer)
-    {
-        ct->internalVoiceKeyerCurrentFKeySetContest.setValue(currentKeyerContestName);
-    }
-    else  if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::ExternalMqtKeyer)
-    {
-        ct->externalVoiceKeyerCurrentFKeySetContest.setValue(currentKeyerContestName);
-    }
-
-    ct->commonSave(false);
-
-    displayButtons();
-}
 
 void DMButtonFrame::setCwMessagePlayingVisible(bool visible)
 {
