@@ -408,7 +408,8 @@ void DMButtonFrame::createKeyer()
             {
 
                 //int columns = 4;
-                buildFkeyButtons(txKeyer->numButtons);
+               //buildFkeyButtons(txKeyer->numButtons);
+                buildFkeyButtons(12);    // fixed at 12 for now
                 //createButtonsForKeyer(txKeyer->numButtons, columns);
             }
             else if (selectedKeyerCap.getTxKeyerId() == TxKeyerId::PcCwKeyer)
@@ -2321,6 +2322,11 @@ void DMButtonFrame::showFButtons(bool s)
         selectedKeyerCap.getTxKeyerId() == TxKeyerId::CW_RigControl)
     {
         rigKey = keyerSettings->getSelectedRadio().key();
+        if (rigKey.isEmpty())
+        {
+            logMessage(QString("showFButtons - radio is empty"));
+            return;
+        }
     }
 
     auto &contestMap = allKeyConfigs[getTxKeyerTypeFromTxKeyerId(selectedKeyerCap.getTxKeyerId())];

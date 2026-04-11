@@ -258,11 +258,7 @@ public:
 
     void setPttEnabled(bool state, PubSubName psn)
     {
-        if (allRadioDetails.contains(psn))
-        {
-            allRadioDetails[psn].setPttEnabled(state);
-        }
-
+        allRadioDetails[psn].setPttEnabled(state);
     }
 
 
@@ -281,10 +277,8 @@ public:
     void setPttType(int type, PubSubName psn)
     {
 
-        if (allRadioDetails.contains(psn))
-        {
-            allRadioDetails[psn].setPttType(type);
-        }
+        allRadioDetails[psn].setPttType(type);
+
     }
 
     serialCommonData::MINOS_PTT_TYPES getPttType(PubSubName psn)
@@ -308,13 +302,11 @@ public:
     void setVoiceMemAvail(bool avail, PubSubName psn)
     {
 
-        if (allRadioDetails.contains(psn))
-        {
-            allRadioDetails[psn].setVoiceMemAvail(avail);
-        }
+        allRadioDetails[psn].setVoiceMemAvail(avail);
+
     }
 
-    bool isVoiceMemAvail(PubSubName psn)
+    bool isVoiceMemAvail(PubSubName psn) const
     {
         if (allRadioDetails.contains(psn))
         {
@@ -327,10 +319,8 @@ public:
     void setNumVoiceMessages(int numMsgs, PubSubName psn)
     {
 
-        if (allRadioDetails.contains(psn))
-        {
-            allRadioDetails[psn].setNumVoiceMessages(numMsgs);
-        }
+        allRadioDetails[psn].setNumVoiceMessages(numMsgs);
+
     }
 
     // This is max number of voice messages available on a radio
@@ -348,10 +338,8 @@ public:
 
     void setRigVoiceKeyerSupportStopFlag(bool supportStopCmd, PubSubName psn)
     {
-        if (allRadioDetails.contains(psn))
-        {
-            allRadioDetails[psn].setRigVoiceKeyerSupportStopCmd(supportStopCmd);
-        }
+        allRadioDetails[psn].setRigVoiceKeyerSupportStopCmd(supportStopCmd);
+
     }
 
 
@@ -371,10 +359,8 @@ public:
 
     void setRigCwKeyerSupportStopFlag(bool supportStopCmd, PubSubName psn)
     {
-        if (allRadioDetails.contains(psn))
-        {
-            allRadioDetails[psn].setRigCwKeyerSupportStopCmd(supportStopCmd);
-        }
+        allRadioDetails[psn].setRigCwKeyerSupportStopCmd(supportStopCmd);
+
     }
 
 
@@ -392,11 +378,7 @@ public:
 
     void setRigModel(QString rigModel, PubSubName psn)
     {
-        if (allRadioDetails.contains(psn))
-        {
-            allRadioDetails[psn].setRigModel(rigModel);
-        }
-
+        allRadioDetails[psn].setRigModel(rigModel);
     }
 
     QString getRigModel(PubSubName psn)
@@ -440,10 +422,8 @@ public:
 
     void setCwMemType(int cwMemType, PubSubName psn)
     {
-        if (allRadioDetails.contains(psn))
-        {
-            allRadioDetails[psn].setCwMemType(cwMemType);
-        }
+        allRadioDetails[psn].setCwMemType(cwMemType);
+
     }
 
 

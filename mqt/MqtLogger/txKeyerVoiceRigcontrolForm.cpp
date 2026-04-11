@@ -11,13 +11,13 @@ TxVoiceRigControlForm::TxVoiceRigControlForm(QWidget *parent)
     // create ui
 
     indicators = KeyerWidgetFactory::createIndicators(this);
-    indicatorLayout = KeyerWidgetFactory::createRowLayout(this);
+    indicatorLayout = KeyerWidgetFactory::createRowLayout(nullptr);
     indicatorLayout->addWidget(indicators.keyerIndicators);
     indicatorLayout->addWidget(indicators.pttIndicator);
     indicatorLayout->addStretch();
 
 
-    QVBoxLayout *mainLayout = KeyerWidgetFactory::createMainLayout(this);
+    QVBoxLayout *mainLayout = KeyerWidgetFactory::createMainLayout(nullptr);
     mainLayout->addLayout(indicatorLayout);
 
     setLayout(mainLayout);

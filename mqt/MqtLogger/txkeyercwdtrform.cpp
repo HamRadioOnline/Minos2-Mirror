@@ -18,18 +18,18 @@ TxKeyerCwDtrForm::TxKeyerCwDtrForm(QWidget *parent)
     indicatorLayout->addWidget(indicators.pttIndicator);
     indicatorLayout->addStretch();
 
-    cwSpeedSlider = KeyerWidgetFactory::createCwSpeedControl(this);
+    cwSpeedSlider = KeyerWidgetFactory::createCwSpeedControl(nullptr);
     cwSliderLayout = KeyerWidgetFactory::createRowLayout();
     cwSliderLayout->addWidget(cwSpeedSlider);
 
-    cwMessagePlayingRow = KeyerWidgetFactory::createCwMessagePlayingRow(this);
+    cwMessagePlayingRow = KeyerWidgetFactory::createCwMessagePlayingRow(nullptr);
 
 
-    cwEntry = KeyerWidgetFactory::createCwEntry(this);
+    cwEntry = KeyerWidgetFactory::createCwEntry(nullptr);
     cwEntryLayout = KeyerWidgetFactory::createRowLayout();
     cwEntryLayout->addWidget(cwEntry);
 
-    QVBoxLayout *mainLayout = KeyerWidgetFactory::createMainLayout(this);
+    QVBoxLayout *mainLayout = KeyerWidgetFactory::createMainLayout(nullptr);
     mainLayout->addLayout(indicatorLayout);
     //mainLayout->addLayout(keyerErrorMessageLayout);
     mainLayout->addLayout(cwSliderLayout);

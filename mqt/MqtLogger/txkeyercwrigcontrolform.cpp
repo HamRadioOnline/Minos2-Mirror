@@ -17,14 +17,14 @@ TxKeyerCwRigControlForm::TxKeyerCwRigControlForm(QWidget *parent)
     indicatorLayout->addStretch();
 
 
-    cwMessagePlayingRow = KeyerWidgetFactory::createCwMessagePlayingRow(this);
+    cwMessagePlayingRow = KeyerWidgetFactory::createCwMessagePlayingRow(nullptr);
 
 
     cwEntry = KeyerWidgetFactory::createCwEntry(this);
     cwEntryLayout = KeyerWidgetFactory::createRowLayout();
     cwEntryLayout->addWidget(cwEntry);
 
-    QVBoxLayout *mainLayout = KeyerWidgetFactory::createMainLayout(this);
+    QVBoxLayout *mainLayout = KeyerWidgetFactory::createMainLayout(nullptr);
     mainLayout->addLayout(indicatorLayout);
     //mainLayout->addLayout(keyerErrorMessageLayout);
     mainLayout->addLayout(cwMessagePlayingRow.layout);
