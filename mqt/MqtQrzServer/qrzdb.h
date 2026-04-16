@@ -11,9 +11,9 @@ class QRZDB : public QObject
 public:
     explicit QRZDB(QObject *parent = nullptr);
 
-    bool createRecord(const QrzCallsignData &csData);
+    bool createRecord(const CallsignData &csData);
 
-    QrzCallsignData getRecord(const QString cs);
+    CallsignData getRecord(const QString cs);
 
     int getRecordCount();
 

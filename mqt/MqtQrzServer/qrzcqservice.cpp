@@ -15,7 +15,7 @@ void QRZCQService::requestLogin(const QString& user_, const QString& password_)
 {
 
 }
-
+/*
 bool QRZCQService::lookupCallsign(const QString& call, QrzCallsignData& result)
 {
     // TEMP: fallback to DB only for now
@@ -27,3 +27,4 @@ bool QRZCQService::lookupCallsign(const QString& call, QrzCallsignData& result)
     emit lookupNetworkRequested(call);
     return false;
 }
+*/

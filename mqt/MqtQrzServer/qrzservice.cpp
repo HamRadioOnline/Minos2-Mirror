@@ -1,7 +1,6 @@
 
-
+#include "CallsignTypes.h"
 #include "qrzservice.h"
-#include "qrzservermainwindow.h"
 #include "MTrace.h"
 
 QRZService::QRZService(QRZDB* db, QObject* parent)
@@ -23,6 +22,7 @@ void QRZService::requestLogin(const QString& user_, const QString& password_)
     loginInProgress = true;
 
     QString user = user_.trimmed();
+    logonCallsign = user;
     QString password = password_.trimmed();
 
     if (user.isEmpty() || password.isEmpty())
@@ -86,7 +86,7 @@ void QRZService::sendUrl(QString url)
 
     if ( reply->error() == QNetworkReply::NoError )
     {
-        stateErrorMessage.clear();
+        qrzStateErrorMessage.clear();
 
         int raw = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         if (raw == 301)
@@ -164,15 +164,12 @@ void QRZService::sendUrl(QString url)
 
         QString msg = QString( "HTTP Get of " ) + url_ + " failed: " + reply->errorString() + sslError;
         logMessage ( QString( "HTTP Get of " ) + url_ + " failed: " + reply->errorString()  + sslError );
-        stateErrorMessage = reply->errorString();
 
-        emit stateErrorMessage(stateErrorMessage);
-        emit sendStatusToRpc(qrzServerStateFlags.getQrzLoggedOnFlag(), reply->errorString());
 
-        //addToErrorTextLabel(msg);
-        //addTextToLogWindow(msg);
-        //qrzServerStateFlags.clear();
-        //QrzServerRpc::getQrzServerRpc()->sendQrzLoggedState(qrzServerStateFlags.getQrzLoggedOnFlag(), reply->errorString());
+        emit sendToErrorTextLabel(reply->errorString());
+        emit sendToLogWindow(reply->errorString());
+        emit sendStatusToRpc(qrzServiceStateFlags.getQrzLoggedOnFlag(), reply->errorString());
+
     }
 }
 
@@ -195,8 +192,9 @@ void QRZService::sessionDataReceived()
     if (!qrzSessionData.getError().isEmpty())
     {
         logMessage(QString("Qrz Error: %1").arg(qrzSessionData.getError()));
-        addToErrorTextLabel(qrzSessionData.getError());
-        addTextToLogWindow(qrzSessionData.getError());
+
+        emit sendToErrorTextLabel(qrzSessionData.getError());
+        emit sendToLogWindow(qrzSessionData.getError());
 
         if (qrzSessionData.getError() != "Connection refused")
         {
@@ -207,39 +205,38 @@ void QRZService::sessionDataReceived()
             {
                 // session has expired, we need to re-connect
 
-                qrzServerStateFlags.clear();
-                logon();
+                loginState = LoginState::Idle;
+                emit logon();
             }
         }
     }
 
-    if (qrzServerStateFlags.getAskLogonFlag())
+    if (loginState == LoginState::LoggingIn)
     {
         if (!qrzSessionData.getKey().isEmpty() && qrzSessionData.getError().isEmpty())
         {
             // logon succesfull
-            qrzServerStateFlags.setQrzLoggedOnFlag(true);
-            qrzServerStateFlags.setAskLogonFlag(false);
+            loginState = LoginState::LoggedIn;
             QString msg = QString("Qrz Logged on Ok with call %1").arg(logonCallsign);
             logMessage(msg);
-            addTextToLogWindow(tr("Qrz logged on Ok with call %1").arg(logonCallsign));
-            addToErrorTextLabel("");
-            addToMessageTextLabel("");
-            setQrzStatusConnected(true);
+            emit sendToLogWindow(tr("Qrz logged on Ok with call %1").arg(logonCallsign));
+            emit sendToErrorTextLabel("");
+            emit sendToMessageTextLabel("");
+            emit sendServiceStateConnected(true);
         }
         else
         {
             // send error message to client
             QString errorMsg = qrzSessionData.getError();
             logMessage(errorMsg);
-            addTextToLogWindow(tr("Logon failed to Qrz.com, logon callsign = %1, error = %2").arg(logonCallsign, errorMsg));
-            setQrzStatusConnected(false);
-            qrzServerStateFlags.clear();
+            emit sendToLogWindow(tr("Logon failed to Qrz.com, logon callsign = %1, error = %2").arg(logonCallsign, errorMsg));
+            emit sendServiceStateConnected(false);
+            qrzServiceStateFlags.clear();
         }
     }
 
 
-    if (qrzServerStateFlags.getAskCallsignFlag())
+    if (qrzServiceStateFlags.getAskCallsignFlag())
     {
         QString stateMsg;
         if (!qrzSessionData.getError().isEmpty())
@@ -264,7 +261,7 @@ void QRZService::sessionDataReceived()
             {
                 QrzServerRpc::getQrzServerRpc()->sendQrzResponseToClusterServer(qrzCallsignData.getCallsign(), "", stateMsg, "", "", "");
             }
-            qrzServerStateFlags.setAskCallsignFlag(false);
+            qrzServiceStateFlags.setAskCallsignFlag(false);
         }
     }
 
@@ -272,7 +269,7 @@ void QRZService::sessionDataReceived()
 
 void QRZService::callsignDataReceived()
 {
-    if (qrzServerStateFlags.getAskCallsignFlag())
+    if (qrzServiceStateFlags.getAskCallsignFlag())
     {
         if (!requestedStation.getLoggerFlag())
         {
@@ -280,9 +277,10 @@ void QRZService::callsignDataReceived()
 
             QString msg = QString("Cluster Qrz Callsign Data received for call = %1, Qra = %2 - Send to Cluster Server").arg(requestedStation.getDxCall(), qrzCallsignData.getQra());
             logMessage(msg);
-            addTextToLogWindow(tr("Cluster Qrz Callsign Data received for call = %1, Qra = %2 - Send to Cluster Server").arg(requestedStation.getDxCall(), qrzCallsignData.getQra()));
 
-            QrzServerRpc::getQrzServerRpc()->sendQrzResponseToClusterServer(requestedStation.getDxCall(), qrzCallsignData.getQra(), QRA_LOOKUP_OK, requestedStation.getSpotterCall(), "", rpcConstants::qrzServerCallOK);
+            emit sendToLogWindow(tr("Cluster Qrz Callsign Data received for call = %1, Qra = %2 - Send to Cluster Server").arg(requestedStation.getDxCall(), qrzCallsignData.getQra()));
+
+            emit sendQrzResponseToClusterServer(requestedStation.getDxCall(), qrzCallsignData.getQra(), QRA_LOOKUP_OK, requestedStation.getSpotterCall(), "", rpcConstants::qrzServerCallOK);
 
         }
         else
@@ -290,16 +288,16 @@ void QRZService::callsignDataReceived()
             // a request from logger
             QString msg = QString(QString("Logger Qrz Callsign Data received for call = %1, Send to Qrz Display in Logger Server").arg(requestedStation.getDxCall()));
             logMessage(msg);
-            addTextToLogWindow(tr("Logger Qrz Callsign Data received for call = %1, Send to Qrz Display in Logger Server").arg(requestedStation.getDxCall()));
+            emit sendToLogWindow(tr("Logger Qrz Callsign Data received for call = %1, Send to Qrz Display in Logger Server").arg(requestedStation.getDxCall()));
             QString stateMsg = "";
 
             qrzCallsignData.setDbRecords(dbRecords);
             qrzCallsignData.setDbRecalls(dbRequests);
             qrzCallsignData.setQrzRecalls(qrzRequests);
-            QrzServerRpc::getQrzServerRpc()->sendQrzResponseToLoggerDisplay(qrzCallsignData, stateMsg, requestedStation.getFromStationName(), requestedStation.getLoggerUuid());
+            emit sendQtrResponseToLoggerDisplay(qrzCallsignData, stateMsg, requestedStation.getFromStationName(), requestedStation.getLoggerUuid());
 
         }
-        qrzServerStateFlags.setAskCallsignFlag(false);
+        qrzServiceStateFlags.setAskCallsignFlag(false);
     }
 }
 
@@ -437,6 +435,11 @@ bool QRZService::lookupCallsign(const QString& call,
 
     emit lookupNetworkRequested(call);
     return false;
+}
+
+void QRZService::parseDXCCData(QXmlStreamReader &xmlData)
+{
+    Q_UNUSED(xmlData)
 }
 
 

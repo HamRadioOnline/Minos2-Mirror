@@ -34,83 +34,8 @@ QT_END_NAMESPACE
 
 class QRZDB;
 class QLabel;
-/*
-class QrzSessionData
-{
-public:
-    QrzSessionData(){}
-
-    void clear()
-    {
-        error.clear();
-        message.clear();
-        key.clear();
-        subExp.clear();
-    }
-
-    void setError(QString error_){error = error_;}
-    QString getError(){return error;}
-
-    void setMessage(QString message_){message = message_;}
-    QString getMessage(){return message;}
-
-    void setKey(QString key_){key = key_;}
-    QString getKey(){return key;}
-
-    void setSubExp(QString subExp_){subExp = subExp_;}
-    QString getSubExp(){return subExp;}
-
-private:
-
-    QString error;
-    QString message;
-    QString key;
-    QString subExp;
 
 
-
-};
-
-class QrzServerStateFlags
-{
-
-public:
-
-    QrzServerStateFlags()
-    {
-        clear();
-    }
-
-    void clear()
-    {
-        askLogonFlag = false;
-        askCallsignFlag = false;
-        qrzLoggedOnFlag = false;
-    }
-
-    bool getAskLogonFlag(){return askLogonFlag;}
-    void setAskLogonFlag(bool state){askLogonFlag = state;}
-
-    bool getAskCallsignFlag(){return askCallsignFlag;}
-    void setAskCallsignFlag(bool state){askCallsignFlag = state;}
-
-    bool getQrzLoggedOnFlag(){return qrzLoggedOnFlag;}
-    void setQrzLoggedOnFlag(bool state){qrzLoggedOnFlag = state;}
-
-
-
-private:
-
-    bool askLogonFlag = false;
-    bool askCallsignFlag = false;
-    bool qrzLoggedOnFlag = false;
-
-
-
-
-};
-
-*/
 
 
 
@@ -167,16 +92,15 @@ private:
 
     int parseTest();
 
-    QrzCallsignData qrzCallsignData;
-    QrzSessionData qrzSessionData;
+
 
     QString askQrzCallsign;
 
     QTimer *checkQrzRequestsTimer;
 
-    QrzServerStateFlags qrzServerStateFlags;
+    //QrzServerStateFlags qrzServerStateFlags;
 
-    QString stateErrorMessage;
+    //QString stateErrorMessage;
 
 
     QString key;

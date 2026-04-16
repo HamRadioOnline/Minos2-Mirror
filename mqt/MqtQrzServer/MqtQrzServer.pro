@@ -29,6 +29,7 @@ SOURCES += \
     servicesconfigmanager.cpp
 
 HEADERS += \
+    CallsignTypes.h \
     callsignservice.h \
     credentialsmanager.h \
     icallsignnetwork.h \

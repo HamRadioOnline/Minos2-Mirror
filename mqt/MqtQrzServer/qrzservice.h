@@ -9,80 +9,9 @@
 
 class QrzServerMainWindow;
 
-class QrzSessionData
-{
-public:
-    QrzSessionData(){}
-
-    void clear()
-    {
-        error.clear();
-        message.clear();
-        key.clear();
-        subExp.clear();
-    }
-
-    void setError(QString error_){error = error_;}
-    QString getError(){return error;}
-
-    void setMessage(QString message_){message = message_;}
-    QString getMessage(){return message;}
-
-    void setKey(QString key_){key = key_;}
-    QString getKey(){return key;}
-
-    void setSubExp(QString subExp_){subExp = subExp_;}
-    QString getSubExp(){return subExp;}
-
-private:
-
-    QString error;
-    QString message;
-    QString key;
-    QString subExp;
 
 
 
-};
-
-class QrzServiceStateFlags
-{
-
-public:
-
-    QrzServiceStateFlags()
-    {
-        clear();
-    }
-
-    void clear()
-    {
-        askLogonFlag = false;
-        askCallsignFlag = false;
-        qrzLoggedOnFlag = false;
-    }
-
-    bool getAskLogonFlag(){return askLogonFlag;}
-    void setAskLogonFlag(bool state){askLogonFlag = state;}
-
-    bool getAskCallsignFlag(){return askCallsignFlag;}
-    void setAskCallsignFlag(bool state){askCallsignFlag = state;}
-
-    bool getQrzLoggedOnFlag(){return qrzLoggedOnFlag;}
-    void setQrzLoggedOnFlag(bool state){qrzLoggedOnFlag = state;}
-
-
-
-private:
-
-    bool askLogonFlag = false;
-    bool askCallsignFlag = false;
-    bool qrzLoggedOnFlag = false;
-
-
-
-
-};
 
 
 
@@ -98,7 +27,7 @@ public:
     QString name() const override;
 
     void requestLogin(const QString& user, const QString& pass) override;
-    void lookupCallsign(const QString& call) override;
+    //void lookupCallsign(const QString& call) override;
 
     void resetSession() override;
     void setCacheAge(int cacheAge) override;
@@ -107,20 +36,25 @@ private:
     QRZDB* m_db = nullptr;
 
     bool loginInProgress = false;
+    QString logonCallsign;  //callsign/username to logon to service
 
-    QrzCallsignData qrzCallsignData;
-    QrzSessionData qrzSessionData;
+    CallsignData qrzCallsignData;
+    SessionData qrzSessionData;
+
+
+    QString qrzStateErrorMessage;
 
     void sendUrl(QString url);
     void performLogin(const QString& user, const QString& pass);
 
     void parseSessionData(QXmlStreamReader &xmlData);
     void parseCallsignData(QXmlStreamReader &xmlData);
-    bool lookupCallsign(const QString &call, QrzCallsignData &result);
+    //bool lookupCallsign(const QString &call, QrzCallsignData &result);
     void logMessage(QString msg);
     void callsignDataReceived();
     QString stripPasswordFromUrl(QString url);
     void sessionDataReceived();
+    void parseDXCCData(QXmlStreamReader &xmlData);
 };
 
 #endif // QRZSERVICE_H

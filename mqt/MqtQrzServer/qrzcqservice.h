@@ -13,7 +13,7 @@ public:
     explicit QRZCQService(QRZDB* db, QObject* parent = nullptr);
     QString name() const override;
     void requestLogin(const QString& user, const QString& pass) override;
-    bool lookupCallsign(const QString& call, QrzCallsignData& result) override;
+    //bool lookupCallsign(const QString& call) override;
 
     void resetSession() override;
     void setCacheAge(int cacheAge) override;

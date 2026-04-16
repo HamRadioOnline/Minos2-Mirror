@@ -132,15 +132,15 @@ QrzServerMainWindow::QrzServerMainWindow(QWidget *parent)
     }
     else if (selectedService == "QRZCQ")
     {
-        callsignService = new QRZCQService(qdb, this);
+        callsignService = new QRZCQService(qdb,this);
     }
     else
     {
-        trace("Unknown provider, defaulting to QRZ");
-        callsignService = new QRZService(qdb, this);
+        trace("Unknown provider");
+
     }
 
-    callsignService = new QRZService(qdb);
+
 /*
     connect(callsignService,
             &CallsignService::loginRequest,
@@ -314,8 +314,8 @@ void QrzServerMainWindow::askCallsignData(QString callsign)
 {
     Callsign cs;
     cs.setFullCall(callsign);
-    QString callsignUrl = QString(QRZURL) + "s=" + qrzSessionData.getKey() + ";callsign=" + callsign;
-    sendUrl(callsignUrl);
+    //QString callsignUrl = QString(QRZURL) + "s=" + qrzSessionData.getKey() + ";callsign=" + callsign;
+    //sendUrl(callsignUrl);
 }
 /*
 void QrzServerMainWindow::sendUrl(QString url)
@@ -673,12 +673,12 @@ void QrzServerMainWindow::parseCallsignData(QXmlStreamReader &xmlData)
         }
     }
 }
-*/
+
 void QrzServerMainWindow::parseDXCCData(QXmlStreamReader &xmlData)
 {
     Q_UNUSED(xmlData)
 }
-
+*/
 
 QString QrzServerMainWindow::getCurrentSelectedService()
 {
