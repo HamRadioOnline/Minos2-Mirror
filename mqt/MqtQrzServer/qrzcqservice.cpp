@@ -11,7 +11,7 @@ QString QRZCQService::name() const
     return "QRZCQ";
 }
 
-void QRZCQService::login(const QString& user_, const QString& password_)
+void QRZCQService::requestLogin(const QString& user_, const QString& password_)
 {
 
 }

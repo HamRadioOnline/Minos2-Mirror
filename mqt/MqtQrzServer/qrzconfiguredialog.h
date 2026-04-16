@@ -32,9 +32,26 @@ public:
     explicit QrzConfigureDialog(QWidget *parent = nullptr);
     ~QrzConfigureDialog();
 
-    QString logCallsign;
-    QString logPassword;
-    int cacheAge = 0;
+    void setServiceName(QString serviceName_){serviceName = serviceName_;}
+    QString getServiceName(){return serviceName;}
+
+    void setQrzLogCallsign(QString callsign){qrzLogCallsign = callsign;}
+    QString getQrzLogCallsign(){return qrzLogCallsign;}
+
+    void setQrzLogPassword(QString password){qrzLogPassword = password;}
+    QString getQrzLogPassword(){return qrzLogPassword;}
+
+    void setQrzCacheAge(int age){qrzCacheAge = age;}
+    int getQrzCacheAge(){return qrzCacheAge;}
+
+    void setQrzCqLogCallsign(QString callsign){qrzCqLogCallsign = callsign;}
+    QString getQrzCqLogCallsign(){return qrzCqLogCallsign;}
+
+    void setQrzCqLogPassword(QString password){qrzCqLogPassword = password;}
+    QString getQrzCqLogPassword(){return qrzCqLogPassword;}
+
+    void setQrzCqCacheAge(int age){qrzCqCacheAge = age;}
+    int getQrzCqCacheAge(){return qrzCqCacheAge;}
 
     bool resetDB = false;
 
@@ -52,6 +69,17 @@ private slots:
 private:
     Ui::QrzConfigureDialog *ui;
     UpperCaseValidator ucValidator;
+
+    QString serviceName;
+
+    QString qrzLogCallsign;
+    QString qrzLogPassword;
+    int qrzCacheAge = 0;
+
+    QString qrzCqLogCallsign;
+    QString qrzCqLogPassword;
+    int qrzCqCacheAge = 0;
+
     void saveSettings();
 };
 

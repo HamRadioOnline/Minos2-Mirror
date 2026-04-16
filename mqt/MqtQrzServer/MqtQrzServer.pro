@@ -17,6 +17,7 @@ mac:ICON=../MinosQRZ.icns
 
 SOURCES += \
     callsignservice.cpp \
+    credentialsmanager.cpp \
     main.cpp \
     qrzconfiguredialog.cpp \
     qrzcqservice.cpp \
@@ -24,10 +25,12 @@ SOURCES += \
     qrzservermainwindow.cpp \
     qrzserverminosparameters.cpp \
     qrzserverrpc.cpp \
-    qrzservice.cpp
+    qrzservice.cpp \
+    servicesconfigmanager.cpp
 
 HEADERS += \
     callsignservice.h \
+    credentialsmanager.h \
     icallsignnetwork.h \
     qrzconfiguredialog.h \
     qrzcqservice.h \
@@ -35,7 +38,8 @@ HEADERS += \
     qrzservermainwindow.h \
     qrzserverminosparameters.h \
     qrzserverrpc.h \
-    qrzservice.h
+    qrzservice.h \
+    servicesconfigmanager.h
 
 FORMS += \
     qrzconfiguredialog.ui \

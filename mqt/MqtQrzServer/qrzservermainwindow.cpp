@@ -30,6 +30,8 @@
 #include "callsign.h"
 #include "qrzservice.h"
 #include "qrzcqservice.h"
+#include "credentialsmanager.h"
+#include "servicesconfigmanager.h"
 
 #include "qrzconfiguredialog.h"
 #include "ui_qrzservermainwindow.h"
@@ -59,7 +61,7 @@ QrzServerMainWindow::QrzServerMainWindow(QWidget *parent)
     QByteArray geometry = settings.getSettings().value("geometry").toByteArray();
     if (geometry.size() > 0)
         restoreGeometry(geometry);
-
+/*
     QString fileName = getDirectoryLocation(dlConfiguration) + "/QRZServer.ini";
     QSettings config(fileName, QSettings::IniFormat);
 
@@ -78,7 +80,7 @@ QrzServerMainWindow::QrzServerMainWindow(QWidget *parent)
             config.setValue("password", password);
         }
     }
-
+*/
     createCloseEvent();
 
     connect(&LogTimer, &QTimer::timeout, this, &QrzServerMainWindow::LogTimerTimer);
@@ -103,15 +105,8 @@ QrzServerMainWindow::QrzServerMainWindow(QWidget *parent)
     connect(pingStateTimer, &QTimer::timeout, this, [=](){onPingStateTimerTimeout();});
     pingStateTimer->start(5000);
 
-    ui->messageTextWindow->isReadOnly();
-    addTextToLogWindow(tr("Note! An xml subscription is required to look up QRA data on QRZ.com"));
+    ui->messageTextWindow->setReadOnly(true);
 
-    delayedAction(this, [=]()
-    {
-        trace("Starting logon");
-        logon();
-    }
-    );
 
     sblabel0 = new QLabel( "" );
     statusBar() ->addWidget( sblabel0, 6 );
@@ -126,18 +121,16 @@ QrzServerMainWindow::QrzServerMainWindow(QWidget *parent)
 
     // select the callsign service
 
-    QString service_fileName = getDirectoryLocation(dlConfiguration) + "/QRZServer.ini";
-    QSettings service_config(service_fileName, QSettings::IniFormat);
-
-    QString provider = service_config.value("provider", "QRZ").toString().toUpper();
+    QString selectedService = getCurrentSelectedService().toUpper();
+    trace(QString("Callsign Service Selected = %1").arg(selectedService));
 
     callsignService = nullptr;
 
-    if (provider == "QRZ")
+    if (selectedService == "QRZ")
     {
         callsignService = new QRZService(qdb, this);
     }
-    else if (provider == "QRZCQ")
+    else if (selectedService == "QRZCQ")
     {
         callsignService = new QRZCQService(qdb, this);
     }
@@ -148,7 +141,7 @@ QrzServerMainWindow::QrzServerMainWindow(QWidget *parent)
     }
 
     callsignService = new QRZService(qdb);
-
+/*
     connect(callsignService,
             &CallsignService::loginRequest,
             this,
@@ -162,7 +155,23 @@ QrzServerMainWindow::QrzServerMainWindow(QWidget *parent)
             {
                 askCallsignData(call);
             });
+*/
+    CredentialsManager credentialsManager(getDirectoryLocation(dlConfiguration) + "/QRZServer.ini");
+    ServiceCredentials srvCredentials = credentialsManager.getCredentials(selectedService);
 
+    callsignService-requestLogin(srvCredentials.username, srvCredentials.password);
+
+
+/*
+    addTextToLogWindow(tr("Note! An xml subscription is required to look up QRA data on QRZ.com"));
+    trace("Before delayedAction setup");
+    delayedAction(this, [this]()
+                  {
+                      trace("Starting logon");
+                      logon();
+                  }
+    );
+*/
 }
 
 QrzServerMainWindow::~QrzServerMainWindow()
@@ -308,7 +317,7 @@ void QrzServerMainWindow::askCallsignData(QString callsign)
     QString callsignUrl = QString(QRZURL) + "s=" + qrzSessionData.getKey() + ";callsign=" + callsign;
     sendUrl(callsignUrl);
 }
-
+/*
 void QrzServerMainWindow::sendUrl(QString url)
 {
     trace(QString("sendUrl - %1").arg(stripPasswordFromUrl(url)));
@@ -664,64 +673,125 @@ void QrzServerMainWindow::parseCallsignData(QXmlStreamReader &xmlData)
         }
     }
 }
-
+*/
 void QrzServerMainWindow::parseDXCCData(QXmlStreamReader &xmlData)
 {
     Q_UNUSED(xmlData)
+}
+
+
+QString QrzServerMainWindow::getCurrentSelectedService()
+{
+    QString fileName = getDirectoryLocation(dlConfiguration) + "/QRZServer.ini";
+    QSettings config(fileName, QSettings::IniFormat);
+
+    config.beginGroup("General");
+    QString currentService = config.value("serviceName", "").toString();
+    config.endGroup();
+
+    return currentService;
+}
+
+void QrzServerMainWindow::saveCurrentSelectedService(const QString& serviceName )
+{
+    QString fileName = getDirectoryLocation(dlConfiguration) + "/QRZServer.ini";
+    QSettings config(fileName, QSettings::IniFormat);
+
+    config.beginGroup("General");
+    config.setValue("serviceName",serviceName);
+    config.endGroup();
 }
 
 void QrzServerMainWindow::onConfigure()
 {
     QrzConfigureDialog conf;
 
-    conf.logCallsign = logonCallsign;
-    conf.logPassword = password;
-    conf.cacheAge = cacheAge;
+    QString currentServiceName = getCurrentSelectedService();
+
+    QString fileName = getDirectoryLocation(dlConfiguration) + "/QRZServer.ini";
+
+    CredentialsManager credentialsManager(fileName);
+
+    ServiceCredentials qrzServiceCredentials = credentialsManager.getCredentials("QRZ");
+    ServiceCredentials qrzCqServiceCredentials = credentialsManager.getCredentials("QRZCQ");
+
+    conf.setQrzLogCallsign(qrzServiceCredentials.username);
+    conf.setQrzLogPassword(qrzServiceCredentials.password);
+
+    conf.setQrzCqLogCallsign(qrzCqServiceCredentials.username);
+    conf.setQrzCqLogPassword(qrzCqServiceCredentials.password);
+
+    ServicesConfigManager servicesConfigManager(fileName);
+    ServiceConfig qrzServiceConfig = servicesConfigManager.getServicesConfig("QRZ");
+    ServiceConfig qrzCqServiceConfig = servicesConfigManager.getServicesConfig("QRZCQ");
+
+    conf.setQrzCacheAge(qrzServiceConfig.cacheAge);
+    conf.setQrzCqCacheAge(qrzServiceConfig.cacheAge);
 
     int ret = conf.exec();
     if (ret == QDialog::Accepted)
     {
-        bool callsignChanged = false;
-        bool passwordChanged = false;
+        // --- QRZ credentials ---
+        ServiceCredentials newQrzCreds;
+        newQrzCreds.username = conf.getQrzLogCallsign().trimmed();
+        newQrzCreds.password = conf.getQrzLogPassword().trimmed();
 
-        QString fileName = getDirectoryLocation(dlConfiguration) + "/QRZServer.ini";
-        QSettings config(fileName, QSettings::IniFormat);
+        bool qrzCredsChanged =
+            credentialsManager.setCredentialsIfChanged("QRZ", newQrzCreds);
 
-        cacheAge = conf.cacheAge;
+        // --- QRZCQ credentials ---
+        ServiceCredentials newQrzCqCreds;
+        newQrzCqCreds.username = conf.getQrzCqLogCallsign().trimmed();
+        newQrzCqCreds.password = conf.getQrzCqLogPassword().trimmed();
 
-        if (cacheAge != config.value("cacheAge"))
+        bool qrzCqCredsChanged =
+            credentialsManager.setCredentialsIfChanged("QRZCQ", newQrzCqCreds);
+
+        // --- QRZ config ---
+        ServiceConfig newQrzCfg;
+        newQrzCfg.cacheAge = conf.getQrzCacheAge();
+
+        bool qrzCfgChanged =
+            servicesConfigManager.setConfigIfChanged("QRZ", newQrzCfg);
+
+        // --- QRZCQ config ---
+        ServiceConfig newQrzCqCfg;
+        newQrzCqCfg.cacheAge = conf.getQrzCqCacheAge();
+
+        bool qrzCqCfgChanged = servicesConfigManager.setConfigIfChanged("QRZCQ", newQrzCqCfg);
+
+        // --- Notify services if needed ---
+        if (qrzCredsChanged && callsignService)
         {
-            config.setValue("cacheAge", cacheAge);
+            callsignService->resetSession();
         }
 
-        if (conf.logCallsign.trimmed() != config.value("logonCallsign", "").toString())
+        if (qrzCqCredsChanged && callsignService)
         {
-            logonCallsign = conf.logCallsign.trimmed();
-            config.setValue("logonCallsign", logonCallsign);
-            callsignChanged = true;
+            callsignService->resetSession();
         }
 
-        if (conf.logPassword.trimmed() != config.value("pasword", "").toString())
+        if (qrzCfgChanged && callsignService)
         {
-            password = conf.logPassword.trimmed();
-            config.setValue("password", password);
-            passwordChanged = true;
+            callsignService->setCacheAge(newQrzCfg.cacheAge);
         }
 
-        if (callsignChanged || passwordChanged || !logonCallsign.isEmpty() || !password.isEmpty())
+        if (qrzCqCfgChanged && callsignService)
         {
-            qrzSessionData.clear();
+            callsignService->setCacheAge(newQrzCqCfg.cacheAge);
         }
 
+        // --- DB reset ---
         if (conf.resetDB)
         {
-            qdb->resetDB();
-            delete qdb;
-            qdb = new QRZDB(this);
-
-            dbRecords = qdb->getRecordCount();
-            dbRequests = 0;
-            qrzRequests = 0;
+            if (currentServiceName == "QRZ" && callsignService)
+            {
+                callsignService->resetDatabase();
+            }
+            else if (currentServiceName == "QRZCQ" && callsignService)
+            {
+                callsignService->resetDatabase();
+            }
         }
     }
 }

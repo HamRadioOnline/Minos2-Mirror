@@ -34,7 +34,7 @@ QT_END_NAMESPACE
 
 class QRZDB;
 class QLabel;
-
+/*
 class QrzSessionData
 {
 public:
@@ -110,7 +110,7 @@ private:
 
 };
 
-
+*/
 
 
 
@@ -183,7 +183,7 @@ private:
 
     void closeEvent(QCloseEvent *event) override;
 
-    void sendUrl(QString url);
+    //void sendUrl(QString url);
     void parseCallsignData(QXmlStreamReader &xmlData);
     void parseSessionData(QXmlStreamReader &xmlData);
     void parseDXCCData(QXmlStreamReader &xmlData);
@@ -197,5 +197,7 @@ private:
     void addToMessageTextLabel(QString message);
     void setQrzStatusConnected(bool state);
     bool askDBCallsignData(QString callsign);
+    QString getCurrentSelectedService();
+    void saveCurrentSelectedService(const QString &serviceName);
 };
 #endif // QRZSERVERMAINWINDOW_H

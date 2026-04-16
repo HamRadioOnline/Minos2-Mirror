@@ -12,10 +12,11 @@ class QRZCQService : public CallsignService
 public:
     explicit QRZCQService(QRZDB* db, QObject* parent = nullptr);
     QString name() const override;
-    void login(const QString& user, const QString& password) override;
+    void requestLogin(const QString& user, const QString& pass) override;
     bool lookupCallsign(const QString& call, QrzCallsignData& result) override;
 
-
+    void resetSession() override;
+    void setCacheAge(int cacheAge) override;
 
 private:
     QRZDB* m_db;

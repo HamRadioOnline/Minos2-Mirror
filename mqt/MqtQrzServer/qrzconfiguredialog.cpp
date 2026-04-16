@@ -26,7 +26,11 @@ QrzConfigureDialog::QrzConfigureDialog(QWidget *parent) :
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    ui->logonCallsignLineEdit->setValidator(&ucValidator);
+    ui->qrzLogonCallsignLineEdit->setValidator(&ucValidator);
+    ui->qrzCqLogonCallsignLineEdit->setValidator(&ucValidator);
+
+    QStringList listOfServices = {"", "QRZ, QRZCQ"};
+    ui->callsignServiceComboBox->addItems(listOfServices);
 }
 
 QrzConfigureDialog::~QrzConfigureDialog()
@@ -36,9 +40,16 @@ QrzConfigureDialog::~QrzConfigureDialog()
 
 int QrzConfigureDialog::exec()
 {
-    ui->logonCallsignLineEdit->setText(logCallsign);
-    ui->qrzPasswordLineEdit->setText(logPassword);
-    ui->cacheAge->setValue(cacheAge);
+
+    ui->callsignServiceComboBox->setCurrentText(getServiceName());
+
+    ui->qrzLogonCallsignLineEdit->setText(getQrzLogCallsign());
+    ui->qrzPasswordLineEdit->setText(getQrzLogPassword());
+    ui->qrzCacheAge->setValue(getQrzCacheAge());
+
+    ui->qrzCqLogonCallsignLineEdit->setText(getQrzCqLogCallsign());
+    ui->qrzCqPasswordLineEdit->setText(getQrzCqLogPassword());
+    ui->qrzCqCacheAge->setValue(getQrzCqCacheAge());
 
     return QDialog::exec();
 }
@@ -52,9 +63,17 @@ void QrzConfigureDialog::on_resetDBButton_clicked()
 
 void QrzConfigureDialog::on_OKButton_clicked()
 {
-    logCallsign = ui->logonCallsignLineEdit->text().trimmed();
-    logPassword = ui->qrzPasswordLineEdit->text().trimmed();
-    cacheAge = ui->cacheAge->value();
+
+    setServiceName(ui->callsignServiceComboBox->currentText());
+
+    setQrzLogCallsign(ui->qrzLogonCallsignLineEdit->text().trimmed());
+    setQrzLogCallsign(ui->qrzLogonCallsignLineEdit->text().trimmed());
+
+    setQrzCqLogCallsign(ui->qrzCqLogonCallsignLineEdit->text().trimmed());
+    setQrzCqLogCallsign(ui->qrzCqLogonCallsignLineEdit->text().trimmed());
+
+    setQrzCacheAge(ui->qrzCacheAge->value());
+    setQrzCqCacheAge(ui->qrzCqCacheAge->value());
 
     accept();
 }
