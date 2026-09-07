@@ -25,6 +25,7 @@ public:
     explicit QSOLogFrame(QWidget *parent);
     ~QSOLogFrame() override;
 
+    void doFontChanged();
     void setAsEdit(bool s, QString b);
 
     bool savePartial(  );

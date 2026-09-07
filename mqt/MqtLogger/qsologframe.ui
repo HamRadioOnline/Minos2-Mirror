@@ -956,7 +956,7 @@ to</string>
         <string>Log the QSO, or move to next unfilled field</string>
        </property>
        <property name="text">
-        <string>Log</string>
+        <string>Log QSO</string>
        </property>
       </widget>
      </item>
@@ -1130,12 +1130,12 @@ to</string>
    <header>QSOTextEditFrame.h</header>
    <container>1</container>
   </customwidget>
-   <customwidget>
-    <class>MinosPanel</class>
-    <extends>QFrame</extends>
-    <header>minospanel.h</header>
-    <container>1</container>
-   </customwidget>
+  <customwidget>
+   <class>MinosPanel</class>
+   <extends>QFrame</extends>
+   <header>minospanel.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections/>

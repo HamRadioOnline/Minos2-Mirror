@@ -142,7 +142,7 @@ void QSOMapFrame::setPanelFont()
 {
     MinosPanel::setPanelFont();
 
-    int fs = panelFont.pointSize();
+    int fs = getPanelFont().pointSize();
     emit setFontSize(fs);
     doRedraw(ct, bdrawGrid, bdrawLines, drawSpots, showLoc, showCall, locTL, locBR, showNav);
 }
@@ -365,7 +365,7 @@ void QSOMapFrame::doRedraw(const BaseContestLog *ctest, bool grid, bool lines, b
     showCall = sc;
     emit showCallsb(showCall);
 
-    int fs = panelFont.pointSize();
+    int fs = getPanelFont().pointSize();
     emit setFontSize(fs);
 
     locTL = tl;

@@ -61,6 +61,7 @@ TQSOEditDlg::TQSOEditDlg(QWidget *parent, bool unfilled )
     connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::MatchTreeSelected, this, &TQSOEditDlg::MatchTreeSelected);
 
     ui->GJVQSOEditFrame->setXferEnabled(false, contest, "Edit");
+
 }
 TQSOEditDlg::~TQSOEditDlg()
 {
@@ -70,6 +71,7 @@ int TQSOEditDlg::exec()
 {
     ui->GJVQSOEditFrame->unfilled = unfilled;
 
+    ui->GJVQSOEditFrame->setPanelFont();
     ui->GJVQSOEditFrame->initialise( );
     ui->GJVQSOEditFrame->setContest( contest );
 

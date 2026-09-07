@@ -534,46 +534,46 @@ void KSTMainWindow::buildRow(KSTPageFrame *cp, SCRow &scrow, MinosSplitter *spli
 
             case sctkASActive:
                 elementScrollArea->setWidget(kstASActiveFrame);
-                kstASActiveFrame->fontsize = scele.fontSize;
+                kstASActiveFrame->setFontsize(scele.fontSize);
                 break;
 
             case sctkCallList:
                 hs->addWidget(kstCallsFrame);
-                kstCallsFrame->fontsize = scele.fontSize;
+                kstCallsFrame->setFontsize(scele.fontSize);
                 kstCallsFrame->setVisible(true);
                 break;
 
             case sctkAirScout:
                 hs->addWidget(kstPlanesFrame);
-                kstPlanesFrame->fontsize = scele.fontSize;
+                kstPlanesFrame->setFontsize(scele.fontSize);
                 kstPlanesFrame->setVisible(true);
                 break;
 
             case sctkMessageList:
                 hs->addWidget(kstMsgFrame);
-                kstMsgFrame->fontsize = scele.fontSize;
+                kstMsgFrame->setFontsize(scele.fontSize);
                 kstMsgFrame->setVisible(true);
                 break;
 
             case sctkMeepList:
                 hs->addWidget(kstTomeFrame);
-                kstTomeFrame->fontsize = scele.fontSize;
+                kstTomeFrame->setFontsize(scele.fontSize);
                 kstTomeFrame->setVisible(true);
                 break;
 
             case sctkLogins:
                 elementScrollArea->setWidget(kstLoginFrame);
-                kstLoginFrame->fontsize = scele.fontSize;
+                kstLoginFrame->setFontsize(scele.fontSize);
                 break;
 
             case sctkSendMeep:
                 elementScrollArea->setWidget(kstSendMeepFrame);
-                kstSendMeepFrame->fontsize = scele.fontSize;
+                kstSendMeepFrame->setFontsize(scele.fontSize);
                 break;
 
             case sctkButtons:
                 elementScrollArea->setWidget(kstButtonsFrame);
-                kstButtonsFrame->fontsize = scele.fontSize;
+                kstButtonsFrame->setFontsize(scele.fontSize);
                 break;
 
             case sctSplit:

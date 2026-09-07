@@ -277,10 +277,15 @@ void QSOLogFrame::onContestBandChanged(BaseContestLog *c)
 }
 void QSOLogFrame::on_FontChanged()
 {
+    doFontChanged();
+}
+
+void QSOLogFrame::doFontChanged()
+{
     int lcfont;
     TContestApp::getContestApp() ->getIntDisplayProfile(edpQSOFieldFont, lcfont);
 
-    QFont cf = panelFont;
+    QFont cf = getPanelFont();
     qreal fs = cf.pointSizeF();
     int fsi = static_cast<int>(fs * lcfont/100.0);
     cf.setPointSize(fsi);
@@ -306,7 +311,7 @@ void QSOLogFrame::on_FontChanged()
     }
     else
     {
-        cf = panelFont;
+        cf = getPanelFont();
     }
     ui->CallsignFrame->getTextEditlabel()->setFont(cf);
     ui->RSTTxFrame->getTextEditlabel()->setFont(cf);

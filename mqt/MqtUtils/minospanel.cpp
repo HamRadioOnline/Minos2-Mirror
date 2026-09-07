@@ -24,6 +24,26 @@ void MinosPanel::setPanelFont()
         w->update();
     }
  }
+
+void MinosPanel::setFontsize(int newFontsize)
+{
+    fontsize = newFontsize;
+}
+int MinosPanel::getFontsize() const
+{
+    return fontsize;
+}
+
+QFont MinosPanel::getPanelFont() const
+{
+    return panelFont;
+}
+
+void MinosPanel::setPanelFont(QFont &f)
+{
+    panelFont = f;
+}
+
 void MinosPanel::onSetFont()
 {
     setPanelFont();

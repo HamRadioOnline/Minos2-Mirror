@@ -321,7 +321,7 @@ void BandmapClientFrame::on_waitClusterServerLoadedTimeout()
 
 void BandmapClientFrame::on_FontChanged()
 {
-    QFont cf = panelFont;
+    QFont cf = getPanelFont();
     bandmapView->onFontChanged(cf);
 }
 

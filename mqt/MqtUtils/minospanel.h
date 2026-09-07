@@ -10,7 +10,14 @@ public:
     explicit MinosPanel(QWidget *parent = nullptr);
 
     virtual void setPanelFont();
+    int getFontsize() const;
 
+    QFont getPanelFont() const;
+    void setPanelFont(QFont &f);
+
+    void setFontsize(int newFontsize);
+
+private:
     int fontsize = 100;
     QFont panelFont;
 private slots:
