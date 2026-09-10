@@ -206,6 +206,10 @@ BandmapClientFrame::BandmapClientFrame(QWidget *parent):
     ui->zoomSpinner->setMaximum(dialData::MAX_ZOOM_LEVEL);
 
     bmsdb = QSharedPointer<BandMapSpotDB>(new BandMapSpotDB());
+
+    adjustMargins(ui->connectFrame->layout(), 2, 0, 0, 0, 0);
+    adjustMargins(ui->actionFrame->layout(), 2, 0, 0, 0, 0);
+
 }
 void BandmapClientFrame::traceMsg(QString msg)
 {
