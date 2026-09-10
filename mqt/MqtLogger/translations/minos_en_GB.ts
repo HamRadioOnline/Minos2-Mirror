@@ -13,9 +13,9 @@
     <name>BandmapClientFrame</name>
     <message>
         <location filename="../bandmapclientframe.ui" line="32"/>
-        <location filename="../bandmapclientframe.cpp" line="582"/>
-        <location filename="../bandmapclientframe.cpp" line="608"/>
-        <location filename="../bandmapclientframe.cpp" line="628"/>
+        <location filename="../bandmapclientframe.cpp" line="586"/>
+        <location filename="../bandmapclientframe.cpp" line="612"/>
+        <location filename="../bandmapclientframe.cpp" line="632"/>
         <source>Bandmap</source>
         <translation type="unfinished"></translation>
     </message>
@@ -159,52 +159,52 @@ Unworked</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bandmapclientframe.cpp" line="583"/>
+        <location filename="../bandmapclientframe.cpp" line="587"/>
         <source>Please confirm you want to delete this spot - %1?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bandmapclientframe.cpp" line="609"/>
+        <location filename="../bandmapclientframe.cpp" line="613"/>
         <source>Please confirm you want to delete all the spots in the bandmap?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bandmapclientframe.cpp" line="629"/>
+        <location filename="../bandmapclientframe.cpp" line="633"/>
         <source>Please confirm you want to delete all the cluster spots in the bandmap?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bandmapclientframe.cpp" line="707"/>
+        <location filename="../bandmapclientframe.cpp" line="711"/>
         <source>Filter %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bandmapclientframe.cpp" line="1708"/>
+        <location filename="../bandmapclientframe.cpp" line="1716"/>
         <source>Bandmap Spot Filters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bandmapclientframe.cpp" line="1783"/>
+        <location filename="../bandmapclientframe.cpp" line="1791"/>
         <source>Mouse in frame, updates paused</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bandmapclientframe.cpp" line="1513"/>
+        <location filename="../bandmapclientframe.cpp" line="1521"/>
         <source>Cluster Server Not Running</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bandmapclientframe.cpp" line="1546"/>
+        <location filename="../bandmapclientframe.cpp" line="1554"/>
         <source>Connected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bandmapclientframe.cpp" line="1556"/>
+        <location filename="../bandmapclientframe.cpp" line="1564"/>
         <source>Disconnected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bandmapclientframe.cpp" line="1666"/>
+        <location filename="../bandmapclientframe.cpp" line="1674"/>
         <source>Freq out of band</source>
         <translation type="unfinished"></translation>
     </message>
@@ -212,33 +212,33 @@ Unworked</source>
 <context>
     <name>BandmapView</name>
     <message>
-        <location filename="../bandmapview.cpp" line="1126"/>
+        <location filename="../bandmapview.cpp" line="1130"/>
         <source>%1%2CQ Frequency @ .%3%4%5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bandmapview.cpp" line="1179"/>
+        <location filename="../bandmapview.cpp" line="1183"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bandmapview.cpp" line="1307"/>
+        <location filename="../bandmapview.cpp" line="1311"/>
         <source>CQ Frequency = %1
 The mode is %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bandmapview.cpp" line="1336"/>
+        <location filename="../bandmapview.cpp" line="1340"/>
         <source>The computed mode is</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bandmapview.cpp" line="1339"/>
+        <location filename="../bandmapview.cpp" line="1343"/>
         <source>The mode is</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../bandmapview.cpp" line="1346"/>
+        <location filename="../bandmapview.cpp" line="1350"/>
         <source>%1 - %2, %3, %4, %5 [%6 %7 @ %8] 
 %9 %10
 %11
@@ -2224,7 +2224,7 @@ Move between components of a group using the mouse or up/down arrow keys.
 <context>
     <name>LocGridModel</name>
     <message>
-        <location filename="../locframe.cpp" line="537"/>
+        <location filename="../locframe.cpp" line="543"/>
         <source>Single click to transfer the square centre bearing ( %1 ) to rotator control;
 Double click on an edge square to extend the area of the map.</source>
         <translation type="unfinished"></translation>
@@ -2864,7 +2864,7 @@ to</source>
     </message>
     <message>
         <location filename="../qsologframe.ui" line="171"/>
-        <location filename="../qsologframe.cpp" line="845"/>
+        <location filename="../qsologframe.cpp" line="850"/>
         <source>Catch-up (Post Entry)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2886,6 +2886,11 @@ to</source>
     <message>
         <location filename="../qsologframe.ui" line="573"/>
         <source>Last Spot Sent: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qsologframe.ui" line="959"/>
+        <source>Log QSO</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2995,7 +3000,7 @@ to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="2635"/>
+        <location filename="../qsologframe.cpp" line="2640"/>
         <source>No QSO entry field focussed!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3012,11 +3017,6 @@ to</source>
     <message>
         <location filename="../qsologframe.ui" line="956"/>
         <source>Log the QSO, or move to next unfilled field</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qsologframe.ui" line="959"/>
-        <source>Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3122,17 +3122,17 @@ to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="667"/>
+        <location filename="../qsologframe.cpp" line="672"/>
         <source>Return to Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="854"/>
+        <location filename="../qsologframe.cpp" line="859"/>
         <source>End Catch-up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="2361"/>
+        <location filename="../qsologframe.cpp" line="2366"/>
         <source>This Contact has changed: Shall I log the changes?
 
 Yes         - Log as shown
@@ -3140,69 +3140,69 @@ No          - Discard changes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="2614"/>
+        <location filename="../qsologframe.cpp" line="2619"/>
         <source>Read Only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="2618"/>
+        <location filename="../qsologframe.cpp" line="2623"/>
         <source>Protected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="2622"/>
+        <location filename="../qsologframe.cpp" line="2627"/>
         <source>Protected by age of contest</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="3037"/>
+        <location filename="../qsologframe.cpp" line="3042"/>
         <source>Change mode to CW?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="3040"/>
-        <location filename="../qsologframe.cpp" line="3051"/>
-        <location filename="../qsologframe.cpp" line="3060"/>
+        <location filename="../qsologframe.cpp" line="3045"/>
+        <location filename="../qsologframe.cpp" line="3056"/>
+        <location filename="../qsologframe.cpp" line="3065"/>
         <source>Please check the signal reports, and log the contact</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="3048"/>
+        <location filename="../qsologframe.cpp" line="3053"/>
         <source>Change mode to PH?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="3057"/>
+        <location filename="../qsologframe.cpp" line="3062"/>
         <source>Change mode to USB?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="3104"/>
+        <location filename="../qsologframe.cpp" line="3109"/>
         <source>Spot Last Logged (%1) </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="3175"/>
+        <location filename="../qsologframe.cpp" line="3180"/>
         <source>&quot;Serial sent&quot; is too high - please confirm that this is correct?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="3177"/>
+        <location filename="../qsologframe.cpp" line="3182"/>
         <source>Do you want to enter the missing contacts later?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="3410"/>
+        <location filename="../qsologframe.cpp" line="3415"/>
         <source>Meep from %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="3595"/>
+        <location filename="../qsologframe.cpp" line="3600"/>
         <source>Start of QSOs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qsologframe.cpp" line="3630"/>
+        <location filename="../qsologframe.cpp" line="3635"/>
         <source>End of QSOs</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5431,12 +5431,12 @@ Please confirm this action by pressing &quot;Yes&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tqsoeditdlg.cpp" line="81"/>
+        <location filename="../tqsoeditdlg.cpp" line="83"/>
         <source>Completing unfilled contacts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tqsoeditdlg.cpp" line="85"/>
+        <location filename="../tqsoeditdlg.cpp" line="87"/>
         <source>Editing QSO</source>
         <translation type="unfinished"></translation>
     </message>

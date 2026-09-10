@@ -183,12 +183,12 @@
 <context>
     <name>BaseContestLog</name>
     <message>
-        <location filename="../contest.cpp" line="706"/>
+        <location filename="../contest.cpp" line="731"/>
         <source>DUPLICATE OF </source>
         <translation>Duplicata de </translation>
     </message>
     <message>
-        <location filename="../contest.cpp" line="722"/>
+        <location filename="../contest.cpp" line="747"/>
         <source>DUP OF</source>
         <translation>Duplicata de</translation>
     </message>
@@ -1227,32 +1227,32 @@
 <context>
     <name>ContestScore</name>
     <message>
-        <location filename="../contest.cpp" line="2254"/>
+        <location filename="../contest.cpp" line="2280"/>
         <source>Score: %1 Qsos; %2 pts; (%3 countries); %4 locs; bonuses %5(%6) = %7</source>
         <translation>Score: %1 Qsos; %2 pts; (%3 pays); %4 locs; bonuses %5(%6) = %7</translation>
     </message>
     <message>
-        <location filename="../contest.cpp" line="2262"/>
+        <location filename="../contest.cpp" line="2288"/>
         <source>Score: %1 Qsos; %2 pts; %3 countries; %4 districts; %5 locs; bonuses %6(%7) = %8</source>
         <translation>Score: %1 Qsos; %2 pts; %3 pays; %4 quartiers; %5 locs; bonuses %6(%7) = %8</translation>
     </message>
     <message>
-        <location filename="../contest.cpp" line="2270"/>
+        <location filename="../contest.cpp" line="2296"/>
         <source>Score: %1 Qsos; %2 pts; %3 countries; %4 locs; bonuses %5(%6) = %7</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../contest.cpp" line="2278"/>
+        <location filename="../contest.cpp" line="2304"/>
         <source>Score: %1 Qsos; %2 pts; %3%4 countries%5; bonuses %6(%7) = %8</source>
         <translation>Score: %1 Qsos; %2 pts; %3%4 pays%5; bonuses %6(%7) = %8</translation>
     </message>
     <message>
-        <location filename="../contest.cpp" line="2288"/>
+        <location filename="../contest.cpp" line="2314"/>
         <source>Score: %1 Qsos; %2 pts;%3%4 countries%5;%6%7 districts%8; %9%10 locators %13 = %14</source>
         <translation>Score: %1 Qsos; %2 pts;%3%4 pays%5;%6%7 quartiers%8; %9%10 locators %13 = %14</translation>
     </message>
     <message>
-        <location filename="../contest.cpp" line="2295"/>
+        <location filename="../contest.cpp" line="2321"/>
         <source>Score: %1 Qsos; %2 pts;%3%4 countries%5;%6%7 locators %8 = %9</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1260,17 +1260,17 @@
 <context>
     <name>CountryList</name>
     <message>
-        <location filename="../MultsImpl.cpp" line="490"/>
+        <location filename="../MultsImpl.cpp" line="491"/>
         <source>CT9 Country File</source>
         <translation>CT9 Fichier  des Pays</translation>
     </message>
     <message>
-        <location filename="../MultsImpl.cpp" line="574"/>
+        <location filename="../MultsImpl.cpp" line="575"/>
         <source>Failed to open %1 (%2)</source>
         <translation>L&apos;ouverture du fichier %1 (%2)  a échoué</translation>
     </message>
     <message>
-        <location filename="../MultsImpl.cpp" line="755"/>
+        <location filename="../MultsImpl.cpp" line="757"/>
         <source>Synonym ranges no longer allowed : %1 for %2</source>
         <translation>Les plages de synonymes ne sont plus autorisées: %1 pour %2</translation>
     </message>
@@ -1278,7 +1278,7 @@
 <context>
     <name>CountrySynonymList</name>
     <message>
-        <location filename="../MultsImpl.cpp" line="730"/>
+        <location filename="../MultsImpl.cpp" line="732"/>
         <source>Country Synonym File</source>
         <translation>Fichier des synonymes de Pays</translation>
     </message>
@@ -1477,32 +1477,32 @@
 <context>
     <name>DisplayContestContact</name>
     <message>
-        <location filename="../DisplayContestContact.cpp" line="429"/>
+        <location filename="../DisplayContestContact.cpp" line="397"/>
         <source>DELETED</source>
         <translation>SUPPRIMÉ</translation>
     </message>
     <message>
-        <location filename="../DisplayContestContact.cpp" line="489"/>
+        <location filename="../DisplayContestContact.cpp" line="457"/>
         <source>MAN</source>
         <translation>MANUEL</translation>
     </message>
     <message>
-        <location filename="../DisplayContestContact.cpp" line="559"/>
+        <location filename="../DisplayContestContact.cpp" line="527"/>
         <source>DEL</source>
         <translation>SUPPRIMÉ</translation>
     </message>
     <message>
-        <location filename="../DisplayContestContact.cpp" line="562"/>
+        <location filename="../DisplayContestContact.cpp" line="530"/>
         <source>N/S</source>
         <translation>NON SIGNIFICATIF</translation>
     </message>
     <message>
-        <location filename="../DisplayContestContact.cpp" line="569"/>
+        <location filename="../DisplayContestContact.cpp" line="537"/>
         <source>DUP</source>
         <translation>DUPLIQUER</translation>
     </message>
     <message>
-        <location filename="../DisplayContestContact.cpp" line="650"/>
+        <location filename="../DisplayContestContact.cpp" line="618"/>
         <source>UNFILLED CONTACT </source>
         <translation>CONTACT NON REMPLI </translation>
     </message>
