@@ -1819,13 +1819,16 @@ bool TSingleLogFrame::isBandMapLoaded()
 
 void TSingleLogFrame::on_setClusterTXSpotEnableState(QString state)
 {
-   bool txEnableState = false;
-    if (state == SPOT_TX_ON)
+
+    if (!state.isEmpty())
     {
-        txEnableState = true;
+
+        SendSpotFlags txSpotMode = static_cast<SendSpotFlags>(state.toInt());
+
+        GJVQSOLogFrame->setClusterTXSpotEnableState(txSpotMode);
+
     }
 
-    GJVQSOLogFrame->setClusterTXSpotEnableState(txEnableState);
 }
 
 void TSingleLogFrame::on_clusterServerState(QString state)

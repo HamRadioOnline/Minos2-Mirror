@@ -5,6 +5,7 @@
 #include <QStandardItemModel>
 #include <QSettings>
 #include "cutils.h"
+#include "clustercommon.h"
 
 
 class QDialogButtonBox;
@@ -22,6 +23,8 @@ const int NameColNum = 0;
 const int AddressColNum = 1;
 const int PortColNum = 2;
 const int PasswdColNum = 3;
+
+
 
 class SetupDialog : public QDialog
 {
@@ -65,16 +68,18 @@ public:
     void loadGeneralToSetupTab();
     void loadPersonalToSetupTab();
 
-    bool getSendToDXClusterEnabled();
     //bool getBandFilterOnSaveFlag(){return bandFilterOnSaveFlag;}
 
     //bool getStartEndScriptOnSaveFlag(){return startEndScriptOnSaveFlag;}
 
+
+    SendSpotFlags getTxSendSpotState();
 signals:
 
     void personalDataUpdated(QString, QString, QString, QString);
     void clusterListChanged();
-    void sendSpotToTxEnabled(bool);
+    void sendSpotToTxEnabled(SendSpotFlags);
+
 
 public slots:
     QString getCurrentNodeName();
@@ -106,12 +111,14 @@ private slots:
     //void runEndCmdFileChkBoxChanged(int state);
 
 
-    void sendSpotsToDXClusterChkBoxChanged(int state);
     //void onSaveBandFilterChkBoxClicked(int state);
     void onQrzCheckBoxChkBoxClicked(int state);
     void repeatSpotsCheckboxChanged();
     void repeatSpotFreqDeltaEditingFinished();
     void repeatSpotWithinTimeEditingFinished();
+
+
+    void onSendSpotsMode();
 private:
     Ui::SetupDialog *ui;
     UpperCaseValidator ucValidator;
@@ -137,8 +144,10 @@ private:
     //bool runEndCmdFilesChanged;
     //bool enableEndCmdFiles;
 
-    bool sendSpotToDXCluster;
-    bool sendSpotsToDXClusterChanged;
+
+    SendSpotFlags txSpotMode = SendSpotFlag::Off;
+    bool sendSpotsToDXClusterChanged = false;
+
 
     bool personalDataChanged;
 

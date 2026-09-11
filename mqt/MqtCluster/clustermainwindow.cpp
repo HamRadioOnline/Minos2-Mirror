@@ -93,9 +93,9 @@ void ClusterMainWindow::connectToCluster()
 
     connectToHost(currentNodeName);
 
-    connect(setupCluster, &SetupDialog::sendSpotToTxEnabled, this, &ClusterMainWindow::sendSpotToTxEnabled);
+    connect(setupCluster, &SetupDialog::sendSpotToTxEnabled, this, &ClusterMainWindow::onSendSpotToTxEnabled);
 
-    removeInsertSendSpotTab(setupCluster->getSendToDXClusterEnabled());
+    removeInsertSendSpotTab();
 
     ui->clusterTab->setCurrentWidget(ui->bandFilter);
     ui->startCloseFileTab->setAutoFillBackground(true);
@@ -216,7 +216,7 @@ void ClusterMainWindow::doStartup()
 
 
 
-    connect(setupCluster, &SetupDialog::sendSpotToTxEnabled, this, &ClusterMainWindow::sendSpotToTxEnabled);
+    connect(setupCluster, &SetupDialog::sendSpotToTxEnabled, this, &ClusterMainWindow::onSendSpotToTxEnabled);
 
     // in comming spot tab
 
@@ -369,29 +369,47 @@ void ClusterMainWindow::clusterListChanged()
 }
 
 
-void ClusterMainWindow::sendSpotToTxEnabled(bool state)
+void ClusterMainWindow::onSendSpotToTxEnabled(SendSpotFlags txSpotMode)
 {
-    QString stateMsg;
-    if (state)
-    {
-        stateMsg = SPOT_TX_ON;
-        removeInsertSendSpotTab(true);
 
-    }
-    else
-    {
-        stateMsg = SPOT_TX_OFF;
-        removeInsertSendSpotTab(false);
-    }
+    QString stateMsg = QString::number(txSpotMode);
+
+    removeInsertSendSpotTab();
 
     clusterRpc->publishTXEnable(stateMsg);
 }
 
-void ClusterMainWindow::removeInsertSendSpotTab(bool state)
+
+
+void ClusterMainWindow::removeInsertSendSpotTab()
 {
-    if (ui->clusterViewsTab->count() >= 1)
+
+
+
+    SendSpotFlags mode = setupCluster->getTxSendSpotState();
+
+    bool spottingEnabled = (mode != SendSpotFlag::Off);
+
+    int sentSpotIndex = ui->clusterViewsTab->indexOf(sentSpotView);
+
+    if (spottingEnabled)
     {
-        if (state)
+        if (sentSpotIndex == -1)
+        {
+            ui->clusterViewsTab->insertTab(1, sentSpotView, tr(SENT_SPOT_TAB_TITLE));
+        }
+    }
+    else
+    {
+        if (sentSpotIndex != -1)
+        {
+            ui->clusterViewsTab->removeTab(sentSpotIndex);
+        }
+    }
+
+/*    if (ui->clusterViewsTab->count() >= 1)
+    {
+        if (setupCluster->getTxSendSpotState() == TxSpotMode::SendSpot || setupCluster->getTxSendSpotState() == TxSpotMode::SelfSpot )
         {
             // insert the tab
             if (ui->clusterViewsTab->tabText(1) == tr(SENT_SPOT_TAB_TITLE))
@@ -416,7 +434,7 @@ void ClusterMainWindow::removeInsertSendSpotTab(bool state)
 
 
 
-    }
+    }*/
 }
 
 
@@ -1953,7 +1971,7 @@ void ClusterMainWindow::LogTimerTimer()
 void ClusterMainWindow::sendSpotToDXCluster(Frequency freq, QString call, QString loc)
 {
     QString spotMsg = assembleSpotForDXCluster(freq, call, loc);
-    if (setupCluster->getSendToDXClusterEnabled() && loginSuccess && !freq.isClear() && !call.isEmpty())
+    if (setupCluster->getTxSendSpotState().testFlag(SendSpotFlag::SendSpot) && loginSuccess && !freq.isClear() && !call.isEmpty())
     {
         trace(QString("SendSpotToDXCluster: sending spot, call %1, freq %2, locator %3").arg(call, freq.traceStr(), loc));
         if (BandList::getBandList().checkValidBand(freq))
@@ -3011,7 +3029,7 @@ void ClusterMainWindow::handleStatusTimer()
         trace(QString("handleStatusTimer: Cluster Client Count Changed old = %1, new = %2 - Send Status to Cluster Clients - %3").arg(oldServerListCount).arg(clusterRpc->getServerListCount()).arg(status->text()));
     //    sendSpotsQueue.append(createStatusToSend(status->text()));
           clusterRpc->publishState(rawStatus, status->text());
-          sendSpotToTxEnabled(setupCluster->getSendToDXClusterEnabled()); // wait for cluster client to open before sending this to qsologframe
+          onSendSpotToTxEnabled(setupCluster->getTxSendSpotState()); // wait for cluster client to open before sending this to qsologframe
     }
 
     // send status message if it has changed

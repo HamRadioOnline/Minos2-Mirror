@@ -7,6 +7,7 @@
 #include "validators.h"
 #include "cutils.h"
 #include "rigmemcommondata.h"
+#include "clustercommon.h"
 
 class ListContact;
 class ContactList;
@@ -88,7 +89,7 @@ public:
     ScreenContact *getPartialContact() const;
     void setPartialContact(ScreenContact *value);
 
-    void setClusterTXSpotEnableState(bool txEnableState);
+    void setClusterTXSpotEnableState(SendSpotFlags txSpotMode);
 
     void setRunOnFlag(bool runModeOn);
     void setRunOffFreqFlag(bool offRunFreq);
@@ -105,6 +106,7 @@ public:
     void DMKey(int key);
     bool getSandP();
     void setCallPlaceholder(QString call);
+    void setClusterSelfSpotEnableState(bool enable);
 private:
     ScreenContact *partialContact; // contact being edited on screen
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
@@ -230,7 +232,8 @@ private:
     bool radioError;
 
     void setClusterSendSpotControlsVisible(bool visible);
-    bool sendSpotToClusterOn;
+
+    SendSpotFlags txSpotMode = SendSpotFlag::Off;
 
     void MainOpComboBox_Exit();
     void SecondOpComboBox_Exit();

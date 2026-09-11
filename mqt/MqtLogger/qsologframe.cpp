@@ -71,7 +71,6 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     , qrzDisplayFrameLoaded(false)
     , radioConnected(false)
     , radioError(false)
-    , sendSpotToClusterOn(false)
     , runButtonOnFlag(false)
     , radioOffRunFreq(false)
 
@@ -4093,11 +4092,50 @@ void QSOLogFrame::setBandMapControlsDisabled(bool disabled)
 }
 
 
-void QSOLogFrame::setClusterTXSpotEnableState(bool txEnableState)
+void QSOLogFrame::setClusterTXSpotEnableState(SendSpotFlags txSpotMode_)
 {
-    setClusterSendSpotControlsVisible(txEnableState);
-    setClusterSendSpotControlsDisabled(!txEnableState);
-    sendSpotToClusterOn = txEnableState;
+
+    txSpotMode = txSpotMode_;
+
+    if (txSpotMode.testFlag(SendSpotFlag::SendSpot) || txSpotMode.testFlag(SendSpotFlag::SelfSpot))
+    {
+       clusterControlsVisible = true;
+
+       if (txSpotMode.testFlag(SendSpotFlag::SendSpot))
+       {
+
+          setClusterSendSpotControlsVisible(true);
+
+
+       }
+       else
+       {
+          setClusterSendSpotControlsVisible(false);
+
+       }
+
+       if (txSpotMode.testFlag(SendSpotFlag::SelfSpot))
+       {
+           setClusterSendSpotControlsDisabled(true);
+       }
+       else
+       {
+           setClusterSendSpotControlsDisabled(false);
+       }
+    }
+    else
+    {
+       clusterControlsVisible = false;  // turn off clusterControls Group box
+    }
+
+
+}
+
+void QSOLogFrame::setClusterSelfSpotEnableState(bool enable)
+{
+    ui->selfSpotPb->setVisible(enable);
+    ui->selfSpotCommentLineEdit->setVisible(enable);
+
 }
 
 void QSOLogFrame::setClusterSendSpotControlsVisible(bool visible)
@@ -4106,7 +4144,7 @@ void QSOLogFrame::setClusterSendSpotControlsVisible(bool visible)
     ui->spotPb->setVisible(visible);
     ui->lastSpotSentTitleLbl->setVisible(visible);
     ui->lastSpotSentLbl->setVisible(visible);
-    clusterControlsVisible = visible;
+
     checkQRZClusterBandmapShowing();
 }
 
@@ -4223,7 +4261,7 @@ void QSOLogFrame::setClusterSendSpotControlsState()
     }
     else
     {
-        if (LogContainer->sendDM->isClusterServerLoaded() && sendSpotToClusterOn)
+        if (LogContainer->sendDM->isClusterServerLoaded() && !txSpotMode.testFlag(SendSpotFlag::Off))
         {
             setClusterSendSpotControlsVisible(true);
             setClusterSendSpotControlsDisabled(false);

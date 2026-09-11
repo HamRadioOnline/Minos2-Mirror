@@ -89,8 +89,33 @@ const int COMMENT_COL_NUM = 10;
 
 const int dxSpotColCount = 11;
 
-inline const QString SPOT_TX_ON = "TxSpotOn";
-inline const QString SPOT_TX_OFF = "TxSpotOff";
+//inline const QString SPOT_TX_ON = "TxSpotOn";
+//inline const QString SPOT_TX_OFF = "TxSpotOff";
+//inline const QString SELF_SPOT_TX_ON = "SelfSpotOn";
+//inline const QString SELF_SPOT_TX_OFF = "SelfSpotOff";
+//inline const QString TX_SPOTTING_OFF = "TxSpottingOff";
+/*
+enum class TxSpotMode
+{
+    Off,
+    SendSpot,
+    SelfSpot
+};
+*/
+
+
+enum SendSpotFlag
+{
+    Off      = 0x00,
+    SendSpot = 0x01,    // send contact spot to cluster
+    SelfSpot = 0x02     // send self spot to cluster
+};
+
+// both options can be selected at the same time
+
+Q_DECLARE_FLAGS(SendSpotFlags, SendSpotFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(SendSpotFlags)
+
 
 const QChar SPOT_DATA_SEPERATOR = ':';
 // Only locators in Europe - why???

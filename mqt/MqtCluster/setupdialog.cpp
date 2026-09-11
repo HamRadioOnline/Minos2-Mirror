@@ -14,7 +14,7 @@
 #include <QMessageBox>
 #include "AppStartup.h"
 #include "regsettings.h"
-#include "clustercommon.h"
+
 #include "CallsignLineEdit.h"
 
 
@@ -43,7 +43,11 @@ SetupDialog::SetupDialog(QWidget *parent) :
 
     // General Tab
     connect(ui->timeToLive, &QLineEdit::editingFinished, this, [=](){timeToliveEditFinished();});
-    connect(ui->sendSpotsToDXClusterChkBox, &QCheckBox::stateChanged, this, [=](int state){sendSpotsToDXClusterChkBoxChanged(state);});
+
+    connect(ui->sendSpotsCheckBox, &QCheckBox::clicked, this, [this]() {onSendSpotsMode();});
+
+    connect(ui->selfSpotCheckBox, &QCheckBox::clicked, this, [this]() {onSendSpotsMode();});
+
     connect(ui->useQrzCheckBox, &QCheckBox::stateChanged, this, [=](int state){onQrzCheckBoxChkBoxClicked(state);});
     readGeneralSettings();
     loadGeneralToSetupTab();
@@ -162,7 +166,6 @@ void SetupDialog::clearChangedFlags()
 
     listDataChanged = false;
     timeToLiveChanged = false;
-    sendSpotToDXCluster = false;
     sendSpotsToDXClusterChanged = false;
     personalDataChanged = false;
     useQrzForQraFlag = false;
@@ -215,10 +218,19 @@ void SetupDialog::saveGeneralSettings()
     if (sendSpotsToDXClusterChanged)
     {
         config.beginGroup("EnableSendSpotsToDXCluster");
-        config.setValue("enableSendToDXCluster", sendSpotToDXCluster);
+
+        config.setValue("enableSendToDXCluster",
+                        txSpotMode.testFlag(SendSpotFlag::SendSpot));
+
+        config.setValue("enableSendSelfToDXCluster",
+                        txSpotMode.testFlag(SendSpotFlag::SelfSpot));
+
         config.endGroup();
-        emit sendSpotToTxEnabled(sendSpotToDXCluster);
+
+        emit sendSpotToTxEnabled(txSpotMode);
     }
+
+
 
     if (useQrzForQraChanged)
     {
@@ -284,9 +296,23 @@ void SetupDialog::readGeneralSettings()
     //enableStartCmdFiles = config.value("enableStartCommandFile", false).toBool();
     //enableEndCmdFiles = config.value("enableEndCommandFile", false).toBool();
     config.endGroup();
+
     config.beginGroup("EnableSendSpotsToDXCluster");
-    sendSpotToDXCluster = config.value("enableSendToDXCluster", false).toBool();
+
+    txSpotMode = SendSpotFlag::Off;
+
+    if (config.value("enableSendToDXCluster", false).toBool())
+    {
+        txSpotMode |= SendSpotFlag::SendSpot;
+    }
+
+    if (config.value("enableSendSelfToDXCluster", false).toBool())
+    {
+        txSpotMode |= SendSpotFlag::SelfSpot;
+    }
+
     config.endGroup();
+
     config.beginGroup("General");
     //bandFilterOnSaveFlag = config.value("bandFilterSaveOnClose", true).toBool();
     config.endGroup();
@@ -310,7 +336,9 @@ void SetupDialog::loadGeneralToSetupTab()
 
     ui->timeToLive->setText(timeToLive);
 
-    ui->sendSpotsToDXClusterChkBox->setChecked(sendSpotToDXCluster);
+    ui->sendSpotsCheckBox->setChecked(txSpotMode.testFlag(SendSpotFlag::SendSpot));
+    ui->selfSpotCheckBox->setChecked(txSpotMode.testFlag(SendSpotFlag::SelfSpot));
+
     ui->useQrzCheckBox->setChecked(useQrzForQraFlag);
     ui->removeRepeatSpotsCheckBox->setChecked(removeRepeatSpotFilterFlag);
     ui->repeatSpotFreqDeltaLineEdit->setText(QString::number(removeRepeatSpotsFreqDelta));
@@ -385,32 +413,28 @@ void SetupDialog::onQrzCheckBoxChkBoxClicked(int state)
 }
 
 
-
-
-void SetupDialog::sendSpotsToDXClusterChkBoxChanged(int state)
+void SetupDialog::onSendSpotsMode()
 {
 
-    if (state == Qt::Checked)
-    {
-        if (!sendSpotToDXCluster)
-        {
-            sendSpotToDXCluster = true;
-            sendSpotsToDXClusterChanged = true;
-        }
+    SendSpotFlags mode = SendSpotFlag::Off;
 
-    }
-    else if (state == Qt::Unchecked)
-    {
-        if (sendSpotToDXCluster)
-        {
-            sendSpotToDXCluster = false;
-            sendSpotsToDXClusterChanged = true;
-        }
+    if (ui->sendSpotsCheckBox->isChecked())
+        mode |= SendSpotFlag::SendSpot;
 
+    if (ui->selfSpotCheckBox->isChecked())
+        mode |= SendSpotFlag::SelfSpot;
+
+
+    if (mode != txSpotMode)
+    {
+        sendSpotsToDXClusterChanged = true;
+        txSpotMode = mode;
     }
 
 
 }
+
+
 
 void SetupDialog::callsignFinished(const QString& /*cs*/)
 {
@@ -423,9 +447,9 @@ void SetupDialog::callsignFinished(const QString& /*cs*/)
 
 }
 
-bool SetupDialog::getSendToDXClusterEnabled()
+SendSpotFlags SetupDialog::getTxSendSpotState()
 {
-    return sendSpotToDXCluster;
+    return txSpotMode;
 }
 
 

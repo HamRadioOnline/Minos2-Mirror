@@ -250,7 +250,7 @@ private slots:
     void onSpotTabChanged(int index);
     void disconnectTimeout();
     void sendSpotToDXCluster(Frequency freq, QString call, QString loc);
-    void sendSpotToTxEnabled(bool state);
+    void onSendSpotToTxEnabled(SendSpotFlags);
 
 signals:
 
@@ -425,7 +425,7 @@ private:
     QString getPropMode(const QString comment);
     QString assembleSpotForDXCluster(Frequency freq, QString call, QString loc);
 
-    void removeInsertSendSpotTab(bool state);
+    void removeInsertSendSpotTab();
     void addSentSpotToDisplayQueue(bool spotStatus, QString reason);
     bool lookforModeInComment(const QString &spotComment, int &commnetModeNum, QString &commentMode);
 
