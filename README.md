@@ -49,6 +49,10 @@ files but never overwrite one you have edited. Point `MINOS2_RUNTIME` somewhere
 else to keep several setups apart, and set `MINOS2_APP` to start a different
 Minos application than `MqtLogger`.
 
+Running more than one USB-connected radio, and want `/dev/ttyUSB<n>`
+reconnects to stop scrambling which radio Minos talks to? See
+`/opt/minos2/Udev/README.md` after installing.
+
 ## How the mirror stays in sync
 
 `.github/workflows/mirror-sync.yml` runs every three hours and on demand:
@@ -170,6 +174,9 @@ packaging/
   fetch-data.sh     cty.dat and the RSGB contest files
   pkg-deb.sh  pkg-rpm.sh  pkg-arch.sh  pkg-appimage.sh
   files/            launcher, .desktop, AppStream metadata, AppImage AppRun
+  files/udev/       optional multi-radio udev integration, staged to
+                     /opt/minos2/Udev (see its README), vendored from
+                     g0lgs/Minos-Config-Script
 scripts/
   sync-mirror.sh    the mirroring itself
   publish-release.sh

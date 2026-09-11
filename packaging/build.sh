@@ -156,6 +156,16 @@ rm -rf "$P/Configuration/WindowsFiles" "$P/Configuration/LinuxFiles" \
        "$P/Configuration/OSXFiles" "$P/Configuration/MacFiles"
 cp "$SRC/mqt/Docs"/*.pdf "$P/Docs/" 2>/dev/null || true
 cp "$SRC/mqt"/*.ico "$P/" 2>/dev/null || true
+
+# Optional udev integration for stable /dev symlinks across multiple USB
+# radios (see packaging/files/udev/README.md). Inert until an operator
+# edits it in with their own radios' idVendor/idProduct/serial, so it is
+# staged but never installed to /etc/udev/rules.d by the package itself.
+mkdir -p "$P/Udev"
+install -m 0755 "$HERE/files/udev/MinosSetRadioPorts" "$P/Udev/MinosSetRadioPorts"
+install -m 0644 "$HERE/files/udev/99-hamlib.rules.example" "$P/Udev/99-hamlib.rules.example"
+install -m 0644 "$HERE/files/udev/README.md" "$P/Udev/README.md"
+install -m 0644 "$HERE/files/udev/Licence" "$P/Udev/Licence"
 install -m 0644 "$SRC/mqt/minos.png" "$STAGE/usr/share/icons/hicolor/32x32/apps/minos2.png"
 
 install -m 0755 "$HERE/files/minos2" "$STAGE/usr/bin/minos2"

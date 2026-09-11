@@ -1,0 +1,52 @@
+# Create stable /dev symlinks for specific radios' USB-to-serial (CAT)
+# ports, and re-point Minos' Configuration/Radio/AvailRadio.ini at the
+# correct ttyUSB<n> whenever a radio is plugged in.
+#
+# This is a TEMPLATE, not an active rule: idVendor/idProduct/serial below
+# are examples. Most USB-to-serial CAT interfaces (Icom's included) use a
+# Silicon Labs CP210x chip reporting idVendor==10c4, idProduct==ea60 - the
+# same pair thousands of unrelated USB-serial gadgets use - so matching on
+# ATTRS{serial} is what actually pins a rule to one radio, not the
+# vendor/product pair. Installing this file unedited would either match
+# nothing (the serial won't exist) or, if you delete that ATTRS{serial}
+# line, would potentially symlink the wrong device.
+#
+# Find your own values with the radio connected:
+#   udevadm info -a -n /dev/ttyUSB0
+# and take idVendor, idProduct and serial from the first matching block.
+#
+# Install (after editing the values and the RUN{program} path/user below):
+#   sudo cp 99-hamlib.rules /etc/udev/rules.d/
+#   sudo udevadm control --reload
+#
+# Vendored and adapted from https://github.com/g0lgs/Minos-Config-Script
+# (commit a93570f) by Stewart Wilkinson G0LGS, under the same GPL-3.0-or-later
+# terms as Minos. Fixed relative to upstream: ACTION="add" (assignment) ->
+# ACTION=="add" (match) on the second IC-9700 port, missing commas between
+# key/value pairs that udevadm verify flags as invalid, and the -cfg path
+# updated from ~/runtime to this project's ~/minos2-runtime.
+
+# IC-7300
+ACTION=="add", KERNEL=="ttyUSB?", SUBSYSTEM=="tty", \
+ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="IC-7300 01234567", SYMLINK+="ic7300", \
+RUN{program}+="/opt/minos2/Udev/MinosSetRadioPorts -cfg /home/<user>/minos2-runtime/Configuration -Q"
+
+# IC-9700, CAT port (A)
+ACTION=="add", KERNEL=="ttyUSB?", SUBSYSTEM=="tty", \
+ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="IC-9700 01234567 A", SYMLINK+="ic9700a", \
+RUN{program}+="/opt/minos2/Udev/MinosSetRadioPorts -cfg /home/<user>/minos2-runtime/Configuration -Q"
+
+# IC-9700, second (data/aux) port (B) - no RUN needed, MinosSetRadioPorts
+# only tracks the port named in its %Radios table (the CAT port above).
+ACTION=="add", KERNEL=="ttyUSB?", SUBSYSTEM=="tty", \
+ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="IC-9700 01234567 B", SYMLINK+="ic9700b"
+
+# FT-817, FTDI interface
+ACTION=="add", KERNEL=="ttyUSB?", SUBSYSTEM=="tty", \
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="AFWZ9VXZ", SYMLINK+="ft817", \
+RUN{program}+="/opt/minos2/Udev/MinosSetRadioPorts -cfg /home/<user>/minos2-runtime/Configuration -Q"
+
+# Consistent names for sound (codec) devices, based on the USB port they are
+# connected to - useful for radios/interfaces that also present a USB sound
+# card, so apps that pick a device by name keep working across reconnects.
+ACTION=="change", SUBSYSTEM=="sound", DEVPATH=="/devices/*/usb*/sound/card?", ENV{PULSE_NAME}="$env{ID_ID}.$env{ID_PATH_TAG}"
