@@ -103,6 +103,6 @@ void KSTASActiveFrame::setASActive(bool s)
 
 ASBand KSTASActiveFrame::getASActiveBand() const
 {
-    ASBand b = static_cast<ASBand>(ui->asBandCombo->currentIndex());
+    ASBand b = mainWindow->getASActiveBand();
     return b;
 }

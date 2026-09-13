@@ -43,7 +43,8 @@ AirScoutLink::AirScoutLink():
     connect(qus.data(), &QUdpSocket::readyRead, this, &AirScoutLink::onReadyRead);
 
     connect(&ASTimer, &QTimer::timeout, this, &AirScoutLink::onTimeout);
-    ASTimer.start(1000);
+    int tm = mainWindow->getASTimeout();
+    ASTimer.start(tm * 1000);
 }
 AirScoutLink::~AirScoutLink()
 {
@@ -52,11 +53,43 @@ AirScoutLink::~AirScoutLink()
 }
 void AirScoutLink::onTimeout()
 {
-    if (mainWindow && mainWindow->kstASActiveFrame->getASActive())
+    QSharedPointer<QVector<QSharedPointer<KstUser> > > callVector = mainWindow->getCallVector();
+    if (!callVector || callVector->isEmpty())
     {
-        // send again...
-        assetPathInProgress = false;
-        askNearest(-1);
+        return;
+    }
+    assetPathInProgress = false;
+    if (!connected)
+    {
+        if (hostAddresses.size() == 0)
+        {
+            getAllAddresses();
+        }
+        if (hostOffset < 0 || hostOffset >= hostAddresses.size())
+        {
+            hostOffset = 0;
+        }
+        QString watchFreq = bandFreqStrings[mainWindow->kstASActiveFrame->getASActiveBand()];        // band
+
+        Callsign testSign;
+        testSign.setFullCall("G0GJV");
+        KstUser testUser(testSign, 0);
+        testUser.loc = "IO91OK";
+        QString testpath = /*"\""  +*/ watchFreq + ","
+                           + mainWindow->getMyCallsign().getFullCall() + "," + mainWindow->getMyLoc() + ","
+                           + testUser.call.realCall + "," + testUser.loc /*+ "\""*/;
+        sendMessage(hostAddresses[hostOffset], "ASSETPATH", testpath);
+        asAddress = hostAddresses[hostOffset];
+
+        hostOffset++;
+        assetPathInProgress = true;
+    }
+
+    else if (mainWindow && mainWindow->kstASActiveFrame->getASActive())
+    {
+         // start again
+        connected = false;
+        trace("Timed out: restart connection");
     }
 }
 bool ASUserCompare (QSharedPointer<KstUser> i, QSharedPointer<KstUser> j)
@@ -73,7 +106,7 @@ bool WatchCompare (QSharedPointer<KstUser> i, QSharedPointer<KstUser> j)
         return i->loc < j->loc;
     return i->call.realCall < j->call.realCall;
 }
-void AirScoutLink::sendToAllBroadcast(QByteArray *packet)
+void AirScoutLink::getAllAddresses()
 {
     // Get network interfaces list
     QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
@@ -81,7 +114,10 @@ void AirScoutLink::sendToAllBroadcast(QByteArray *packet)
     // Interfaces iteration
     for (auto const &i: QASCONST(ifaces))
     {
-        if (i.flags().testFlag(QNetworkInterface::IsLoopBack))
+        if (i.flags().testFlag(QNetworkInterface::IsLoopBack) || !i.flags().testFlag(QNetworkInterface::IsRunning))
+            continue;
+
+        if (i.type() != QNetworkInterface::Ethernet && i.type() != QNetworkInterface::Wifi )
             continue;
 
         // Now get all IP addresses for the current interface
@@ -92,19 +128,23 @@ void AirScoutLink::sendToAllBroadcast(QByteArray *packet)
         {
             if ((a.ip().protocol() == QAbstractSocket::IPv4Protocol) && (a.broadcast().toString() != ""))
             {
-                qint64 res = qus->writeDatagram(packet->data(), packet->length(), a.broadcast(), static_cast<quint16>(mainWindow->getASPort()));
-                if (res > 0)
-                {
-                    trace(QString("%1 bytes sent to %2").arg(res).arg(a.broadcast().toString()));
-                    lastASSEnd = QDateTime::currentDateTime();
-                    break;
-                }
+                hostAddresses.append(a.broadcast());
             }
         }
     }
 }
+qint64 AirScoutLink::sendToHost(QHostAddress a, QByteArray *packet)
+{
+    qint64 res = qus->writeDatagram(packet->data(), packet->length(), a, static_cast<quint16>(mainWindow->getASPort()));
+    if (res > 0)
+    {
+        trace(QString("%1 bytes sent to %2").arg(res).arg(a.toString()));
+        lastASSEnd = QDateTime::currentDateTime();
+    }
+    return res;
+}
 
-qint64 AirScoutLink::sendMessage(QString messagetype, QString messageText)
+qint64 AirScoutLink::sendMessage(QHostAddress a, QString messagetype, QString messageText)
 {
     QString mess = messagetype + ": \"" + mainWindow->getASMyName() + "\" \"" + mainWindow->getASServerName() +  "\" " + messageText;
 
@@ -117,11 +157,18 @@ qint64 AirScoutLink::sendMessage(QString messagetype, QString messageText)
 
     packet += static_cast<char>((cs | 0x80)&0xff);
     packet += '\0';
-    qint64 res = 0;
 
-    sendToAllBroadcast(&packet);
+    qint64 res = sendToHost(a, &packet);
 
-    trace("Datagram sent: " + mess);
+    if (res)
+    {
+        trace("Datagram sent: " + mess);
+    }
+    else
+    {
+        trace("Datagram failed: " + mess);
+    }
+    ASTimer.start(mainWindow->getASTimeout() * 1000);
 
     return res;
 }
@@ -221,87 +268,118 @@ void AirScoutLink::onReadyRead()
 
             }
 
-            if (args[2] == '"' + mainWindow->getASMyName() + '"' && args[1] =='"' + mainWindow->getASServerName() + '"' && args[0] == "ASNEAREST:")
+            QString a = args.join('|');
+            trace(a);
+            if (args[2] == '"' + mainWindow->getASMyName() + '"'
+                && args[1] =='"' + mainWindow->getASServerName() + '"'
+                && args[0] == "ASNEAREST:")
             {
                 assetPathInProgress = false;
-                //trace ("assetPathInProgress = false;");
-                if (args[3].startsWith("\""))
+
+                if (!connected)
                 {
-                    args[3].remove(0, 1);
-                }
-                if (args[3].endsWith("\""))
+                    trace("Connection succesfull");
+                    connected = true;
+                    usersChanged();
+                    delayedAction(this, [=]()
+                                  {
+                                      // NB a lambda function
+                                      askNearest(-1);
+                                  }
+                                  , 50
+                                  );                }
+                else
                 {
-                    args[3].chop(1);
-                }
-                QStringList sl = args[3].split(",");
-                QString dxCall = sl[3];
-                QString dxLoc = sl[4];
-
-                QSharedPointer<KstUser> test(new KstUser());
-                test->call.setFullCall(dxCall);
-                test->loc = dxLoc;
-                QSharedPointer<KstUser> user;
-                int row = 0;
-                if (std::binary_search(watchList.begin(), watchList.end(), test, WatchCompare))
-                {
-                    row = (std::lower_bound(watchList.begin(), watchList.end(), test, WatchCompare ) - watchList.begin());
-
-                    user = watchList.at(row);
-                }
-                if (user)
-                {
-                    user->lastCalcTime = sl[0];
-                    user->fromCall = sl[1];
-                    user->fromLoc = sl[2];
-                    user->toCall = sl[3];
-                    user->toLoc = sl[4];
-                    user->planes.clear();
-                    user->planeResponseSeen = true;
-
-                    int account = sl[5].toInt();
-
-                    int acstart = 6;
-
-                    if (account * 5 + acstart == sl.size())
+                    //trace ("assetPathInProgress = false;");
+                    if (args[3].startsWith("\""))
                     {
+                        args[3].remove(0, 1);
+                    }
+                    if (args[3].endsWith("\""))
+                    {
+                        args[3].chop(1);
+                    }
+                    QStringList sl = args[3].split(",");
+                    QString dxCall = sl[3];
+                    QString dxLoc = sl[4];
 
-                        for (int i = 0; i < account; i++)
+                    QSharedPointer<KstUser> test(new KstUser());
+                    test->call.setFullCall(dxCall);
+                    test->loc = dxLoc;
+                    QSharedPointer<KstUser> user;
+                    int row = 0;
+                    if (std::binary_search(watchList.begin(), watchList.end(), test, WatchCompare))
+                    {
+                        row = (std::lower_bound(watchList.begin(), watchList.end(), test, WatchCompare ) - watchList.begin());
+
+                        user = watchList.at(row);
+                    }
+                    if (user)
+                    {
+                        user->lastCalcTime = sl[0];
+                        user->fromCall = sl[1];
+                        user->fromLoc = sl[2];
+                        user->toCall = sl[3];
+                        user->toLoc = sl[4];
+                        user->planes.clear();
+                        user->planeResponseSeen = true;
+
+                        int account = sl[5].toInt();
+
+                        int acstart = 6;
+
+                        if (account * 5 + acstart == sl.size())
                         {
-                            int acoffset = acstart + i * 5;
 
-                            Aircraft ac(sl, acoffset);
-                            user->planes.push_back(ac);
+                            for (int i = 0; i < account; i++)
+                            {
+                                int acoffset = acstart + i * 5;
 
+                                Aircraft ac(sl, acoffset);
+                                user->planes.push_back(ac);
+
+                            }
                         }
-                    }
 
-                    std::sort(user->planes.begin(), user->planes.end());
-                    for(auto const &ac: QASCONST(user->planes))
+                        std::sort(user->planes.begin(), user->planes.end());
+                        for(auto const &ac: QASCONST(user->planes))
+                        {
+                            ac.traceAircaft();
+                        }
+
+                        emit acChanged(user);
+
+                    }
+                    delayedAction(this, [=]()
                     {
-                        ac.traceAircaft();
+                        // NB a lambda function
+                        askNearest(row);
                     }
-
-                    emit acChanged(user);
-
+                    , 200
+                    );
                 }
-
-                delayedAction(this, [=]()
-                {
-                    // NB a lambda function
-                    askNearest(row);
-                }
-                , 500
-                );
             }
 
         }
     }
 }
 
-void AirScoutLink::usersChanged(QSharedPointer<QVector<QSharedPointer<KstUser> > > callVector)
+void AirScoutLink::usersChanged()
 {
-    if (mainWindow->kstASActiveFrame->getASActive())
+    needWatchList = true;
+    watchList.clear();
+    ASTimer.start(500);
+}
+void AirScoutLink::doUsersChanged()
+{
+    if (connected && mainWindow->kstASActiveFrame->getASActive() && needWatchList)
     {
+        QSharedPointer<QVector<QSharedPointer<KstUser> > > callVector = mainWindow->getCallVector();
+        if (!callVector)
+        {
+            return;
+        }
+        needWatchList = false;
         watchList.clear();
         for(auto const &user: QASCONST(*callVector))
         {
@@ -336,8 +414,12 @@ void AirScoutLink::usersChanged(QSharedPointer<QVector<QSharedPointer<KstUser> >
             {
                 QString watchText = /*"\"" +*/ watch /*+ "\""*/;
 
-                sendMessage("ASWATCHLIST", watchText);
+                sendMessage(asAddress, "ASWATCHLIST", watchText);
                 oldWatch = watch;
+            }
+            else
+            {
+                trace("Watchlist hasn't changed");
             }
         }
 
@@ -348,13 +430,13 @@ void AirScoutLink::usersChanged(QSharedPointer<QVector<QSharedPointer<KstUser> >
 
 void AirScoutLink::asSelected(QSharedPointer<KstUser> user)
 {
-    if (user)
+    if (connected && user)
     {
         QString watchFreq = bandFreqStrings[mainWindow->kstASActiveFrame->getASActiveBand()];        // band
         QString getpath = /*"\""  +*/ watchFreq + ","
                 + mainWindow->getMyCallsign().getFullCall() + "," + mainWindow->getMyLoc() + ","
                 + user->call.realCall + "," + user->loc /*+ "\""*/;
-        sendMessage("ASSHOWPATH", getpath);
+        sendMessage(asAddress, "ASSHOWPATH", getpath);
     }
 }
 
@@ -365,26 +447,42 @@ void AirScoutLink::clearWatchList()
 
 void AirScoutLink::asShowPath(QSharedPointer<KstUser> user, QSharedPointer<KstUser> other)
 {
-    if (user && other)
+    if (connected && user && other)
     {
         QString watchFreq = bandFreqStrings[mainWindow->kstASActiveFrame->getASActiveBand()];        // band
         QString getpath = /*"\""  +*/ watchFreq + ","
                 + user->call.realCall+ "," + user->loc + ","
                 + other->call.realCall + "," + other->loc /*+ "\""*/;
-        sendMessage("ASSHOWPATH", getpath);
+        sendMessage(asAddress, "ASSHOWPATH", getpath);
     }
 }
 
 void AirScoutLink::askNearest(int row)
 {
-    if (assetPathInProgress)
+    trace(QString("askNearest %1").arg(row));
+    if (!connected || assetPathInProgress)
         return;
 
-    if (mainWindow && mainWindow->kstASActiveFrame->getASActive() && watchList.size())
+    if (mainWindow && mainWindow->kstASActiveFrame->getASActive())
     {
-        if ((row < 0) || (++row > watchList.size() - 1))
+        if (row < 0)
         {
             row = 0;
+            doUsersChanged();
+        }
+        else if (watchList.size() == 0 )
+        {
+            row = 0;
+            doUsersChanged();
+        }
+        else if (++row > watchList.size() - 1)
+        {
+            row = 0;
+            doUsersChanged();
+        }
+        if (watchList.size() == 0)
+        {
+            return;
         }
         QString watchFreq = bandFreqStrings[mainWindow->kstASActiveFrame->getASActiveBand()];        // band
 
@@ -392,8 +490,9 @@ void AirScoutLink::askNearest(int row)
         QString getpath = /*"\""  +*/ watchFreq + ","
                 + mainWindow->getMyCallsign().getFullCall() + "," + mainWindow->getMyLoc() + ","
                 + user->call.realCall + "," + user->loc /*+ "\""*/;
-        sendMessage("ASSETPATH", getpath);
+        sendMessage(asAddress, "ASSETPATH", getpath);
         assetPathInProgress = true;
+
         //trace ("assetPathInProgress = true;");
     }
     else

@@ -755,7 +755,7 @@ void KSTMainWindow::userCallTimerTimer()
 {
     if (asl && kstASActiveFrame->getASActive() && callVectorChanged && callVector)
     {
-        asl->usersChanged(callVector);
+        asl->usersChanged();
         callVectorChanged = false;
     }
 }
@@ -864,6 +864,10 @@ int KSTMainWindow::getMaxDistance() const
 bool KSTMainWindow::getASActive() const
 {
     return ASActive;
+}
+ASBand KSTMainWindow::getASActiveBand() const
+{
+    return ASActiveBand;
 }
 
 

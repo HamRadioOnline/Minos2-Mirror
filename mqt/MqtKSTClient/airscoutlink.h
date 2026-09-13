@@ -90,11 +90,17 @@ public:
 
 class AirScoutLink: public QObject
 {
+private:
     Q_OBJECT
 
     QSharedPointer<QUdpSocket> qus;
     QString  oldWatch;
     QVector<QSharedPointer<KstUser> >  watchList;
+    bool needWatchList = false;
+    bool connected = false;
+    QHostAddress asAddress;
+    QVector<QHostAddress> hostAddresses;
+    int hostOffset = -1;
 
     QTimer ASTimer;
     QDateTime lastASSEnd;
@@ -108,16 +114,18 @@ class AirScoutLink: public QObject
 
     static QVector<const char *> bandFreqStrings;
 
-    qint64 sendMessage(QString messagetype, QString messageText);
-    void sendToAllBroadcast(QByteArray *packet);
+    qint64 sendMessage(QHostAddress a, QString messagetype, QString messageText);
+    qint64 sendToHost(QHostAddress a, QByteArray *packet);
     void askNearest(int row);
+    void doUsersChanged();
+    void getAllAddresses();
 public:
     AirScoutLink();
     ~AirScoutLink();
 
     static QVector<const char *> ASBandStrings;
 
-    void usersChanged(QSharedPointer<QVector<QSharedPointer<KstUser> > > callVector);
+    void usersChanged();
     void asSelected(QSharedPointer<KstUser> user);
     void clearWatchList();
     void asShowPath(QSharedPointer<KstUser> user, QSharedPointer<KstUser> other);

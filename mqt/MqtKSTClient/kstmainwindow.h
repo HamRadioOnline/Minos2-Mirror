@@ -228,6 +228,7 @@ public:
      int getMaxDistance() const;
 
     bool getASActive() const;
+     ASBand getASActiveBand() const;
 
     QString getASServerName() const;
 
