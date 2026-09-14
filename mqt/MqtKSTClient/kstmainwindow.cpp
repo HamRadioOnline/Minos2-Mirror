@@ -345,6 +345,11 @@ void KSTMainWindow::closeEvent(QCloseEvent *event)
 
     clearScreenLayout();
 
+    delete MultLists::getMultLists();
+    MinosRPCObj::clearRPCObjects();
+    ScreenConfigFile::getScreenConfigFile(this).configs.clear();
+    delete MinosConfig::getMinosConfig();
+
     QWidget::closeEvent(event);
 }
 void KSTMainWindow::CloseTimerTimer(  )
