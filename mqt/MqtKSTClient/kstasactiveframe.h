@@ -24,6 +24,7 @@ public:
     void setASActive(bool s);
     void do_asBandCombo_currentIndexChanged(int band);
     void on_FontChanged();
+    void asStatusIndicatorToggle(bool on);
 private slots:
     void on_ASActivecb_stateChanged(int state);
     void on_asBandCombo_currentIndexChanged(int band);

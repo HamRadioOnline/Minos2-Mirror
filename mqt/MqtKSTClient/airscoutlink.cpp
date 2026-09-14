@@ -89,6 +89,7 @@ void AirScoutLink::onTimeout()
     {
          // start again
         connected = false;
+        mainWindow->kstASActiveFrame->asStatusIndicatorToggle(false);
         trace("Timed out: restart connection");
     }
 }
@@ -114,10 +115,10 @@ void AirScoutLink::getAllAddresses()
     // Interfaces iteration
     for (auto const &i: QASCONST(ifaces))
     {
-        if (i.flags().testFlag(QNetworkInterface::IsLoopBack) || !i.flags().testFlag(QNetworkInterface::IsRunning))
-            continue;
-
-        if (i.type() != QNetworkInterface::Ethernet && i.type() != QNetworkInterface::Wifi )
+        if (i.flags().testFlag(QNetworkInterface::IsLoopBack)
+            || !i.flags().testFlag(QNetworkInterface::IsUp)
+            || !i.flags().testFlag(QNetworkInterface::IsRunning)
+            )
             continue;
 
         // Now get all IP addresses for the current interface
@@ -126,8 +127,11 @@ void AirScoutLink::getAllAddresses()
         // And for any IP address, if it is IPv4 and the interface is active, send the packet
         for (auto const &a: QASCONST(addrs))
         {
-            if ((a.ip().protocol() == QAbstractSocket::IPv4Protocol) && (a.broadcast().toString() != ""))
+            if ((a.ip().protocol() == QAbstractSocket::IPv4Protocol)
+                && (a.broadcast().toString() != ""))
             {
+                trace(QString("iface %1 address %2").arg(i.humanReadableName(),
+                                                         a.ip().toString()));
                 hostAddresses.append(a.broadcast());
             }
         }
@@ -280,6 +284,7 @@ void AirScoutLink::onReadyRead()
                 {
                     trace("Connection succesfull");
                     connected = true;
+                    mainWindow->kstASActiveFrame->asStatusIndicatorToggle(true);
                     usersChanged();
                     delayedAction(this, [=]()
                                   {

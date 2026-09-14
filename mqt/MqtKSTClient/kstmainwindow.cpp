@@ -241,7 +241,7 @@ KSTMainWindow::KSTMainWindow(QWidget *parent)
 #endif
     connect(kstclient, &QTcpSocket::readyRead, this, &KSTMainWindow::onReadyRead);
 
-    kstPlanesFrame->setVisible(ASActive);
+    showPlanesFrame(ASActive);
 
     while ( myCallsign.getValRes() != CS_OK)
     {
@@ -1912,6 +1912,17 @@ void KSTMainWindow::selectLayout(QString layout)
     });
 }
 
+void KSTMainWindow::showPlanesFrame(bool s)
+{
+    if (s && kstPlanesFrame->parent() != this)
+    {
+        kstPlanesFrame->setVisible(true);
+    }
+    else
+    {
+        kstPlanesFrame->setVisible(false);
+    }
+}
 void KSTMainWindow::onScreenConfigApply(QString curConfigName)
 {
     selectLayout(curConfigName);

@@ -287,6 +287,7 @@ public:
     int getLcf() const;
     void setLcf(int newLcf);
 
+    void showPlanesFrame(bool s);
 private slots:
     void CloseTimerTimer();
 
