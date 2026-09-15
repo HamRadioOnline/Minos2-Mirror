@@ -142,7 +142,8 @@ void BaseContestLog::refreshCache()
 void BaseContestLog::addToContestList(QSharedPointer<BaseContact> rct )
 {
     MapWrapper<BaseContact> wrct(rct);
-    ctList.insert( wrct, wrct );
+    MapKeyWrapper<BaseContact> krct(rct.data());
+    ctList.insert( krct, wrct );
 
     MapWrapper<BaseContact> last = *(std::prev(ctList.end()));
     if (last != rct)
@@ -187,9 +188,9 @@ QSharedPointer<BaseContact> BaseContestLog::pcontactAt( int i )
 
 QSharedPointer<BaseContact> BaseContestLog::pcontactAtSeq( unsigned long logSequence ) const
 {
-    QSharedPointer<BaseContact> test(new BaseContact(nullptr, false));
-    test->setLogSequence(logSequence);
-    auto res = ctList.find(test);
+    BaseContact test(nullptr, false);
+    test.setLogSequence(logSequence);
+    auto res = ctList.find(MapKeyWrapper<BaseContact>(&test));
     if (res != ctList.end())
     {
         return (*res).wt;
@@ -315,7 +316,32 @@ void BaseContestLog::setCurrentBand(QString cb)
     currentBand.setValue(cb);
     commonSave(false);
 }
+LocSquare *BaseContestLog::getLocSquare(const QString &band, const Locator &loc)
+{
+    QString letters;
+    QString numbers;
 
+    QString sloc = loc.getLoc().mid(0, 4);
+
+    letters = sloc.left(2);
+    numbers = sloc.mid(2, 2);
+
+    LocSquare *ls = nullptr;
+    if ( letters[ 0 ].isLetter() && letters[ 1 ].isLetter() )
+    {
+        LocSquare lss( letters );
+        MapKeyWrapper<LocSquare> wlsk(&lss);
+        if (!locs[band].llist.contains(wlsk))
+        {
+            LocSquare *lsi = new LocSquare ( letters );
+            MapKeyWrapper<LocSquare> wlsk(lsi);
+            MapWrapper<LocSquare> wls(lsi);
+            locs[band].llist.insert ( wlsk, wls );
+        }
+        ls = locs[band].llist[wlsk].wt.data();
+    }
+    return ls;
+}
 //==========================================================================
 
 void BaseContestLog::clearDirty()
@@ -1317,6 +1343,11 @@ void BaseContestLog::getOpTime(QString &otBuff, SHOWOPERATINGTIME sot)
 //============================================================
 DupContact::DupContact(CheckableContact *c ) : dct( c )
 {}
+
+DupContact::DupContact(const DupContact &rhs):QObject()
+{
+    dct = rhs.dct;
+}
 DupContact::DupContact()
 {}
 DupContact::~DupContact()
@@ -1421,8 +1452,8 @@ bool dupsheet::checkCurDup(CheckableContact *nct, unsigned long valpseq, bool in
     curdup.reset();
     if ( nct->cs.getValRes() == CS_OK )
     {
-        QSharedPointer<DupContact> test( new DupContact(nct) );
-      DupIterator c = dupList.find(test);
+      DupContact test(nct);
+      DupIterator c = dupList.find(MapKeyWrapper<DupContact>(&test));
       if ( c!= dupList.end() )
       {
          if ( !( nct->contactFlags.getValue() & VALID_DUPLICATE ) )
@@ -1441,8 +1472,10 @@ bool dupsheet::checkCurDup(CheckableContact *nct, unsigned long valpseq, bool in
       else
          if ( insert )
          {
-            MapWrapper<DupContact> ins( test);
-            dupList.insert( ins, ins );
+            DupContact *dc = new DupContact(nct);
+            MapKeyWrapper<DupContact> insk( dc);
+            MapWrapper<DupContact> ins( dc);
+            dupList.insert( insk, ins );
             return false;
          }
    }
@@ -1455,8 +1488,8 @@ bool dupsheet::checkCurDup(BaseContestLog *contest, unsigned long nctseq, unsign
    QSharedPointer<BaseContact> nct = contest->pcontactAtSeq(nctseq);
    if ( nct && nct->cs.getValRes() == CS_OK )
    {
-      QSharedPointer<DupContact> test( new DupContact(nct.data()) );
-      DupIterator c = dupList.find(test);
+      DupContact test(nct.data() );
+      DupIterator c = dupList.find(MapKeyWrapper<DupContact>(&test));
       if ( c != dupList.end() )
       {
          if ( !( nct->contactFlags.getValue() & VALID_DUPLICATE ) )
@@ -1475,8 +1508,10 @@ bool dupsheet::checkCurDup(BaseContestLog *contest, unsigned long nctseq, unsign
       else
          if ( insert )
          {
-            QSharedPointer<DupContact> ins(new DupContact( nct.data() ));
-            dupList.insert( ins, ins );
+            DupContact *dc = new DupContact( nct.data() );
+            MapKeyWrapper<DupContact> dck(dc);
+            MapWrapper<DupContact> dcv(dc);
+            dupList.insert( dck, dcv );
             return false;
          }
    }
@@ -1503,9 +1538,9 @@ CheckableContact *dupsheet::haveWorked(CheckableContact *nct) const
 {
     if ( nct->cs.getValRes() == CS_OK )
     {
-        QSharedPointer<DupContact> test(new DupContact(nct) );
+        DupContact test(nct );
 
-        ConstDupIterator c = dupList.find(test);
+        ConstDupIterator c = dupList.find(MapKeyWrapper<DupContact>(&test));
         if ( c!= dupList.end() )
         {
             return c->wt->dct;
@@ -1753,6 +1788,8 @@ void BaseContestLog::processMinosStanza( const QString &methodName, MinosTestImp
                                    bcfs.setIgnoreDistanceFlag(filterFlag);
                                    mt->getStructArgMemberValue("ignoreEmptyDistanceFlag", filterFlag1);
                                    bcfs.setIgnoreEmptyDistanceFlag(filterFlag1);
+                                   mt->getStructArgMemberValue("hideWorkedStationsFlag", filterFlag1);
+                                   bcfs.setHideWorkedStationsFlag(filterFlag1);
 
 
                                    saveInitialQSOMapFilter(bcfs);
@@ -1947,9 +1984,10 @@ void BaseContestLog::loadBonusList()
     }
 
 }
-int BaseContestLog::getSquareBonus(QString sloc) const
+int BaseContestLog::getSquareBonus(const QString &loc) const
 {
     int bonus = 0;
+    QString sloc = loc.left(4);
     QMap<QString, int>::const_iterator l = locBonuses.find(sloc);
 
     if ( l != locBonuses.end())

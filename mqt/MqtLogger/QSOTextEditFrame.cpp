@@ -98,6 +98,7 @@ void QSOTextEditFrame::setWidth(QString s)
     TextEditEdit->setMinimumWidth(teel);
 
     QSize sh = minimumSizeHint();
+    sh.setWidth(teel + 6);
     setMinimumSize(sh);
     setMaximumSize(sh);
 }

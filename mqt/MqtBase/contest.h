@@ -40,8 +40,9 @@ class BaseContestLog;
 
 enum SCOREMODE {PPKM, PPQSO};
 
-class DupContact
+class DupContact:public QObject
 {
+    Q_OBJECT
    public:
       CheckableContact *dct = nullptr;
       bool operator<( const DupContact& rhs ) const;
@@ -52,10 +53,11 @@ class DupContact
 
 
       DupContact(CheckableContact *c );
+      DupContact(const DupContact &);
       DupContact();
       ~DupContact();
 };
-typedef QMap < MapWrapper<DupContact>, MapWrapper<DupContact> > DupList;
+typedef QMap < MapKeyWrapper<DupContact>, MapWrapper<DupContact> > DupList;
 typedef DupList::iterator DupIterator;
 typedef DupList::const_iterator ConstDupIterator;
 extern uint qHash(const DupContact &dup);
@@ -80,7 +82,7 @@ class dupsheet
       ~dupsheet();
 };
 
-typedef QMap < MapWrapper<BaseContact>, MapWrapper<BaseContact> > LogList;
+typedef QMap < MapKeyWrapper<BaseContact>, MapWrapper<BaseContact> > LogList;
 typedef LogList::iterator LogIterator;
 typedef QMap < QString, QString > OperatorList;
 
@@ -140,6 +142,7 @@ class BaseContestLog: public BaseLogList
       QString getCabrilloFreqBand(Frequency txfreq) const;
 
       void setCurrentBand(QString);
+      LocSquare *getLocSquare(const QString &band, const Locator &loc);
 
       // The contest details
 
@@ -333,7 +336,7 @@ class BaseContestLog: public BaseLogList
       QMap<QString, int> postcodeBonuses;
       QMap<QString, int> dxccBonuses;
       void loadBonusList();
-      int getSquareBonus(QString sloc) const;
+      int getSquareBonus(const QString &loc) const;
       int getCountryBonus(QString c) const;
       int getDistBonus(QString d) const;
 

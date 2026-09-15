@@ -142,7 +142,7 @@ void QSOMapFrame::setPanelFont()
 {
     MinosPanel::setPanelFont();
 
-    int fs = panelFont.pointSize();
+    int fs = getPanelFont().pointSize();
     emit setFontSize(fs);
     doRedraw(ct, bdrawGrid, bdrawLines, drawSpots, showLoc, showCall, locTL, locBR, showNav);
 }
@@ -365,7 +365,7 @@ void QSOMapFrame::doRedraw(const BaseContestLog *ctest, bool grid, bool lines, b
     showCall = sc;
     emit showCallsb(showCall);
 
-    int fs = panelFont.pointSize();
+    int fs = getPanelFont().pointSize();
     emit setFontSize(fs);
 
     locTL = tl;
@@ -478,6 +478,18 @@ void QSOMapFrame::doRedraw(const BaseContestLog *ctest, bool grid, bool lines, b
         {
             continue;
         }
+        CheckableContact test(ct, cct->cs, ct->currentBand.getValue(), ct->currentMode.getValue());
+        CheckableContact *cc = ct->haveWorked(&test);
+        bool callWkd = cc != nullptr;
+        if (callWkd)
+        {
+            bool hideCallWorked = ct->getQSOMapFilter().getHideWorkedStationsFlag();
+            if (hideCallWorked)
+            {
+                continue;
+            }
+        }
+
 
         showContact(ct, cct);
     }
@@ -766,6 +778,18 @@ void QSOMapFrame::drawSpot(QSharedPointer<ClusterSpotData> bsd)
 
         if (matchMode(bsd) && matchDistance(bsd))
         {
+            CheckableContact test(ct, bsd->getDxCall(), ct->currentBand.getValue(), ct->currentMode.getValue());
+            CheckableContact *cc = ct->haveWorked(&test);
+            bool callWkd = cc != nullptr;
+            if (callWkd)
+            {
+                bool hideCallWorked = ct->getQSOMapFilter().getHideWorkedStationsFlag();
+                if (hideCallWorked)
+                {
+                    return;
+                }
+            }
+
             trace(QString("QSOMapFrame::drawSpot filtered OK %1").arg(bsd->getDxCallStr()));
             bool drawLine = true;
             QPair<double, double> pos = calcPosition(loc, drawLine);

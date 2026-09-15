@@ -182,7 +182,7 @@ void KSTCallsFrame::onCSTableSelectionChanged(const QItemSelection &/*selected*/
                 mainWindow->kstMsgFrame->setActive(user->chat);
             }
             // Planes
-            mainWindow->kstPlanesFrame->showPlanes(user);
+            mainWindow->showPlanesFrame(!user.isNull());
             ui->loggerXferButton->setDefault(true);
         }
     }

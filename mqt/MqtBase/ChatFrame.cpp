@@ -29,7 +29,7 @@ ChatFrame::~ChatFrame()
 
 void ChatFrame::on_FontChanged()
 {
-    QFont cf = panelFont;
+    QFont cf = getPanelFont();
     ui->StationList->setFont(cf);
 }
 

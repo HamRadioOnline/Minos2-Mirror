@@ -5,6 +5,9 @@
 #include "kstplanesframe.h"
 #include "ui_kstasactiveframe.h"
 
+inline const QString STATUS_INDICATOR_DISCONNECT_STYLE = QString("background-color: Gainsboro;\n");
+inline const QString STATUS_INDICATOR_CONNECT_STYLE = QString("background-color: Sandybrown;\n");
+
 KSTASActiveFrame::KSTASActiveFrame(QWidget *parent)
     : MinosPanel(parent)
     , ui(new Ui::KSTASActiveFrame)
@@ -12,6 +15,7 @@ KSTASActiveFrame::KSTASActiveFrame(QWidget *parent)
     ui->setupUi(this);
     ui->ASActivecb->setChecked(mainWindow->getASActive());
     on_ASActivecb_stateChanged(mainWindow->getASActive());
+    asStatusIndicatorToggle(false);
 }
 
 KSTASActiveFrame::~KSTASActiveFrame()
@@ -35,6 +39,7 @@ void KSTASActiveFrame::setASBands(QVector<const char *> ASBandStrings)
 
 void KSTASActiveFrame::on_ASActivecb_stateChanged(int state)
 {
+    asStatusIndicatorToggle(false);
     mainWindow->do_ASActive(state);
     if (mainWindow->started)
     {
@@ -58,7 +63,7 @@ void KSTASActiveFrame::on_ASActivecb_stateChanged(int state)
 
         settings.setValue("ASActive", state != 0);
 
-        mainWindow->kstPlanesFrame->setVisible(state != 0);
+        mainWindow->showPlanesFrame(state != 0);
 
         mainWindow->kstCallsFrame->showAircout(state);
     }
@@ -103,6 +108,17 @@ void KSTASActiveFrame::setASActive(bool s)
 
 ASBand KSTASActiveFrame::getASActiveBand() const
 {
-    ASBand b = static_cast<ASBand>(ui->asBandCombo->currentIndex());
+    ASBand b = mainWindow->getASActiveBand();
     return b;
+}
+void KSTASActiveFrame::asStatusIndicatorToggle(bool on)
+{
+    if (on)
+    {
+        ui->asStatusIndicator->setStyleSheet(STATUS_INDICATOR_CONNECT_STYLE);
+    }
+    else
+    {
+        ui->asStatusIndicator->setStyleSheet(STATUS_INDICATOR_DISCONNECT_STYLE);
+    }
 }

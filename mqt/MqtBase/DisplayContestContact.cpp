@@ -342,41 +342,12 @@ int DisplayContestContact::checkContact(bool adddup)
         }
 
         // now look at the locator list
-        QString letters;
-        QString numbers;
-
-        QString sloc = loc.getLoc().mid(0, 4);
-
-        letters = sloc.left(2);
-        numbers = sloc.mid(2, 2);
-
-        LocSquare *ls = nullptr;
-
-        for ( auto const &i: QASCONST(clp->locs[band].llist) )
-        {
-            LocSquare *locsq = i.wt.data();
-            if ( strnicmp ( locsq ->loc, letters, 2 ) == 0 )
-            {
-                ls = locsq;
-                break;
-            }
-
-        }
-
-        if ( !ls )
-        {
-            if (letters.size() >= 2 && letters[ 0 ].isLetter() && letters[ 1 ].isLetter() )
-            {
-                ls = new LocSquare ( letters );
-                MapWrapper<LocSquare> wls(ls);
-                if (!clp->locs[band].llist.contains(wls))
-                    clp->locs[band].llist.insert ( wls, wls );
-            }
-        }
+        LocSquare *ls = contest->getLocSquare(band, loc);
 
         int oldMultCount = multCount;
         if ( ls )
         {
+            QString numbers = loc.getLoc().mid(2, 2);
             LocCount * npt = ls->map ( numbers );
             if ( npt)
             {
@@ -384,7 +355,7 @@ int DisplayContestContact::checkContact(bool adddup)
                 {
                     if (clp->usesBonus.getValue())
                     {
-                        locBonus = clp->getSquareBonus(sloc);
+                        locBonus = clp->getSquareBonus(loc.getLoc());
 
                         if (locBonus > 0)
                         {

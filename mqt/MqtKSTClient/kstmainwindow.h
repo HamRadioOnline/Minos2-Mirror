@@ -228,6 +228,7 @@ public:
      int getMaxDistance() const;
 
     bool getASActive() const;
+     ASBand getASActiveBand() const;
 
     QString getASServerName() const;
 
@@ -286,6 +287,7 @@ public:
     int getLcf() const;
     void setLcf(int newLcf);
 
+    void showPlanesFrame(bool s);
 private slots:
     void CloseTimerTimer();
 

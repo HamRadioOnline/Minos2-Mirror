@@ -159,7 +159,7 @@ void RigControlFrame::on_QSOMargins()
 
 void RigControlFrame::on_FontChanged()
 {
-    QFont cf = panelFont;
+    QFont cf = getPanelFont();
     qreal fs = cf.pointSizeF();
     int fsi = static_cast<int>(fs * 1.25);
     cf.setPointSize(fsi);

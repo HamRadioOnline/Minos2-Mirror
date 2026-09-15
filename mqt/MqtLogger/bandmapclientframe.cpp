@@ -206,6 +206,10 @@ BandmapClientFrame::BandmapClientFrame(QWidget *parent):
     ui->zoomSpinner->setMaximum(dialData::MAX_ZOOM_LEVEL);
 
     bmsdb = QSharedPointer<BandMapSpotDB>(new BandMapSpotDB());
+
+    adjustMargins(ui->connectFrame->layout(), 2, 0, 0, 0, 0);
+    adjustMargins(ui->actionFrame->layout(), 2, 0, 0, 0, 0);
+
 }
 void BandmapClientFrame::traceMsg(QString msg)
 {
@@ -321,7 +325,7 @@ void BandmapClientFrame::on_waitClusterServerLoadedTimeout()
 
 void BandmapClientFrame::on_FontChanged()
 {
-    QFont cf = panelFont;
+    QFont cf = getPanelFont();
     bandmapView->onFontChanged(cf);
 }
 
@@ -1251,7 +1255,7 @@ void BandmapClientFrame::addLogSpotToBandmapTable(QSharedPointer<ClusterSpotData
             }
             if (exch.isEmpty())
             {
-                // If we have worked them, fill in locator
+                // If we have worked them, fill in exchange
                 // This happens when we save just the call for someone we worked from CQ
                 loc = ct->getExchForCall(call);
                 newSpot->setDistrict(exch);
@@ -1335,6 +1339,10 @@ void BandmapClientFrame::addLogSpotToBandmapTable(QSharedPointer<ClusterSpotData
                             {
                                 // and override the loc - it may now be provided or changed
                                 spotInBandmap->setDxLocator(loc);
+                                QString brg = newSpot->getDxBrg();
+                                spotInBandmap->setDxBrg(brg);
+                                QString dist = newSpot->getDxDist();
+                                spotInBandmap->setDxDist(dist);
                             }
                         }
                         bmsdb->modifyRecord(spotInBandmap);
@@ -2013,7 +2021,9 @@ void BandmapClientFrame::setBandmapMarkFreq(Frequency _freq, QString mode)
     }
 }
 
-void BandmapClientFrame::setBandmapSaveFreq(QString cs, Frequency _freq, QString mode, QString loc, QString brg, QString exchange)
+void BandmapClientFrame::setBandmapSaveFreq(QString cs, Frequency _freq,
+                                            QString mode, QString loc,
+                                            QString brg, QString exchange)
 {
     if (ct && !ct->isReadOnly())
     {
@@ -2030,11 +2040,21 @@ void BandmapClientFrame::setBandmapSaveFreq(QString cs, Frequency _freq, QString
         {
             logModeStr = getMode(modeBandPlan, _freq, logBandStr);
         }
-
+        QString distance;
+        QString dxBrg;
+        if (!loc.isEmpty())
+        {
+            double dist = 0;
+            int brg = 0;
+            ct->calcDistanceBearing(loc, &dist, &brg);
+            distance = QString::number(static_cast<int>(dist));
+            dxBrg = QString::number(brg);
+         }
         QSharedPointer<ClusterSpotData> spot(new ClusterSpotData(bandmapSpotType::SAVED));
         spot->setDxCall(cs);
         spot->setDxLocator(loc);
-        spot->setDxBrg(brg);
+        spot->setDxBrg(dxBrg);
+        spot->setDxDist(distance);
         spot->setMode(logModeStr);
         spot->setFreq(_freq);
         spot->setBand(logBandStr);

@@ -94,7 +94,7 @@ void QSOTableFrame::buildFrame()
 
     setPanelFont();
 
-    QSOTable->setFont(panelFont);
+    QSOTable->setFont(getPanelFont());
     QSOTable->setItemDelegate( delegate.data() );
 
     QSOTable->verticalHeader()->setSectionResizeMode(QHeaderView::Interactive);
