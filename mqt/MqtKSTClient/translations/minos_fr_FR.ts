@@ -94,7 +94,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../kstasactiveframe.ui" line="35"/>
+        <location filename="../kstasactiveframe.ui" line="22"/>
         <source>AS Band</source>
         <translation type="unfinished">AS Bande</translation>
     </message>
@@ -102,6 +102,11 @@
         <location filename="../kstasactiveframe.ui" line="45"/>
         <source>AS Active</source>
         <translation type="unfinished">AS actif</translation>
+    </message>
+    <message>
+        <location filename="../kstasactiveframe.ui" line="52"/>
+        <source>AS Connected</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -584,7 +589,7 @@ l&apos;indicatif sélectionné</translation>
     </message>
     <message>
         <location filename="../kstmainwindow.cpp" line="151"/>
-        <location filename="../kstmainwindow.cpp" line="801"/>
+        <location filename="../kstmainwindow.cpp" line="806"/>
         <source>Connect</source>
         <translation>Connecter</translation>
     </message>
@@ -594,7 +599,7 @@ l&apos;indicatif sélectionné</translation>
         <translation>Fermer</translation>
     </message>
     <message>
-        <location filename="../kstmainwindow.cpp" line="791"/>
+        <location filename="../kstmainwindow.cpp" line="796"/>
         <source>Disconnect</source>
         <translation>Déconnecter</translation>
     </message>
@@ -667,33 +672,33 @@ l&apos;indicatif sélectionné</translation>
         <translation type="unfinished">AirScout</translation>
     </message>
     <message>
-        <location filename="../kstmainwindow.cpp" line="707"/>
+        <location filename="../kstmainwindow.cpp" line="712"/>
         <source>Exit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../kstmainwindow.cpp" line="1432"/>
+        <location filename="../kstmainwindow.cpp" line="1441"/>
         <source>Set Back</source>
         <translatorcomment>Ou retour??</translatorcomment>
         <translation>Définir statut à « Présent»</translation>
     </message>
     <message>
-        <location filename="../kstmainwindow.cpp" line="1436"/>
+        <location filename="../kstmainwindow.cpp" line="1445"/>
         <source>Set Away</source>
         <translation>Définir statut à « Absent »</translation>
     </message>
     <message>
-        <location filename="../kstmainwindow.cpp" line="1774"/>
+        <location filename="../kstmainwindow.cpp" line="1783"/>
         <source>KST Test data Files</source>
         <translation>Fichiers de données de test KST</translation>
     </message>
     <message>
-        <location filename="../kstmainwindow.cpp" line="1775"/>
+        <location filename="../kstmainwindow.cpp" line="1784"/>
         <source>All Files</source>
         <translation>Tous fichiers</translation>
     </message>
     <message>
-        <location filename="../kstmainwindow.cpp" line="1778"/>
+        <location filename="../kstmainwindow.cpp" line="1787"/>
         <source>KST Client log files Files</source>
         <translation>Fichiers journaux du Minos KSTclient</translation>
     </message>
