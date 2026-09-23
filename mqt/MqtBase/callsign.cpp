@@ -80,7 +80,12 @@ static QString getPrefix ( QString p, QSharedPointer<CountrySynonym> &csyn )
         // we need to stop when we get to the basic prefix...
         // otherwise RVI6ABC ends up matching R, which is UA
 
-        csyn = MultLists::getMultLists()->searchCountrySynonym ( testpart);
+        MultLists *ml = MultLists::getMultLists();
+        if (!ml)
+        {
+            return testpart;
+        }
+        csyn = ml->searchCountrySynonym ( testpart);
 
         if ( csyn )
         {
