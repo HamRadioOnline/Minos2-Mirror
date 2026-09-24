@@ -24,7 +24,7 @@ public:
 
     void setNameFromCall(const Callsign &call, int activeChat);
 
-    void setDefaultButton(QPushButton *d);
+    void setMeepDefaultButton(QPushButton *d);
 private slots:
     void on_genmsgButton_clicked();
     void on_meepButton_clicked();

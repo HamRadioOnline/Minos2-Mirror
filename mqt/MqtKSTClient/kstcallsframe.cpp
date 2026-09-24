@@ -6,6 +6,7 @@
 #include "QtUtils.h"
 #include "RPCCommandConstants.h"
 
+#include "delayedaction.h"
 #include "kstcallgridmodel.h"
 #include "kstloginframe.h"
 #include "kstmainwindow.h"
@@ -145,6 +146,8 @@ void KSTCallsFrame::on_sortIndicatorChanged(int /*logicalIndex*/, Qt::SortOrder 
 }
 void KSTCallsFrame::onCSTableSelectionChanged(const QItemSelection &/*selected*/, const QItemSelection &/*deselected*/)
 {
+    selectedUser.reset();
+    setXferDefaultButton(false);
     QModelIndexList mil = ui->CSTable->selectionModel()->selectedRows();
 
     QString mselstring;
@@ -170,11 +173,9 @@ void KSTCallsFrame::onCSTableSelectionChanged(const QItemSelection &/*selected*/
         if (r >= 0 && r < mainWindow->callVector->size())
         {
             QSharedPointer<KstUser> user = mainWindow->callVector->at(r);
+            selectedUser = user;
 
-            // probably implement as a signal via mainForm, picked up
-            // by those interested
-
-            if (!ui->noSetCallcb->isChecked())
+            if (!ui->noSetCallcb->isChecked() && user)
             {
                 mainWindow->kstSendMeepFrame->setNameFromCall(user->call, user->chat);    //send meep, msgEdit "Hi Fred"
 
@@ -183,7 +184,7 @@ void KSTCallsFrame::onCSTableSelectionChanged(const QItemSelection &/*selected*/
             }
             // Planes
             mainWindow->showPlanesFrame(!user.isNull());
-            ui->loggerXferButton->setDefault(true);
+            setXferDefaultButton(true);
         }
     }
     else if (mil.count() == 0)
@@ -196,31 +197,36 @@ void KSTCallsFrame::acChanged(QSharedPointer<KstUser> user)
     int row = mainWindow->callVector->indexOf(user);
     emit kstCallModel.dataChanged(kstCallModel.index(row, ecscAirscout), kstCallModel.index(row, ecscAirscout));
 }
-void KSTCallsFrame::setDefaultButton(bool s)
+void KSTCallsFrame::setXferDefaultButton(bool s)
 {
+    QString xfer;
+    if (!selectedUser)
+    {
+        xfer = tr("Send to Logger");
+    }
+    else
+    {
+        xfer = tr("Send %1 to Logger").arg(selectedUser->call.getFullCall());
+    }
+    ui->loggerXferButton->setText(xfer);
     ui->loggerXferButton->setDefault(s);
+    ui->loggerXferButton->setEnabled(!selectedUser.isNull());
 }
 
 void KSTCallsFrame::setFilter(Callsign &c)
 {
     ui->CSFilter->setText(c.getFullCall());
-    ui->CSTable->selectRow(0);
 
+    // maybe we should search for c??
+    ui->CSTable->selectRow(1);
 }
 
 void KSTCallsFrame::on_loggerXferButton_clicked()
 {
-    QModelIndexList mil = ui->CSTable->selectionModel()->selectedRows();
-
-    if (mil.size() == 1)
+    if (selectedUser)
     {
-
-        auto &mi = mil[0];
-        QModelIndex m = kstCallFilterModel.mapToSource(mi);
-        int r = m.row();
-        QSharedPointer<KstUser> user = mainWindow->callVector->at(r);
-        QString call = user->call.getFullCall();
-        QString loc = user->loc;
+        QString call = selectedUser->call.getFullCall();
+        QString loc = selectedUser->loc;
 
         int hyphen = call.indexOf("-");
         if (hyphen > 0)

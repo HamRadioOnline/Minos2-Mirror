@@ -15,6 +15,7 @@ class KSTCallsFrame : public MinosPanel
     Q_OBJECT
 
     QSharedPointer<HtmlDelegate> CSDelegate;
+    QSharedPointer<KstUser> selectedUser;
 
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
 
@@ -30,7 +31,7 @@ public:
     void setServices(QStringList services);
 
     void acChanged(QSharedPointer<KstUser> user);
-    void setDefaultButton(bool s);
+    void setXferDefaultButton(bool s);
     void setFilter(Callsign &c);
     void showAircout(bool s);
 private slots:
