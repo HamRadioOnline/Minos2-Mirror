@@ -322,23 +322,26 @@ LocSquare *BaseContestLog::getLocSquare(const QString &band, const Locator &loc)
     QString numbers;
 
     QString sloc = loc.getLoc().mid(0, 4);
-
-    letters = sloc.left(2);
-    numbers = sloc.mid(2, 2);
-
     LocSquare *ls = nullptr;
-    if ( letters[ 0 ].isLetter() && letters[ 1 ].isLetter() )
+
+    if (sloc.size() == 4)
     {
-        LocSquare lss( letters );
-        MapKeyWrapper<LocSquare> wlsk(&lss);
-        if (!locs[band].llist.contains(wlsk))
+        letters = sloc.left(2);
+        numbers = sloc.mid(2, 2);
+
+        if ( letters[ 0 ].isLetter() && letters[ 1 ].isLetter() )
         {
-            LocSquare *lsi = new LocSquare ( letters );
-            MapKeyWrapper<LocSquare> wlsk(lsi);
-            MapWrapper<LocSquare> wls(lsi);
-            locs[band].llist.insert ( wlsk, wls );
+            LocSquare lss( letters );
+            MapKeyWrapper<LocSquare> wlsk(&lss);
+            if (!locs[band].llist.contains(wlsk))
+            {
+                LocSquare *lsi = new LocSquare ( letters );
+                MapKeyWrapper<LocSquare> wlsk(lsi);
+                MapWrapper<LocSquare> wls(lsi);
+                locs[band].llist.insert ( wlsk, wls );
+            }
+            ls = locs[band].llist[wlsk].wt.data();
         }
-        ls = locs[band].llist[wlsk].wt.data();
     }
     return ls;
 }
