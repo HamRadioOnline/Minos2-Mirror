@@ -24,6 +24,7 @@ class DXCCGridModel: public QAbstractItemModel
         DXCCGridModel();
         ~DXCCGridModel() Q_DECL_OVERRIDE;
         QSharedPointer<HtmlDelegate> delegate;
+        QString scrolledCountry;
 
         LoggerContestLog *ct;
         QString band;
