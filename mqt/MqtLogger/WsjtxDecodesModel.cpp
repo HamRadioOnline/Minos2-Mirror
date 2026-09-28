@@ -44,7 +44,7 @@
 DecodeHeading const DecodesModel::headings[dcMaxVal] = {
     {QT_TR_NOOP ("Client"), Qt::AlignLeft},
 
-    {QT_TR_NOOP ("Time"), Qt::AlignLeft},
+    {QT_TR_NOOP ("Start Time"), Qt::AlignLeft},
     {QT_TR_NOOP ("Snr"), Qt::AlignLeft},
     {QT_TR_NOOP ("DT"), Qt::AlignLeft},
     {QT_TR_NOOP ("DF"), Qt::AlignLeft},
