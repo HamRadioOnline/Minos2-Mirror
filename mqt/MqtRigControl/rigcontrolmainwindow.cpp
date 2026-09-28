@@ -2256,7 +2256,7 @@ void RigControlMainWindow::setFreq(Frequency freq, VFO vfo)
            // rigStateDetails->rfrequency will be set when we poll the rig later
             Frequency curFreq;
             retCode = radio->getFrequency(vfo, curFreq);
-
+            logMessage(QString("SetFreq: getFrequency %1").arg(QString::number(static_cast<qint64>(f))));
             if (curFreq == mf)
             {
                 logMessage(QString("SetFreq: Rig already set to Freq %1").arg(QString::number(static_cast<qint64>(f))));
@@ -3329,7 +3329,8 @@ void RigControlMainWindow::setMode(QString mode, VFO vfo)
         if (radioCommsOK)
         {
             MODE curMode = UNK;
-            radio->getMode(vfo, curMode);
+            retCode = radio->getMode(vfo, curMode);
+            logMessage(QString("SetMode: getMode  Mode = %1 , vfo = %2").arg(rigcommon::convertModeToQString(curMode), vfoToStr(vfo)));
             if (mCode == curMode)
             {
                 logMessage(QString("SetMode: radio mode already correct! Mode = %1 , vfo = %2").arg(rigcommon::convertModeToQString(mCode), vfoToStr(vfo)));
