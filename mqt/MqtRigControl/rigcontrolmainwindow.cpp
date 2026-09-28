@@ -150,14 +150,14 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
         if (hamlibCheckErrorNum == -2 )
         {
-            QMessageBox::critical(nullptr, tr("RigControl Hamlib Library Version Error!"), tr("Installed Hamlib version %1 is incompatible.\nIt should be version %2 or greater.\n\nPlease check your installation.\nYou will not be able to select a radio until this is rectified!").arg(hamlib_version).arg(MINIMUM_HAMLIB_VERSION), QMessageBox::Ok);
-            logMessage(QString("Error version number conversion to int failed - installed version = %1, minimum version = %2").arg(hamlib_version).arg(MINIMUM_HAMLIB_VERSION)); // error)
+            QMessageBox::critical(nullptr, tr("RigControl Hamlib Library Version Error!"), tr("Installed Hamlib version %1 is incompatible.\nIt should be version %2 or greater.\n\nPlease check your installation.\nYou will not be able to select a radio until this is rectified!").arg(hamlib_version, MINIMUM_HAMLIB_VERSION), QMessageBox::Ok);
+            logMessage(QString("Error version number conversion to int failed - installed version = %1, minimum version = %2").arg(hamlib_version, MINIMUM_HAMLIB_VERSION)); // error)
         }
         else if (hamlibCheckErrorNum == -1 )
         {
             // we should not get here....
             QMessageBox::critical(nullptr, tr("Hamlib Version Test conversion error!"), tr("Hamlib Version Test conversion error. Please report error"));
-            logMessage(QString("Error version number conversion to int failed - installed version = %1, minimum version = %2").arg(hamlib_version).arg(MINIMUM_HAMLIB_VERSION));
+            logMessage(QString("Error version number conversion to int failed - installed version = %1, minimum version = %2").arg(hamlib_version, MINIMUM_HAMLIB_VERSION));
         }
         else if (hamlibCheckErrorNum == -3)
         {
@@ -252,7 +252,7 @@ RigControlMainWindow::RigControlMainWindow(QWidget *parent) :
 
     if (!hamlibOk)
     {
-        showStatusMessage(tr("Error: Installed Hamlib version %1 is incorrect, should be version %2 or greater").arg(hamlib_version).arg(MINIMUM_HAMLIB_VERSION));
+        showStatusMessage(tr("Error: Installed Hamlib version %1 is incorrect, should be version %2 or greater").arg(hamlib_version, MINIMUM_HAMLIB_VERSION));
     }
 
     trace("*** Rig App Started ***");
@@ -2254,7 +2254,17 @@ void RigControlMainWindow::setFreq(Frequency freq, VFO vfo)
             }
 
            // rigStateDetails->rfrequency will be set when we poll the rig later
-           retCode = radio->setFrequency(mf, vfo);
+            Frequency curFreq;
+            retCode = radio->getFrequency(vfo, curFreq);
+
+            if (curFreq == mf)
+            {
+                logMessage(QString("SetFreq: Rig already set to Freq %1").arg(QString::number(static_cast<qint64>(f))));
+            }
+            else
+            {
+                retCode = radio->setFrequency(mf, vfo);
+            }
         }
         else
         {
@@ -3318,24 +3328,33 @@ void RigControlMainWindow::setMode(QString mode, VFO vfo)
 
         if (radioCommsOK)
         {
-            retCode = radio->setMode(vfo, mCode);
-            if (retCode == Rig_OK)
+            MODE curMode = UNK;
+            radio->getMode(vfo, curMode);
+            if (mCode == curMode)
             {
-                logMessage(QString("SetMode: changed! Mode = %1 , vfo = %2").arg(rigcommon::convertModeToQString(mCode), vfoToStr(vfo)));
-
+                logMessage(QString("SetMode: radio mode already correct! Mode = %1 , vfo = %2").arg(rigcommon::convertModeToQString(mCode), vfoToStr(vfo)));
             }
             else
             {
-                logMessage(QString("SetMode: Change Error Code = %1, Mode = %2").arg(QString::number(retCode), rigcommon::convertModeToQString(mCode), rigcommon::convertModeToQString(mCode)));
-
-                if (radio->modeSupported(mCode, rigStateDetails->rfrequency))
+                retCode = radio->setMode(vfo, mCode);
+                if (retCode == Rig_OK)
                 {
-                    radioError(retCode, tr("Set Mode"));
+                    logMessage(QString("SetMode: changed! Mode = %1 , vfo = %2").arg(rigcommon::convertModeToQString(mCode), vfoToStr(vfo)));
+
                 }
                 else
                 {
-                    logMessage(QString("Mode not supported by radio"));
-                    sendStatusToLogError(tr("%1 not supported by radio").arg(mode));
+                    logMessage(QString("SetMode: Change Error Code = %1, Mode = %2").arg(QString::number(retCode), rigcommon::convertModeToQString(mCode), rigcommon::convertModeToQString(mCode)));
+
+                    if (radio->modeSupported(mCode, rigStateDetails->rfrequency))
+                    {
+                        radioError(retCode, tr("Set Mode"));
+                    }
+                    else
+                    {
+                        logMessage(QString("Mode not supported by radio"));
+                        sendStatusToLogError(tr("%1 not supported by radio").arg(mode));
+                    }
                 }
             }
         }
