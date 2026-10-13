@@ -75,20 +75,23 @@ void KSTPlanesFrame::showPlanes(QSharedPointer<KstUser> user)
 {
     planeActive = user;
 
-    if (user->lastCalcTime.isEmpty())
+    if (user)
     {
-        ui->planeslabel->setText(tr(""));
-    }
-    else
-    {
-        QString l = QString("%1\n%2 at %3\n")
-        .arg(user->lastCalcTime, user->fromCall, user->fromLoc)
-            + QString("to %1 at %2")
-                  .arg(user->toCall, user->toLoc);
+        if (user->lastCalcTime.isEmpty())
+        {
+            ui->planeslabel->setText(tr(""));
+        }
+        else
+        {
+            QString l = QString("%1\n%2 at %3\n")
+            .arg(user->lastCalcTime, user->fromCall, user->fromLoc)
+                + QString("to %1 at %2")
+                      .arg(user->toCall, user->toLoc);
 
-        ui->planeslabel->setText(l);
+            ui->planeslabel->setText(l);
+        }
+        kstPlanesModel.setPlanesVector(user->planes);
     }
-    kstPlanesModel.setPlanesVector(user->planes);
 
 }
 void KSTPlanesFrame::acChanged(QSharedPointer<KstUser> user)
@@ -102,7 +105,7 @@ void KSTPlanesFrame::acChanged(QSharedPointer<KstUser> user)
 }
 void KSTPlanesFrame::on_showInAS_clicked()
 {
-    mainWindow->asl->asSelected(planeActive);
+    mainWindow->asl->asSelected(mainWindow->kstCallsFrame->selectedUser);
 }
 void KSTPlanesFrame::on_showMPath_clicked()
 {

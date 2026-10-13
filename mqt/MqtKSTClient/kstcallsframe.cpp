@@ -184,6 +184,7 @@ void KSTCallsFrame::onCSTableSelectionChanged(const QItemSelection &/*selected*/
             }
             // Planes
             mainWindow->showPlanesFrame(!user.isNull());
+            mainWindow->kstPlanesFrame->showPlanes(user);
             setXferDefaultButton(true);
         }
     }

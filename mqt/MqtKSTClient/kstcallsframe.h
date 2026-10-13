@@ -15,13 +15,13 @@ class KSTCallsFrame : public MinosPanel
     Q_OBJECT
 
     QSharedPointer<HtmlDelegate> CSDelegate;
-    QSharedPointer<KstUser> selectedUser;
 
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
 
 public:
     KstCallGridModel kstCallModel;
     KstCallGridSortFilterModel kstCallFilterModel;
+    QSharedPointer<KstUser> selectedUser;
 
     explicit KSTCallsFrame(QWidget *parent = nullptr);
     ~KSTCallsFrame();
