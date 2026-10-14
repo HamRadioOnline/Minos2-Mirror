@@ -20,7 +20,7 @@
    <item>
     <widget class="MinosSplitter" name="bmSplitter">
      <property name="orientation">
-      <enum>Qt::Orientation::Vertical</enum>
+      <enum>Qt::Vertical</enum>
      </property>
      <widget class="QFrame" name="connectFrame">
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -36,7 +36,7 @@
          <item>
           <spacer name="horizontalSpacer_4">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -56,7 +56,7 @@
          <item>
           <widget class="QLineEdit" name="textFilterEdit">
            <property name="focusPolicy">
-            <enum>Qt::FocusPolicy::ClickFocus</enum>
+            <enum>Qt::ClickFocus</enum>
            </property>
            <property name="clearButtonEnabled">
             <bool>true</bool>
@@ -86,7 +86,7 @@
             </size>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::FocusPolicy::NoFocus</enum>
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string/>
@@ -103,7 +103,7 @@
          <item>
           <spacer name="horizontalSpacer_5">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -136,7 +136,7 @@
             </size>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::FocusPolicy::NoFocus</enum>
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string/>
@@ -146,7 +146,7 @@
          <item>
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -164,7 +164,7 @@
             </font>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::FocusPolicy::NoFocus</enum>
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>00:000:000:000</string>
@@ -176,7 +176,7 @@
             <bool>false</bool>
            </property>
            <property name="alignment">
-            <set>Qt::AlignmentFlag::AlignCenter</set>
+            <set>Qt::AlignCenter</set>
            </property>
            <property name="readOnly">
             <bool>true</bool>
@@ -186,7 +186,7 @@
          <item>
           <spacer name="horizontalSpacer_7">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -213,7 +213,7 @@
          <item>
           <spacer name="horizontalSpacer_3">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -229,7 +229,7 @@
      </widget>
      <widget class="BandmapGraphicsPanel" name="bandmapGraphicsView">
       <property name="focusPolicy">
-       <enum>Qt::FocusPolicy::NoFocus</enum>
+       <enum>Qt::NoFocus</enum>
       </property>
      </widget>
      <widget class="QFrame" name="actionFrame">
@@ -239,7 +239,7 @@
          <item>
           <widget class="QPushButton" name="actionsButton">
            <property name="focusPolicy">
-            <enum>Qt::FocusPolicy::NoFocus</enum>
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Actions</string>
@@ -249,7 +249,7 @@
          <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -276,7 +276,7 @@
          <item>
           <spacer name="horizontalSpacer_6">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -289,10 +289,17 @@
          <item>
           <widget class="QPushButton" name="filtersPushBut">
            <property name="focusPolicy">
-            <enum>Qt::FocusPolicy::NoFocus</enum>
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>Filters</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="filterWorked">
+           <property name="text">
+            <string>Filter Worked</string>
            </property>
           </widget>
          </item>
@@ -303,7 +310,7 @@
          <item>
           <widget class="QFrame" name="filterframe">
            <property name="frameShape">
-            <enum>QFrame::Shape::Box</enum>
+            <enum>QFrame::Box</enum>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
@@ -326,10 +333,10 @@
          <item>
           <widget class="QFrame" name="searchFrame">
            <property name="frameShape">
-            <enum>QFrame::Shape::Box</enum>
+            <enum>QFrame::Box</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Shadow::Raised</enum>
+            <enum>QFrame::Raised</enum>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
@@ -337,7 +344,7 @@
               <item>
                <widget class="QPushButton" name="searchUnworkedHF">
                 <property name="focusPolicy">
-                 <enum>Qt::FocusPolicy::NoFocus</enum>
+                 <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="text">
                  <string>Next HF
@@ -348,7 +355,7 @@ Unworked</string>
               <item>
                <widget class="QPushButton" name="searchUnworkedLF">
                 <property name="focusPolicy">
-                 <enum>Qt::FocusPolicy::NoFocus</enum>
+                 <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="text">
                  <string>Next LF
@@ -388,13 +395,13 @@ Unworked</string>
    <header>minossplitter.h</header>
    <container>1</container>
   </customwidget>
-   <customwidget>
-    <class>MinosPanel</class>
-    <extends>QFrame</extends>
-    <header>minospanel.h</header>
-    <container>1</container>
-   </customwidget>
-  </customwidgets>
+  <customwidget>
+   <class>MinosPanel</class>
+   <extends>QFrame</extends>
+   <header>minospanel.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -47,6 +47,7 @@ BandmapClientFrame::BandmapClientFrame(QWidget *parent):
     bandmapView->move(-100, -100);
     bandmapView->resize(1, 1);
     bandmapView->setFilterSettings(&filterSettings);
+    ui->filterWorked->setChecked(filterSettings.getHideWorkedStationsFlag());
 
     bandmapView->bandmapDataModel = bandmapDataModel;
 
@@ -711,6 +712,7 @@ void BandmapClientFrame::ShowFilter()
         ft = tr("Filter %1").arg(filterSettings.getDistanceFilter());
     }
     ui->filterText->setText(ft);
+    ui->filterWorked->setChecked(filterSettings.getHideWorkedStationsFlag());
 }
 
 void BandmapClientFrame::setContest(BaseContestLog *c)
@@ -2190,3 +2192,10 @@ void BandmapClientFrame::on_searchUnworkedHF_clicked()
     bool locs = ui->locatorscb->isChecked();
     bandmapView-> onNextUnworkedSpot(true, locs);
 }
+void BandmapClientFrame::on_filterWorked_stateChanged(int /*arg1*/)
+{
+    filterSettings.setHideWorkedStationsFlag(ui->filterWorked->isChecked());
+    ct->saveBandmapFilter(filterSettings);
+    bandmapView->bandmapUpdate(true);
+}
+

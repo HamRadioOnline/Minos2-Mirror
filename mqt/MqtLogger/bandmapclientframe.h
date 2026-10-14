@@ -276,6 +276,8 @@ private slots:
      void on_searchUnworkedHF_clicked();
      void on_searchUnworkedLF_clicked();
 
+     void on_filterWorked_stateChanged(int arg1);
+
  public slots:
      void on_AfterLogContact(BaseContestLog *c, QSharedPointer<BaseContact>);
 };
