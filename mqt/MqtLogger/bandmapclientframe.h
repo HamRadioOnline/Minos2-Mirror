@@ -212,6 +212,8 @@ private:
     void doMemorySelected(QSharedPointer<ClusterSpotData> sd);
     void doClearSpotSelected(QSharedPointer<ClusterSpotData> sd);
     void doClearClusterSpotsSelected();
+    void checkAction(QAction *act, QString text);
+    void checkContextAction(QAction *act, QString text);
 protected:
 
     void keyPressEvent(QKeyEvent *event) override;
