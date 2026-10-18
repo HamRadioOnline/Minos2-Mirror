@@ -78,6 +78,8 @@ BandmapClientFrame::BandmapClientFrame(QWidget *parent):
     actionInObject = new BMP_MouseInObject(this, this);
     spotsMenu->installEventFilter(actionInObject);
 
+    callsignAction = new QAction("placeholder", this);
+    callsignAction->setEnabled(false);
     markSpotAction = new QAction(tr("M&ark Spot"), this);
     unMarkSpotAction = new QAction(tr("&Unmark Spot"), this);
     freqAction = new QAction(tr("Set &Freq"), this);
@@ -91,6 +93,7 @@ BandmapClientFrame::BandmapClientFrame(QWidget *parent):
     clearAllSpotsAction = new QAction(tr("Clear All Spots"), this);
     clearClusterSpotsAction = new QAction(tr("Clear Cluster Spots"), this);
 
+    spotsMenu->addAction(callsignAction);
     spotsMenu->addAction(markSpotAction);
     spotsMenu->addAction(unMarkSpotAction);
     spotsMenu->addAction(freqAction);
@@ -127,6 +130,8 @@ BandmapClientFrame::BandmapClientFrame(QWidget *parent):
     connect( clearClusterSpotsAction, &QAction::triggered, this, &BandmapClientFrame::on_clearClusterSpotsActionSelected );
 
     contextSpotsMenu = new QMenu(this);
+    contextSpotsMenu_callsignAction = new QAction("placeholder");
+    contextSpotsMenu_callsignAction->setEnabled(false);
     contextSpotsMenu_markSpotAction = new QAction(tr("M&ark Spot"), this);
     contextSpotsMenu_unMarkSpotAction = new QAction(tr("&Unmark Spot"), this);
     contextMoveFreqAction = new QAction(tr("Move spot to current frequency"));
@@ -136,6 +141,7 @@ BandmapClientFrame::BandmapClientFrame(QWidget *parent):
     contextSpotsMenu_memoryAction = new QAction(tr("Send &Memory"), this);
     contextSpotsMenu_clearSpotAction = new QAction(tr("Clear &Spot"), this);
 
+    contextSpotsMenu->addAction(contextSpotsMenu_callsignAction);
     contextSpotsMenu->addAction(contextSpotsMenu_markSpotAction);
     contextSpotsMenu->addAction(contextSpotsMenu_unMarkSpotAction);
     contextSpotsMenu->addAction(contextMoveFreqAction);
@@ -336,32 +342,37 @@ void BandmapClientFrame::on_bandmapLimitsChanged()
 }
 // this is for the Tool button Action Menu
 
-void BandmapClientFrame::checkAction(QAction * act, QString text)
+void BandmapClientFrame::checkAction(QAction * act/*, QString text*/)
 {
     QSharedPointer<ClusterSpotData> spot = bandmapView->getSelectedSpotDataPtr();
     if (spot)
     {
-        QString call = spot->getDxCallStr();
-        act->setText(text + " (" + call + ")");
         act->setVisible(true);
     }
     else
     {
-        act->setText(text);
         act->setVisible(false);
     }
 }
 void BandmapClientFrame::onMenuShow()
 {
     traceMsg(QString("Action Menu Selected - ViewRowNum %1").arg(bandmapView->getSelectedSpotViewRowNum()));
-    checkAction(markSpotAction, tr("M&ark Spot"));
+    QSharedPointer<ClusterSpotData> spot = bandmapView->getSelectedSpotDataPtr();
+    QString call;
+    if (spot)
+    {
+        call = spot->getDxCallStr();
+    }
+    callsignAction->setText(call);
+    checkAction(callsignAction);
+    checkAction(markSpotAction);
 
-    checkAction(unMarkSpotAction, tr("&Unmark Spot"));
-    checkAction(freqAction, tr("Set &Freq"));
-    checkAction(bearingAction, tr("Set &Bearing"));
-    checkAction(logAction, tr("Send &Log"));
-    checkAction(memoryAction, tr("Send &Memory"));
-    checkAction(clearSpotAction, tr("Clear &Spot"));
+    checkAction(unMarkSpotAction);
+    checkAction(freqAction);
+    checkAction(bearingAction);
+    checkAction(logAction);
+    checkAction(memoryAction);
+    checkAction(clearSpotAction);
 
 }
 
@@ -703,18 +714,15 @@ void BandmapClientFrame::on_readZoomLevelActionSelected()
 }
 // end of actions and context actions
 //============================================================================
-void BandmapClientFrame::checkContextAction(QAction * act, QString text)
+void BandmapClientFrame::checkContextAction(QAction * act)
 {
     QSharedPointer<ClusterSpotData> spot = contextMenuSelectedSpotData;
     if (spot)
     {
-        QString call = spot->getDxCallStr();
-        act->setText(text + " (" + call + ")");
         act->setVisible(true);
     }
     else
     {
-        act->setText(text);
         act->setVisible(false);
     }
 }
@@ -725,10 +733,10 @@ void BandmapClientFrame::on_contextMenuSelected(const QPoint& pos, const QPoint&
     int viewRowNum = bandmapView->isClickInRegionOfSpot(mapP);
     traceMsg(QString("Context Menu Selected - ViewRowNum %1").arg(viewRowNum));
 
+    QString call;
     if (viewRowNum != NO_SELECTED_ROWNUM)
     {
         contextMenuSelectedSpotData = bandmapView->getSpotData(viewRowNum);
-        QString call;
         if (contextMenuSelectedSpotData->getSpotType() == bandmapSpotType::CQ)
         {
             traceMsg(QString("Context Menu Selected - ViewRowNum %1 - Error Selected CQ Marker").arg(viewRowNum));
@@ -736,7 +744,7 @@ void BandmapClientFrame::on_contextMenuSelected(const QPoint& pos, const QPoint&
         }
         else
         {
-            QString call = contextMenuSelectedSpotData->getDxCallStr();
+            call = contextMenuSelectedSpotData->getDxCallStr();
             traceMsg(QString("Context Menu Selected - call %1").arg(call));
 
         }
@@ -746,14 +754,16 @@ void BandmapClientFrame::on_contextMenuSelected(const QPoint& pos, const QPoint&
         contextMenuSelectedSpotData.reset();
     }
     // this all of the actions; if off a spot the popup doesn't happen
-    checkContextAction(contextSpotsMenu_markSpotAction, tr("M&ark Spot"));
-    checkContextAction(contextSpotsMenu_unMarkSpotAction, tr("&Unmark Spot"));
-    checkContextAction(contextMoveFreqAction, tr("Move spot to current frequency"));
-    checkContextAction(contextSpotsMenu_freqAction, tr("Set &Freq"));
-    checkContextAction(contextSpotsMenu_bearingAction, tr("Set &Bearing"));
-    checkContextAction(contextSpotsMenu_logAction, tr("Send &Log"));
-    checkContextAction(contextSpotsMenu_memoryAction, tr("Send &Memory"));
-    checkContextAction(contextSpotsMenu_clearSpotAction, tr("Clear &Spot"));
+    contextSpotsMenu_callsignAction->setText(call);
+    checkContextAction(contextSpotsMenu_callsignAction);
+    checkContextAction(contextSpotsMenu_markSpotAction);
+    checkContextAction(contextSpotsMenu_unMarkSpotAction);
+    checkContextAction(contextMoveFreqAction);
+    checkContextAction(contextSpotsMenu_freqAction);
+    checkContextAction(contextSpotsMenu_bearingAction);
+    checkContextAction(contextSpotsMenu_logAction);
+    checkContextAction(contextSpotsMenu_memoryAction);
+    checkContextAction(contextSpotsMenu_clearSpotAction);
 
 
     QPoint globalPos = ui->bandmapGraphicsView->viewport()->mapToGlobal( pos );
