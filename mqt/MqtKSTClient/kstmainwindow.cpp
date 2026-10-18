@@ -340,6 +340,7 @@ void KSTMainWindow::closeEvent(QCloseEvent *event)
 
     trace("KSTMainWindow Closing");
 
+    asl.reset();
     delete monitoredLogs;
     monitoredLogs =nullptr;
 
