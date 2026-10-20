@@ -277,11 +277,17 @@ bool EngineConfigure::check()
     checkEnginePath(ui->grittyEdit, ui->grittyEnable1);
     checkEnginePath(ui->grittyEdit, ui->grittyEnable2);
 
+    checkEnginePath(ui->JTTYEdit1, ui->JTTYEnable1);
+    checkEnginePath(ui->JTTYEdit2, ui->JTTYEnable2);
+
     checkEnginePort(ui->fldigiPort1, ui->fldigiEnable1);
     checkEnginePort(ui->fldigiPort2, ui->fldigiEnable2);
 
     checkEnginePort(ui->grittyPort1, ui->grittyEnable1);
     checkEnginePort(ui->grittyPort2, ui->grittyEnable2);
+
+    checkEnginePort(ui->JTTYPort1, ui->JTTYEnable1);
+    checkEnginePort(ui->JTTYPort2, ui->JTTYEnable2);
 
     return true;
 }
@@ -309,8 +315,10 @@ EngineConfigure::EngineConfigure(DMMainWindow *parent) :
     connect(ui->fldigiEdit, &QLineEdit::editingFinished, this, &EngineConfigure::check);
     connect(ui->grittyPort1, &QLineEdit::editingFinished, this, &EngineConfigure::check);
     connect(ui->grittyPort2, &QLineEdit::editingFinished, this, &EngineConfigure::check);
-    connect(ui->grittyPort1, &QLineEdit::editingFinished, this, &EngineConfigure::check);
-    connect(ui->grittyPort2, &QLineEdit::editingFinished, this, &EngineConfigure::check);
+    connect(ui->JTTYEdit1, &QLineEdit::editingFinished, this, &EngineConfigure::check);
+    connect(ui->JTTYEdit2, &QLineEdit::editingFinished, this, &EngineConfigure::check);
+    connect(ui->JTTYPort1, &QLineEdit::editingFinished, this, &EngineConfigure::check);
+    connect(ui->JTTYPort2, &QLineEdit::editingFinished, this, &EngineConfigure::check);
 
     RegSettings qsettings;
     geoStr = QString("dataModes/Configuration/geometry");
@@ -416,6 +424,16 @@ EngineConfigure::EngineConfigure(DMMainWindow *parent) :
     b = getEngineEnabled(settings, EngineWindow::gritty + EngineWindow::i2);
     ui->grittyEnable2->setChecked(b);
 
+    m = getEnginePath(settings, EngineWindow::JTTY + EngineWindow::i1);
+    ui->JTTYEdit1->setText(m);
+    m = getEnginePath(settings, EngineWindow::JTTY + EngineWindow::i2);
+    ui->JTTYEdit2->setText(m);
+
+    b = getEngineEnabled(settings, EngineWindow::JTTY + EngineWindow::i1);
+    ui->JTTYEnable1->setChecked(b);
+    b = getEngineEnabled(settings, EngineWindow::JTTY + EngineWindow::i2);
+    ui->JTTYEnable2->setChecked(b);
+
     b = getEngineEnabled(settings, EngineWindow::test + EngineWindow::i1);
     ui->testEnable1->setChecked(b);
     b = getEngineEnabled(settings, EngineWindow::test + EngineWindow::i2);
@@ -425,6 +443,8 @@ EngineConfigure::EngineConfigure(DMMainWindow *parent) :
     setPortDefault(settings, EngineWindow::fldigi + EngineWindow::i2, ui->fldigiPort2, 7363);
     setPortDefault(settings, EngineWindow::gritty + EngineWindow::i1, ui->grittyPort1, 7502);
     setPortDefault(settings, EngineWindow::gritty + EngineWindow::i2, ui->grittyPort2, 7503);
+    setPortDefault(settings, EngineWindow::JTTY + EngineWindow::i1, ui->JTTYPort1, 7512);
+    setPortDefault(settings, EngineWindow::JTTY + EngineWindow::i2, ui->JTTYPort2, 7513);
 
     ui->rttySpeed->addItem("45.45");
     ui->rttySpeed->addItem("75");
@@ -510,6 +530,15 @@ void EngineConfigure::on_grittyBrowse_clicked()
     doBrowse(EngineWindow::gritty + EngineWindow::i1, ui->grittyEdit);
 }
 
+void EngineConfigure::on_JTTYBrowse1_clicked()
+{
+    doBrowse(EngineWindow::JTTY + EngineWindow::i1, ui->JTTYEdit1);
+}
+void EngineConfigure::on_JTTYBrowse2_clicked()
+{
+    doBrowse(EngineWindow::JTTY + EngineWindow::i2, ui->JTTYEdit2);
+}
+
 
 void EngineConfigure::on_OKButton_clicked()
 {
@@ -541,6 +570,8 @@ void EngineConfigure::on_OKButton_clicked()
         setEnginePath(settings, EngineWindow::fldigi + EngineWindow::i2, ui->fldigiEdit->text());
         setEnginePath(settings, EngineWindow::gritty + EngineWindow::i1, ui->grittyEdit->text());
         setEnginePath(settings, EngineWindow::gritty + EngineWindow::i2, ui->grittyEdit->text());
+        setEnginePath(settings, EngineWindow::JTTY + EngineWindow::i1, ui->JTTYEdit1->text());
+        setEnginePath(settings, EngineWindow::JTTY + EngineWindow::i2, ui->JTTYEdit2->text());
 
         setEngineEnabled(settings, EngineWindow::mmvari + EngineWindow::i1, ui->mmvariEnable1->isChecked());
         setEngineEnabled(settings, EngineWindow::mmvari + EngineWindow::i2, ui->mmvariEnable2->isChecked());
@@ -552,6 +583,8 @@ void EngineConfigure::on_OKButton_clicked()
         setEngineEnabled(settings, EngineWindow::fldigi + EngineWindow::i2, ui->fldigiEnable2->isChecked());
         setEngineEnabled(settings, EngineWindow::gritty + EngineWindow::i1, ui->grittyEnable1->isChecked());
         setEngineEnabled(settings, EngineWindow::gritty + EngineWindow::i2, ui->grittyEnable2->isChecked());
+        setEngineEnabled(settings, EngineWindow::JTTY + EngineWindow::i1, ui->JTTYEnable1->isChecked());
+        setEngineEnabled(settings, EngineWindow::JTTY + EngineWindow::i2, ui->JTTYEnable2->isChecked());
         setEngineEnabled(settings, EngineWindow::test + EngineWindow::i1, ui->testEnable1->isChecked());
         setEngineEnabled(settings, EngineWindow::test + EngineWindow::i2, ui->testEnable2->isChecked());
 
@@ -559,6 +592,8 @@ void EngineConfigure::on_OKButton_clicked()
         setEnginePort(settings, EngineWindow::gritty + EngineWindow::i2, ui->grittyPort2->text().toInt());
         setEnginePort(settings, EngineWindow::fldigi + EngineWindow::i1, ui->fldigiPort1->text().toInt());
         setEnginePort(settings, EngineWindow::fldigi + EngineWindow::i2, ui->fldigiPort2->text().toInt());
+        setEnginePort(settings, EngineWindow::JTTY + EngineWindow::i1, ui->JTTYPort1->text().toInt());
+        setEnginePort(settings, EngineWindow::JTTY + EngineWindow::i2, ui->JTTYPort2->text().toInt());
 
         setSpeed(settings, "RTTY", ui->rttySpeed->currentText());
         setSpeed(settings, "BPSK", ui->BPSKSpeed->currentText());

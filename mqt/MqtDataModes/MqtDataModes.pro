@@ -29,6 +29,7 @@ SOURCES += \
     datapainter.cpp \
     engineconfigure.cpp \
     enginewindow.cpp \
+    jttyframe.cpp \
     main.cpp \
     dmmainwindow.cpp \
     rxbuffer.cpp \
@@ -41,6 +42,7 @@ HEADERS += \
     dmmainwindow.h \
     engineconfigure.h \
     enginewindow.h \
+    jttyframe.h \
     rxbuffer.h \
     testframe.h
 
@@ -49,6 +51,7 @@ FORMS += \
     dmmainwindow.ui \
     engineconfigure.ui \
     enginewindow.ui \
+    jttyframe.ui \
     testframe.ui
 
 win32{

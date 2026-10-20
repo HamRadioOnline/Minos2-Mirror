@@ -32,6 +32,7 @@ const QString EngineWindow::mmtty = "MMTTY";
 const QString EngineWindow::twotone = "2Tone";
 const QString EngineWindow::gritty = "Gritty";
 const QString EngineWindow::fldigi = "FLDigi";
+const QString EngineWindow::JTTY = "JTTY";
 const QString EngineWindow::test = "Test";
 
 const QString EngineWindow::i1("_1");
@@ -43,6 +44,7 @@ const QStringList EngineWindow::enginesList = {
     mmtty + i1, mmtty + i2,
     twotone + i1, twotone + i2,
     gritty + i1, gritty + i2,
+    JTTY + i1, JTTY + i2,
 #endif
     fldigi + i1, fldigi + i2,
     test + i1, test + i2
@@ -151,6 +153,10 @@ void EngineWindow::startEngine()
     else if (engineName.contains(gritty))
     {
         selectGritty(engineName);
+    }
+    else if (engineName.contains(JTTY))
+    {
+        selectJTTY(engineName);
     }
     else if (engineName.contains(fldigi))
     {
@@ -473,6 +479,13 @@ void EngineWindow::closeAllEngines()
         grittyFrame->deleteLater();
         grittyFrame = nullptr;
     }
+    if (jttyFrame)
+    {
+        jttyFrame->closeFrame();
+
+        jttyFrame->deleteLater();
+        jttyFrame = nullptr;
+    }
 #endif
     if (fldigiFrame)
     {
@@ -559,6 +572,20 @@ void EngineWindow::selectGritty(QString name)
     QString m = EngineConfigure::getEnginePath(name);
 
     grittyFrame = new GrittyFrame(this, ui->sendEdit, m, name);
+
+    ui->sendFrame->setVisible(false);
+#endif
+}
+
+void EngineWindow::selectJTTY(QString name)
+{
+#ifdef Q_OS_WIN
+    trace("Select JTTY Engine");
+
+    QString m = EngineConfigure::getEnginePath(name);
+
+
+    jttyFrame = new JTTYFrame(this, ui->sendEdit, m, name);
 
     ui->sendFrame->setVisible(false);
 #endif

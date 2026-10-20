@@ -71,6 +71,9 @@ private slots:
 
     void on_grittyBrowse_clicked();
 
+    void on_JTTYBrowse1_clicked();
+    void on_JTTYBrowse2_clicked();
+
     void on_OKButton_clicked();
 
     void on_cancelButton_clicked();

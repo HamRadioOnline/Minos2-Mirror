@@ -10,6 +10,7 @@
 #include "MMVARIFrame.h"
 #include "MMTTYFrame.h"
 #include "grittyframe.h"
+#include "jttyframe.h"
 #endif
 #include "FLDigiFrame.h"
 #include "testframe.h"
@@ -38,6 +39,7 @@ public:
     static const QString twotone;
     static const QString gritty;
     static const QString fldigi;
+    static const QString JTTY;
     static const QString test;
     static const QString i1;
     static const QString i2;
@@ -55,6 +57,7 @@ public:
     void selectFLDigi(QString name);
     void select2Tone(QString name);
     void selectGritty(QString name);
+    void selectJTTY(QString name);
     void clear();
 
     void doSendCharacters(QString d, int c);
@@ -97,6 +100,7 @@ private:
     MMVARIFrame *mmvariFrame = nullptr;
     MMTTYFrame *mmttyFrame = nullptr;
     GrittyFrame *grittyFrame = nullptr;
+    JTTYFrame *jttyFrame = nullptr;
 #endif
     FLDigiFrame *fldigiFrame = nullptr;
     TestFrame *testFrame = nullptr;
