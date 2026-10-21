@@ -16,6 +16,7 @@
 #include "tlogcontainer.h"
 #include "SendRPCDM.h"
 #include "ScreenConfigFile.h"
+#include "ContestApp.h"
 #include "MTrace.h"
 
 #include "contestdetails.h"
@@ -202,7 +203,7 @@ int ContestDetails::exec()
     contestTransferObject->initialiseINI();
 
     focusChange(nullptr, false, nullptr);    // higlight required fields
-    QWidget *nextD = getDetails( );
+    QWidget *nextD = getDetails( true);
     if ( nextD )
     {
        nextD->setFocus();
@@ -1318,7 +1319,7 @@ void ContestDetails::focusChange(QObject * /*obj*/, bool in, QFocusEvent * /*eve
         }
     }
 }
-QWidget * ContestDetails::getDetails( )
+QWidget * ContestDetails::getDetails(bool onExec )
 {
     QWidget *nextD = getNextFocus();
 
@@ -1389,7 +1390,10 @@ QWidget * ContestDetails::getDetails( )
     {
         if (!nextD)
         {
-            mShowMessage(tr("Contest end is before contest start"), this);
+            if (!onExec)
+            {
+                mShowMessage(tr("Contest end is before contest start"), this);
+            }
             nextD = ui->EndTimeCombo;
         }
     }
@@ -1455,6 +1459,29 @@ QWidget * ContestDetails::getDetails( )
         if (!nextD)
         {
             nextD = ui->MainOpComboBox;
+        }
+    }
+    if (!nextD && locOk)
+    {
+        QString sloc = contestTransferObject->myloc.getLoc().left(4);
+        if (sloc.size())
+        {
+            bool LocOK;
+
+            QString prefix = contestTransferObject->mycall.locCtryPrefix;
+            TContestApp::getContestApp() ->locsBundle.openSection(prefix);
+            if (TContestApp::getContestApp() ->locsBundle.isCurrSectionPresent() )
+            {
+                TContestApp::getContestApp() ->locsBundle.getBoolProfile( sloc, LocOK, false );
+                if (!LocOK)
+                {
+                    if (!onExec && !mShowYesNoMessage(this, tr("Your Locator is probably not within your callsign's country.\n"
+                                                    "Ignore this error?")))
+                    {
+                        nextD = ui->LocatorEdit;
+                    }
+                }
+            }
         }
     }
     contestTransferObject->location.setValue( ui->ExchangeEdit->text() );
@@ -1742,7 +1769,7 @@ void ContestDetails::on_OKButton_clicked()
        }
     }
 
-    QWidget *nextD = getDetails( );
+    QWidget *nextD = getDetails(false );
     if ( nextD )
     {
        nextD->setFocus();
@@ -1768,7 +1795,7 @@ void ContestDetails::on_OKButton_clicked()
 
 void ContestDetails::on_EntDetailButton_clicked()
 {
-    getDetails( );   // override from the window
+    getDetails(false );   // override from the window
     TEntryOptionsForm EntryDlg( this, contestTransferObject, nullptr, true, false );        // don't show the export options
     if ( EntryDlg.exec() == QDialog::Accepted )
        setDetails( );
@@ -1931,7 +1958,7 @@ void ContestDetails::on_ProtectedOption_clicked()
 }
 void ContestDetails::bundleChanged()
 {
-    getDetails( );   // override from the window
+    getDetails( false);   // override from the window
 
     contestTransferObject->setINIDetails();
     setDetails( );
