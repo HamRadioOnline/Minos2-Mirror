@@ -1080,6 +1080,7 @@ void QSOLogFrame::doGJVOKButton_clicked()
           else
              selectField( nextf );
        }
+
        return;
     }
     else
@@ -1133,6 +1134,8 @@ void QSOLogFrame::doGJVOKButton_clicked()
         MinosLoggerEvents::SendUpdateStats(contest);
         sortUnfilledCatchupTime();
     }
+
+    contest->checkSameTime(catchup);
     return;
 
 }

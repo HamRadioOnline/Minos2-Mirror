@@ -454,6 +454,7 @@ class BaseContestLog: public BaseLogList
 
       int getBonus() const;
 
+      void checkSameTime(bool catchup);
       void getOpTime(QString &otBuff, SHOWOPERATINGTIME temp);
       QString  scanContact(QSharedPointer<BaseContact> nct, QDateTime contestStart, QDateTime contestEnd);
       
