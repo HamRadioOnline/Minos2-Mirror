@@ -1412,7 +1412,7 @@ QWidget * ContestDetails::getDetails(bool onExec )
 
     contestTransferObject->myloc.setLoc( ui->LocatorEdit->text() );
     contestTransferObject->validateLoc();
-    bool locOk = contestTransferObject->myloc.getValRes() == LOC_OK;
+    bool locOk = (contestTransferObject->myloc.getValRes() == LOC_OK);
     if (locOk)
     {
         locOk = false;
