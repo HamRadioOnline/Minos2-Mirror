@@ -343,7 +343,7 @@ bool TContestApp::isListOpen( const QString fn )
    {
       if ( isOpen( i, fn ) )
       {
-         mshowMessage( "File " + fn + " is already open!" );
+         //mshowMessage( "File " + fn + " is already open!" );
          return true;
       }
    }
