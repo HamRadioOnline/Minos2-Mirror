@@ -79,6 +79,15 @@ class dtg
          return baddtg;
       }
 
+      bool operator== ( const dtg& rhs ) const
+      {
+          if (baddtg || rhs.baddtg)
+          {
+              return false;
+          }
+          return (qdatetime == rhs.qdatetime);
+      }
+      dtg();
       dtg( bool now );
       dtg(const dtg&);
       dtg& operator =(const dtg&);

@@ -1215,56 +1215,39 @@ class Period
 
 void BaseContestLog::checkSameTime(bool catchup)
 {
-    QDateTime  contestStart = CanonicalToTDT(DTGStart.getValue());
-    QDateTime  contestEnd = CanonicalToTDT(DTGEnd.getValue());
-
-    int contestMinutes =  static_cast<int>(contestStart.secsTo(contestEnd)/60);
-
-    QVector<Minute> qTimeMap;
-    qTimeMap.resize(contestMinutes);
-
-    for(auto &m:qTimeMap)
+    dtg lastdtg;
+    int dtgCount = 0;
+    for (auto p = ctList.end() - 1; p != ctList.begin(); p--)
     {
-        m.count = 0;
-    }
-    for(auto const &wnct: QASCONST(ctList))
-    {
-        // get the next contact in sequence and do any required scan checks
-        QSharedPointer<BaseContact> nct = wnct.wt;
+        QSharedPointer<BaseContact> nct = p->wt;
 
-        QDateTime contactTime;
-        bool dirty = false;
-        nct->timeOff.getDtg(contactTime, dirty);
-        if (contactTime >= contestStart && contactTime < contestEnd)
+        if (!nct->timeOff.isBadDtg() )
         {
-            int qoffset = contestStart.secsTo(contactTime)/60;
-            qTimeMap[qoffset].count++;
-        }
-    }
-
-    // reverse through qsoTimeMap, look for first nonzero count
-    // are too many times the same?
-    for (auto p = qTimeMap.end() - 1; p != qTimeMap.begin(); p--)
-    {
-        if (p->count == 0)
-        {
-            continue;
-        }
-        if (p->count >= 5)
-        {
-            QString tmMess = tr("You had %1 QSOs in the last active minute").arg(p->count);
-            if (catchup)
+            if (!lastdtg.isBadDtg())
             {
-                mShowMessage(tmMess + "\n" + tr("In catchup mode you must correct the time for each QSO"),
-                         nullptr);
+                if (lastdtg == nct->timeOff)
+                {
+                    dtgCount++;
+                    if (dtgCount >= (catchup?3:10))
+                    {
+                        QString tmMess = tr("You had %1 QSOs in the last active minute").arg(dtgCount);
+                        if (catchup)
+                        {
+                            mShowMessage(tmMess + "\n" + tr("In catchup mode you must correct the time for each QSO"),
+                                         nullptr);
+                        }
+                        else
+                        {
+                            mShowMessage(tmMess + "\n" + tr("This is unlikely!"),
+                                         nullptr);
+                        }
+                        return;
+                    }
+                    continue;
+                }
             }
-            else
-            {
-                mShowMessage(tmMess + "\n" + tr("This is unlikely!"),
-                             nullptr);
-            }
+            lastdtg = nct->timeOff;
         }
-        break;
     }
 }
 void BaseContestLog::getOpTime(QString &otBuff, SHOWOPERATINGTIME sot)
