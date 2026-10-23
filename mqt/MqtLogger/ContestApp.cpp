@@ -343,7 +343,7 @@ bool TContestApp::isListOpen( const QString fn )
    {
       if ( isOpen( i, fn ) )
       {
-         //mshowMessage( "File " + fn + " is already open!" );
+         mshowMessage( "File " + fn + " is already open!" );
          return true;
       }
    }
@@ -463,9 +463,9 @@ void TContestApp::writeContestList()
         logsPreloadBundle.flushProfile();
     }
 }
-void TContestApp::writeListsList()
+void TContestApp::writeListsList(bool force)
 {
-    if (preloadComplete)
+    if (force || preloadComplete)
     {
         // build a stripped, renumbered list
         int newSlotNo = 0;
@@ -565,7 +565,7 @@ void TContestApp::closeListFile( ContactList *list )
       removeList( list );
       delete list;
    }
-   writeListsList();
+   writeListsList(false);
 }
 BaseContestLog * TContestApp::getCurrentContest()
 {

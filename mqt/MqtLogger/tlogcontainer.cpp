@@ -2332,6 +2332,7 @@ void TLogContainer::preloadLists( )
     slotlst.sort();
 
     QStringList pathlst;
+    bool rewriteNeeded = false;
     for ( int i = 0; i < slotlst.count(); i++ )
     {
         // get each value
@@ -2347,15 +2348,18 @@ void TLogContainer::preloadLists( )
         int slotno = slotlst[i].toInt() - 1;
         if ( slotno >= 0 )
         {
-            addListSlot( this, pathlst[ i ], i, true );
+            if (!addListSlot( this, pathlst[ i ], i, true ))
+            {
+                rewriteNeeded = true;
+            }
         }
     }
     TContestApp::getContestApp() ->listsPreloadBundle.endGroup();
 
-    TContestApp::getContestApp() ->writeListsList();
+    TContestApp::getContestApp() ->writeListsList(rewriteNeeded);
 }
 
-void TLogContainer::addListSlot( QWidget * /*p*/, const QString &fname, int slotno, bool preload )
+bool TLogContainer::addListSlot( QWidget * /*p*/, const QString &fname, int slotno, bool preload )
 {
     // openFile ends up calling ContactList::initialise which then
     // calls TContestApp::insertList
@@ -2381,8 +2385,9 @@ void TLogContainer::addListSlot( QWidget * /*p*/, const QString &fname, int slot
         }
     }
 
-    TContestApp::getContestApp() ->writeListsList();
+    TContestApp::getContestApp() ->writeListsList(false);
     enableActions();
+    return list != nullptr;
 }
 
 void TLogContainer::ListOpenActionExecute()

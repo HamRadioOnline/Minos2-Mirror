@@ -135,7 +135,7 @@ class TContestApp : public MinosParameters
       int removeContest(BaseContestLog * p);
       int removeList( ContactList * p );
       void writeContestList();
-      void writeListsList();
+      void writeListsList(bool force);
       LoggerContestLog * openFile(const QString &fn, int slotno , bool hf);
       ContactList * openListFile( const QString &fn, int slotno );
       void closeFile(BaseContestLog *contest );

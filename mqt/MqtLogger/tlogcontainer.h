@@ -193,7 +193,7 @@ private:
 
     void preloadLists( );
     void preloadFiles( const QString &conarg );
-    void addListSlot(QWidget *p, const QString &fname, int slotno , bool preload);
+    bool addListSlot(QWidget *p, const QString &fname, int slotno , bool preload);
 
     virtual void closeEvent(QCloseEvent *event) override;
     virtual void resizeEvent(QResizeEvent *event) override;
