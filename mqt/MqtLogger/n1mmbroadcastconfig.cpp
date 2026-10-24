@@ -31,6 +31,8 @@ void N1MMBroadcastConfig::initialise()
     int contactsPort;
     QString extCSAddr;
     int extCSPort;
+    QString extSA6FAXCSAddr;
+    int extSA6FAXCSPort;
     QString extSpotsAddr;
     int extSpotsPort;
     QString ADIFAddr;
@@ -47,6 +49,12 @@ void N1MMBroadcastConfig::initialise()
     TContestApp::getContestApp() ->loggerBundle.getIntProfile( elpextCSPort, extCSPort );
     ui->extCSAddr->setText(extCSAddr);
     ui->extCSPort->setText(QString::number(extCSPort));
+
+    extSA6FAXCSSelect.initialise(&TContestApp::getContestApp() ->loggerBundle, elpextSA6FAXCSSelect,  ui->extSA6FAXCSSelect );
+    TContestApp::getContestApp() ->loggerBundle.getStringProfile( elpextSA6FAXCSAddr, extSA6FAXCSAddr );
+    TContestApp::getContestApp() ->loggerBundle.getIntProfile( elpextSA6FAXCSPort, extSA6FAXCSPort );
+    ui->extSA6FAXCSAddr->setText(extSA6FAXCSAddr);
+    ui->extSA6FAXCSPort->setText(QString::number(extSA6FAXCSPort));
 
     extSpotsSelect.initialise(&TContestApp::getContestApp() ->loggerBundle, elpextSpotsSelect,  ui->spotsSelect );
     TContestApp::getContestApp() ->loggerBundle.getStringProfile( elpextSpotsAddr, extSpotsAddr );
@@ -82,6 +90,12 @@ void N1MMBroadcastConfig::finalise()
     int extCSPort = ui->extCSPort->text().toInt();
     TContestApp::getContestApp() ->loggerBundle.setStringProfile( elpextCSAddr, extCSAddr );
     TContestApp::getContestApp() ->loggerBundle.setIntProfile( elpextCSPort, extCSPort );
+
+    extSA6FAXCSSelect.finalise();
+    QString extSA6FAXCSAddr = ui->extSA6FAXCSAddr->text();
+    int extSA6FAXCSPort = ui->extSA6FAXCSPort->text().toInt();
+    TContestApp::getContestApp() ->loggerBundle.setStringProfile( elpextSA6FAXCSAddr, extSA6FAXCSAddr );
+    TContestApp::getContestApp() ->loggerBundle.setIntProfile( elpextSA6FAXCSPort, extSA6FAXCSPort );
 
     extSpotsSelect.finalise();
     QString spotsAddr = ui->spotsAddr->text();

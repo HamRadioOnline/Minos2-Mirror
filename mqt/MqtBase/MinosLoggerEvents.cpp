@@ -145,6 +145,10 @@ void MinosLoggerEvents::SendModeChange(QString mode)
 {
     emit mle.modeChange(mode);
 }
+void MinosLoggerEvents::SendSA6FAXLoc(QString id)
+{
+    emit mle.SA6FAXLoc(id);
+}
 //---------------------------------------------------------------------------
 void MinosLoggerEvents::SendMainRaised()
 {

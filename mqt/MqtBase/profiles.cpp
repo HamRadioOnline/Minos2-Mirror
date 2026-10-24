@@ -84,6 +84,10 @@ BundleFile::BundleFile( PROFILES p )
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpextCSAddr, "UDPExtCSAddress", "", QT_TR_NOOP("UDP External QSO Info Address"), QT_TR_NOOP("UDP External QSO Info Address"), false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpextCSPort, "UDPExtCSPort", 12060, QT_TR_NOOP("UDP External QSO Info Port"), QT_TR_NOOP("UDP External QSO Info Port"), false ) ) );
 
+        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpextSA6FAXCSSelect, "UDPextSA6FAXCSEnabled", false, QT_TR_NOOP("UDP SA6FAX External QSO Info Enabled"), QT_TR_NOOP("UDP SA6FAX External QSO Info Enabled"), false ) ) );
+        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpextSA6FAXCSAddr, "UDPExtSA6FAXCSAddress", "", QT_TR_NOOP("UDP SA6FAX External QSO Info Address"), QT_TR_NOOP("UDP External SA6FAX QSO Info Address"), false ) ) );
+        entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpextSA6FAXCSPort, "UDPExtSA6FAXCSPort", 12061, QT_TR_NOOP("UDP SA6FAX External QSO Info Port"), QT_TR_NOOP("UDP External SA6FAX QSO Info Port"), false ) ) );
+
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpextSpotsSelect, "UDPextSpotsEnabled", false, QT_TR_NOOP("UDP External Spots Enabled"), QT_TR_NOOP("UDP External Spots Enabled"), false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpextSpotsAddr, "UDPExtSpotsAddress", "", QT_TR_NOOP("UDP External Spots Address"), QT_TR_NOOP("UDP External Spots Address"), false ) ) );
         entries.push_back(  QSharedPointer<ProfileEntry> (new ProfileEntry( elpextSpotsPort, "UDPExtSpotsPort", 12060, QT_TR_NOOP("UDP External Spots Port"), QT_TR_NOOP("UDP External Spots Port"), false ) ) );

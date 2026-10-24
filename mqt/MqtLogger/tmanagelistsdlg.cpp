@@ -1,3 +1,4 @@
+#include "QtUtils.h"
 #include "fileutils.h"
 #include "regsettings.h"
 #include "ContestApp.h"

@@ -110,6 +110,7 @@ signals:
    void DMMess(AnalysePubSubNotify);
    void broadcastSpots(QSharedPointer<ClusterSpotData>, bool delSpot);
    void modeChange(QString);
+   void SA6FAXLoc(QString);
 public:
    static MinosLoggerEvents mle;
 
@@ -190,6 +191,7 @@ public:
     static void SendDMMess(AnalysePubSubNotify);
     static void SendBroadcastSpot(QSharedPointer<ClusterSpotData>, bool delSpot = false);
     static void SendModeChange(QString);
+    static void SendSA6FAXLoc(QString);
 };
 //---------------------------------------------------------------------------
 #endif

@@ -1,4 +1,5 @@
 //#include <QSslSocket>
+#include "QtUtils.h"
 #include "regsettings.h"
 //#include "MTrace.h"
 #include "MMessageDialog.h"

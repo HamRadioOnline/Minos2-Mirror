@@ -116,7 +116,7 @@ private:
     QString baseName;
     QString oldloc;
     bool locValid;
-
+    QString SA6FAXLoc;
     bool oldTimeOK;
     QString timerSS;
 
@@ -328,6 +328,7 @@ private slots:
     void on_GJVOKButton_clicked();
     void on_GJVForceButton_clicked();
     void on_GJVCancelButton_clicked();
+    void on_locXferButton_clicked();
     void on_MatchXferButton_clicked();
     void onQTHEdit_textChanged(const QString &arg1);
     void onCallsignEdit_textChanged(const QString &arg1);
@@ -369,6 +370,7 @@ private slots:
     void on_SandPrb_clicked();
     void onContestBandChanged(BaseContestLog *c);
     void appStateChanged(Qt::ApplicationState state);
+    void onSA6FAXLoc(QString id);
 public slots:
     void setXferEnabled(bool s, BaseContestLog *c, QString basename);
 

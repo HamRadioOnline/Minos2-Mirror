@@ -79,6 +79,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::SA6FAXLoc, this, &QSOLogFrame::onSA6FAXLoc);
     connect(ui->ModeButton, &QToolButton::clicked, this,&QSOLogFrame::onModeButtonClicked);
 
     TContestApp::getContestApp() ->getBoolDisplayProfile( edpExpertMode, expert );
@@ -117,6 +118,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
         theirSentLabelString = tr("Sent by Them");
         ui->theirSentLabel->setText("<b>" + theirSentLabelString);
     }
+    ui->locXferButton->setText(tr("______ %1").arg(getFKeyLabel(11)));
     ui->MatchXferButton->setText(tr("Match Xfer%1").arg(getFKeyLabel(12)));
 
     ui->BrgSt->setFixedSize(ui->BrgSt->size());
@@ -450,7 +452,7 @@ bool QSOLogFrame::doKeyPressEvent( QKeyEvent* event )
     else if ( ((ctrl && altFKeys) || (!ctrl && !altFKeys))
               && ( Key == Qt::Key_F1 || Key == Qt::Key_F2 || Key == Qt::Key_F3
                    || Key == Qt::Key_F4 || Key == Qt::Key_F5 || Key == Qt::Key_F6
-                   || Key == Qt::Key_F12) )
+                   || Key == Qt::Key_F11 || Key == Qt::Key_F12) )
     {
         if (setActiveControl( &Key, mods ))
         {
@@ -1390,7 +1392,27 @@ void QSOLogFrame::on_GJVCancelButton_clicked()
 {
     doGJVCancelButton_clicked();
 }
-
+void QSOLogFrame::on_locXferButton_clicked()
+{
+    // transfer loc from SA6FAX response
+    ui->LocFrame->getTextEditEdit()->setText(SA6FAXLoc);
+    ui->LocFrame->getTextEditEdit()->setFocus();
+}
+void QSOLogFrame::onSA6FAXLoc(QString id)
+{
+    //pick up on loc from SA6FAX
+    if (id == LogContainer->n1mmBroadcast->lastResponse.id)
+    {
+        QString ourCall = ui->CallsignFrame->getTextEditEdit()->text();
+        QString matchedCall = LogContainer->n1mmBroadcast->lastResponse.matchedCall;
+        ui->locXferButton->setText(tr("______ %1").arg(getFKeyLabel(11)));
+        if (ourCall == matchedCall)
+        {
+            SA6FAXLoc = LogContainer->n1mmBroadcast->lastResponse.locator;
+            ui->locXferButton->setText(QString("%1 %2").arg(SA6FAXLoc, getFKeyLabel(11)));
+        }
+    }
+}
 void QSOLogFrame::on_MatchXferButton_clicked()
 {
     MinosLoggerEvents::SendXferPressed(contest, baseName);
@@ -1513,6 +1535,10 @@ bool QSOLogFrame::setActiveControl(int *Key , Qt::KeyboardModifiers mods)
             return true;
         case Qt::Key_F6:
             selectField( ui->QTHFrame->getTextEditEdit() );
+            *Key = 0;
+            return true;
+        case Qt::Key_F11:
+            on_locXferButton_clicked();
             *Key = 0;
             return true;
         case Qt::Key_F12:
@@ -4305,4 +4331,5 @@ bool QSOLogFrame::getSandP()
 {
     return ui->SandPrb->isChecked();
 }
+
 
