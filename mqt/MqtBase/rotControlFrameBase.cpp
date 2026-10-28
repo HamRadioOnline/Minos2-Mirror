@@ -192,6 +192,7 @@ void RotControlFrameBase::setupShortcuts(QWidget *shortcutParent)
     if (auto btn = getRotateButtonObject())
     {
        connect(turnToBearing, &QShortcut::activated,  btn, &QToolButton::click);
+        connect(turnToBearing, &QShortcut::activatedAmbiguously,  btn, &QToolButton::click);
     }
 
 
@@ -309,7 +310,7 @@ void RotControlFrameBase::onRotate_clicked()
     }
     else
     {
-        traceMsg(QString("On Rotate:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False").arg(rotFrameData.getRotError() ? "True" : "False"));
+        traceMsg(QString("On Rotate:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False", rotFrameData.getRotError() ? "True" : "False"));
     }
 
 
@@ -329,7 +330,8 @@ void RotControlFrameBase::onNudgeLeft_clicked()
     }
     else
     {
-        traceMsg(QString("NudgeLeft:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False").arg(rotFrameData.getRotError() ? "True" : "False"));
+        traceMsg(QString("NudgeLeft:Rotconnected = %1, RotError = %2")
+                     .arg(rotFrameData.getRotConnected() ? "True" : "False", rotFrameData.getRotError() ? "True" : "False"));
     }
 }
 
@@ -347,7 +349,7 @@ void RotControlFrameBase::onNudgeRight_clicked()
     }
     else
     {
-        traceMsg(QString("NudgeRight:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False").arg(rotFrameData.getRotError() ? "True" : "False"));
+        traceMsg(QString("NudgeRight:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False", rotFrameData.getRotError() ? "True" : "False"));
     }
 
 }
@@ -357,7 +359,7 @@ void RotControlFrameBase::onRotateLeft_clicked()
 
     if (!rotFrameData.getRotConnected() || rotFrameData.getRotError())
     {
-        traceMsg(QString("On Rotate Left:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False").arg(rotFrameData.getRotError() ? "True" : "False"));
+        traceMsg(QString("On Rotate Left:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False", rotFrameData.getRotError() ? "True" : "False"));
         return;
     }
 
@@ -410,7 +412,7 @@ void RotControlFrameBase::onRotateRight_clicked()
 
     if (!rotFrameData.getRotConnected() || rotFrameData.getRotError())
     {
-        traceMsg(QString("On Rotate Right:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False").arg(rotFrameData.getRotError() ? "True" : "False"));
+        traceMsg(QString("On Rotate Right:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False", rotFrameData.getRotError() ? "True" : "False"));
         return;
     }
 

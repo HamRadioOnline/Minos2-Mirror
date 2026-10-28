@@ -317,6 +317,21 @@ TLogContainer::TLogContainer(QWidget *parent) :
 
     BandMapSpotDB::startDB();
 
+    for (int i = 0; i < 12; i++)
+    {
+        QShortcut *logFKeyQShortcut = new QShortcut(QKeySequence(Qt::Key_F1 + i), this);
+        connect(logFKeyQShortcut, &QShortcut::activated, this, &TLogContainer::FKeyTriggered);
+        //connect(logFKeyQShortcut, &QShortcut::activatedAmbiguously, this, &TLogContainer::FKeyTriggered);
+        QShortcut *logCFKeyQShortcut = new QShortcut(QKeySequence(Qt::CTRL | (Qt::Key_F1 + i)), this);
+        connect(logCFKeyQShortcut, &QShortcut::activated, this, &TLogContainer::FKeyTriggered);
+        //connect(logCFKeyQShortcut, &QShortcut::activatedAmbiguously, this, &TLogContainer::FKeyTriggered);
+
+        // we may never use this...
+        FKeyShortcuts.append(logFKeyQShortcut);
+        FKeyShortcuts.append(logCFKeyQShortcut);
+    }
+
+
 }
 TLogContainer::~TLogContainer()
 {
@@ -349,6 +364,26 @@ TLogContainer::~TLogContainer()
 
     delete serialTVSw;
     delete n1mmBroadcast;
+}
+void TLogContainer::FKeyTriggered()
+{
+    QShortcut *t = dynamic_cast<QShortcut *>(sender());
+    if (t)
+    {
+        bool ctrl = false;
+        QKeySequence k = t->key();
+        QString s = k.toString();
+        if (s.contains("Ctrl+", Qt::CaseInsensitive))
+        {
+            ctrl = true;
+            s = s.mid(5);
+        }
+        s = s.mid(1);
+        int key = toInt(s);
+        BaseContestLog * ct = TContestApp::getContestApp()->getCurrentContest();
+
+        MinosLoggerEvents::SendRawFKey(ct, ctrl, key);
+    }
 }
 
 bool TLogContainer::eventFilter(QObject *obj, QEvent *event)

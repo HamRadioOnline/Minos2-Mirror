@@ -26,6 +26,7 @@ class TSendDM;
 class ContestPageControl;
 class QLabel;
 class TAboutBox;
+class QShortcut;
 
 class SetMemoryAction: public QAction
 {
@@ -191,6 +192,8 @@ private:
 
     BaseContestLog *loadSession(QString sessName);
 
+    QVector<QShortcut *> FKeyShortcuts;
+
     void preloadLists( );
     void preloadFiles( const QString &conarg );
     bool addListSlot(QWidget *p, const QString &fname, int slotno , bool preload);
@@ -266,6 +269,7 @@ private slots:
     void onScreenConfigApply(QString curConfigName);
     void onSetDefaultName(QString def);
     void onSetProtectedName(QString prot);
+    void FKeyTriggered();
 public slots:
     void onArgsReceived(QString conarg);
     void ListOpenActionExecute();

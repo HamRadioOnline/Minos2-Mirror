@@ -66,7 +66,7 @@ TxVmButtonsFrame::TxVmButtonsFrame(QWidget *parent) :
     connect(extKeyerConnectTimer, &QTimer::timeout, this, &TxVmButtonsFrame::onExtConnectTimer);
     connect(LogContainer->sendDM, &TSendDM::keyerReport, this, &TxVmButtonsFrame::onExtConnectTimer);
 
-    connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::fKey, this, &TxVmButtonsFrame::fKey);
+    connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::rawFKey, this, &TxVmButtonsFrame::fKey);
     connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::SandPChanged, this, &TxVmButtonsFrame::sandPChanged);
     //connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::modeChange, this, &TxVmButtonsFrame::onModeChange);
 
@@ -1010,7 +1010,7 @@ void TxVmButtonsFrame::editActionSelected(int buttonNumber)
         }
         else if ((voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl]))
         {
-            logMessage(QString("editActionSelected - cwRigControl - selectedRadio = %1, isCwMemTypeAvail = %2").arg(selectedRadio.getLocalName()).arg(isCwMemTypeAvail(selectedRadio) ? "True" : "False"));
+            logMessage(QString("editActionSelected - cwRigControl - selectedRadio = %1, isCwMemTypeAvail = %2").arg(selectedRadio.getLocalName(), isCwMemTypeAvail(selectedRadio) ? "True" : "False"));
         }
 
 
@@ -1612,7 +1612,7 @@ void TxVmButtonsFrame::setPttEnabled(bool state, PubSubName psn)
     }
 
 
-    logMessage(QString("setPttEnabled = %1, radio = %2").arg(state ? "Enabled" : "Disabled").arg(psn.getLocalName()));
+    logMessage(QString("setPttEnabled = %1, radio = %2").arg(state ? "Enabled" : "Disabled", psn.getLocalName()));
 
     RadioDetails rd;
     if (allRadioDetails.contains(psn))
@@ -1777,7 +1777,7 @@ void TxVmButtonsFrame::setRigVoiceKeyerSupportStopFlag(bool supportStopCmd, PubS
         return;
     }
 
-    logMessage(QString("setRigVoiceKeyerSupportStopFlag = %1, radio = %2").arg(supportStopCmd ? "Yes" : "No").arg(psn.getLocalName()));
+    logMessage(QString("setRigVoiceKeyerSupportStopFlag = %1, radio = %2").arg(supportStopCmd ? "Yes" : "No", psn.getLocalName()));
 
     RadioDetails rd;
     if (allRadioDetails.contains(psn))
@@ -1819,7 +1819,7 @@ void TxVmButtonsFrame::setRigCwKeyerSupportStopFlag(bool supportStopCmd, PubSubN
     }
 
 
-    logMessage(QString("setRigCwKeyerSupportStopFlag = %1, radio = %2").arg(supportStopCmd ? "Yes" : "No").arg(psn.getLocalName()));
+    logMessage(QString("setRigCwKeyerSupportStopFlag = %1, radio = %2").arg(supportStopCmd ? "Yes" : "No", psn.getLocalName()));
 
 
     RadioDetails rd;
@@ -1861,7 +1861,7 @@ void TxVmButtonsFrame::setRigModel(QString rigModel, PubSubName psn)
         return;
     }
 
-    logMessage(QString("setRigModel = %1, radio = %2").arg(rigModel).arg(psn.getLocalName()));
+    logMessage(QString("setRigModel = %1, radio = %2").arg(rigModel, psn.getLocalName()));
 
 
     RadioDetails rd;
@@ -2327,29 +2327,38 @@ void TxVmButtonsFrame::sandPChanged(BaseContestLog *c, bool s)
 
 
 
-void TxVmButtonsFrame::fKey(BaseContestLog *c, int key, int /*carrier*/)
+void TxVmButtonsFrame::fKey(BaseContestLog *c, bool ctrl, int key)
 {
     // FKey event received by log frame (or ctrl/FKey)
-
-    if (c && ct == c && (isVoiceMode() ||
-        voiceKeyerType == keyerTypes[VoiceKeyerId::PcCwKeyer] ||
-        voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl]))
+    if ( c && c == ct)
     {
-        int mem = key - Qt::Key_F1;
-        if (mem > 10)
-        {
+        bool altFKeys = false;
+        TContestApp::getContestApp() ->getBoolDisplayProfile( edpAlternateFKeys, altFKeys );
 
-        }
-        else if (mem == 10)
+        if (ctrl != altFKeys)
         {
-            onVmStopClicked();
+            // altFKeys means that Tx buttons don't have ctrl
+            return;
         }
-        else
+        if (isVoiceMode() ||
+            voiceKeyerType == keyerTypes[VoiceKeyerId::PcCwKeyer] ||
+            voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl])
         {
-            readActionSelected(mem);
+            int mem = key - 1;
+            if (mem > 10)
+            {
+
+            }
+            else if (mem == 10)
+            {
+                onVmStopClicked();
+            }
+            else
+            {
+                readActionSelected(mem);
+            }
         }
     }
-
 }
 
 void TxVmButtonsFrame::setMode(const QString m)

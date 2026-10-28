@@ -31,7 +31,7 @@ DMButtonFrame::DMButtonFrame(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::fKey, this, &DMButtonFrame::fKey);
+    connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::rawFKey, this, &DMButtonFrame::fKey);
     connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::SandPChanged, this, &DMButtonFrame::sandPChanged);
     connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::DMMess, this, &DMButtonFrame::DMMess);
     connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::modeChange, this, &DMButtonFrame::onModeChange);
@@ -60,7 +60,7 @@ DMButtonFrame::DMButtonFrame(QWidget *parent) :
     fButtons << ui->F1Button << ui->F2Button << ui->F3Button << ui->F4Button << ui->F5Button << ui->F6Button;
     fButtons << ui->F7Button << ui->F8Button << ui->F9Button << ui->F10Button << ui->F11Button << ui->F12Button;
 
-    int i = Qt::Key_F1;
+    int i = 1;
     for (auto b: QASCONST(fButtons))
     {
         b->setProperty("KeyNo", i++);
@@ -128,8 +128,11 @@ void DMButtonFrame::fkeyFileChanged()
 void DMButtonFrame::fButtonClicked()
 {
     QPushButton *b = dynamic_cast<QPushButton *>(sender());
+    bool altFKeys = false;
+    TContestApp::getContestApp() ->getBoolDisplayProfile( edpAlternateFKeys, altFKeys );
+
     int kno = b->property("KeyNo").toInt();
-    fKey(ct, kno, 0);
+    fKey(ct, !altFKeys, kno);
 }
 void DMButtonFrame::setContest(BaseContestLog *c)
 {
@@ -151,15 +154,23 @@ bool  DMButtonFrame::isDataMode()
     return  curMode == PSK
            || curMode == RY;
 
-}void DMButtonFrame::fKey(BaseContestLog *c, int key, int carr)
+}void DMButtonFrame::fKey(BaseContestLog *c, bool ctrl, int key)
 {
     if (c && c == ct && isDataMode())
     {
-        if (key >= Qt::Key_F1 && key <= Qt::Key_F12 && fkeys[currentName].size() == 24)
+        bool altFKeys = false;
+        TContestApp::getContestApp() ->getBoolDisplayProfile( edpAlternateFKeys, altFKeys );
+        if (ctrl == altFKeys)
+        {
+            // altFKeys doesn't have ctrl on DM keys
+            return;
+        }
+        if (key >= 1 && key <= 12 && fkeys[currentName].size() == 24)
         {
             TSingleLogFrame *tslf = LogContainer->getCurrentLogFrame();
+            int moffset = tslf->GJVQSOLogFrame->getMarkOffset();
             int spoffset = tslf->GJVQSOLogFrame->getSandP()?12:0;
-            KeyVal mess = fkeys[currentName][key - Qt::Key_F1 + spoffset];
+            KeyVal mess = fkeys[currentName][key - 1 + spoffset];
 
             QString toSend = parseFKeyMessage(mess.kval);
 
@@ -168,7 +179,7 @@ bool  DMButtonFrame::isDataMode()
             RPCGeneralClient rpc(rpcConstants::DMTransmit);
             QSharedPointer<RPCParam>st(new RPCParamStruct);
             st->addMember( toSend, rpcConstants::DMTransmit );
-            st->addMember(carr, rpcConstants::DMMarkFreq);
+            st->addMember(moffset, rpcConstants::DMMarkFreq);
             rpc.getCallArgs() ->addParam( st );
             rpc.queueCall( dataSender );
 
