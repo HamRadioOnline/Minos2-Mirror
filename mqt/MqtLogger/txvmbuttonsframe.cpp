@@ -1479,7 +1479,7 @@ void TxVmButtonsFrame::setRunButtonText(const int buttonNumber, const QString na
 
 void TxVmButtonsFrame::onMsgDurTimerTimeout()
 {
-    if (buttonNumSent >= 0)
+    if (buttonNumSent >= 0 && buttonNumSent < vmKeyParamList.size())
     {
         if (vmKeyParamList[buttonNumSent].getVmDuration() > 0
             || selectedEomType == voiceKeyerCommon::VoiceCwKeyerEomTypes::CAT
@@ -2335,7 +2335,7 @@ void TxVmButtonsFrame::fKey(BaseContestLog *c, bool ctrl, int key)
         bool altFKeys = false;
         TContestApp::getContestApp() ->getBoolDisplayProfile( edpAlternateFKeys, altFKeys );
 
-        if (ctrl != altFKeys)
+        if (ctrl == altFKeys)
         {
             // altFKeys means that Tx buttons don't have ctrl
             return;
