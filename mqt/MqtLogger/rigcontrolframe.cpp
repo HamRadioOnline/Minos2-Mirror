@@ -72,24 +72,31 @@ RigControlFrame::RigControlFrame(TSingleLogFrame *parent):
     BandList::getBandList().loadAllBands(bands);
 
     freqEditShortKey = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_F), parent);
+    freqEditShortKey->setContext(Qt::ApplicationShortcut);
     connect(freqEditShortKey, &QShortcut::activated, this, &RigControlFrame::freqEditSelected);
 
     connect(ui->freqStepCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &RigControlFrame::freqStepComboChanged);
 
     freqPlusShortCut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_U), parent);
+    freqPlusShortCut->setContext(Qt::ApplicationShortcut);
+
     connect(freqPlusShortCut, &QShortcut::activated, this, &RigControlFrame::freqPlus_ShortCut);
     connect(ui->freqUp, &QToolButton::clicked, this, &RigControlFrame::freqPlusShortCut_clicked);
 
     freqNegShortCut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_D), parent);
+    freqNegShortCut->setContext(Qt::ApplicationShortcut);
     connect(freqNegShortCut, &QShortcut::activated, this, &RigControlFrame::freqNeg_ShortCut);
     connect(ui->freqDown, &QToolButton::clicked, this, &RigControlFrame::freqNegShortCut_clicked);
 
     // rit key shortcuts
     ritOnOffShortCut = new QShortcut(QKeySequence("Ctrl+o"), parent);
+    ritOnOffShortCut->setContext(Qt::ApplicationShortcut);
     connect(ritOnOffShortCut, &QShortcut::activated, this, &RigControlFrame::ritButtonSelected);
     ritClearShortCut = new QShortcut(QKeySequence("Ctrl+k"), parent);
+    ritClearShortCut->setContext(Qt::ApplicationShortcut);
     connect(ritClearShortCut, &QShortcut::activated, this, &RigControlFrame::ritClearShortCutSelected);
     ritFreqEditShortCut = new QShortcut(QKeySequence("Ctrl+i"), parent);
+    ritFreqEditShortCut->setContext(Qt::ApplicationShortcut);
     connect(ritFreqEditShortCut, &QShortcut::activated, this, &RigControlFrame::ritFreqEditShortCutInFocus);
 
     connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::FontChanged, this, &RigControlFrame::on_FontChanged, Qt::QueuedConnection);
