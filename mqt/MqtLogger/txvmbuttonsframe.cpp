@@ -29,18 +29,6 @@ const int CW_FREE_TEXT_BUTTON_NUMBER = 13;
 
 const int ERROR_MSG_TIMEOUT_DURATION = 20000;
 
-const QStringList vmButtonShortCutKeys = {
-                                    "Shift+F1", "Shift+F2",
-                                    "Shift+F3", "Shift+F4",
-                                    "Shift+F5", "Shift+F6",
-                                    "Shift+F7", "Shift+F8",
-                                    "Shift+F9", "Shift+F10",
-                                    "Shift+F11", "Shift+F12",
-                                };
-
-//const char * vmStopButtonShortCutKey = "Shift+F10";
-
-
 TxVmButtonsFrame::TxVmButtonsFrame(QWidget *parent) :
     MinosPanel(parent),
     ui(new Ui::TxVmButtonsFrame),
@@ -2566,8 +2554,6 @@ TxVoiceMemButton::TxVoiceMemButton(QToolButton *b, TxVmButtonsFrame *tvmbf, int 
     vmButton->setPopupMode(QToolButton::MenuButtonPopup);
     vmButton->setFocusPolicy(Qt::NoFocus);
     vmButton->setFixedHeight(vmButton->sizeHint().height());
-
-    shortKey = new QShortcut(QKeySequence(vmButtonShortCutKeys[memNo]), vmButton);
 
     newAction = new QAction(tr("&New"),vmButton);
     editAction = new QAction(tr("&Edit"), vmButton);
