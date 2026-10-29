@@ -27,16 +27,9 @@
 #include "bearinglineedit.h"
 #include "ContestApp.h"
 
-
-
-
-
-
 class RotControlFrameBase : public MinosPanel
 {
     Q_OBJECT
-
-
 public:
     explicit RotControlFrameBase(QWidget *parent);
     ~RotControlFrameBase();
@@ -84,20 +77,12 @@ protected:
     virtual QToolButton* getnudgeLeftObject() { return nullptr; }
     virtual QToolButton* getnudgeRightObject() { return nullptr; }
     virtual QLabel* getRotBrgDisplayObject() { return nullptr; }
-    virtual QShortcut* getNudgeRightShortCutObject() { return nullptr; };
-    virtual QShortcut* getNudgeLeftShortCutObject() { return nullptr; }
-    virtual QShortcut* getRotateLeftShortCutObject() { return nullptr; }
-    virtual QShortcut* getRotateRightShortCutObject() { return nullptr; }
-    virtual QShortcut* getTurnToBearingShortCutObject() { return nullptr; }
-    virtual QShortcut* getRotateStopShortCutObject() { return nullptr; }
 
     virtual void keyPressEvent(QKeyEvent *event) override;
-
 
     QString convertBearingForDisplay(QString bearing);
     void setTurnDisplayText(QString brg);
     void turnTo(int angle);
-
 
     void rot_left_button_on();
     void rot_left_button_off();
@@ -114,9 +99,6 @@ protected:
     void traceMsg(QString msg);
     void setCwCcW_Items_Visible(bool visible);
 
-
-
-
     void initConnections();
     void clearBearingLineEdit();
     void clearRotatorIndicators();
@@ -130,23 +112,7 @@ private:
 
     LoggerContestLog *ct = nullptr;
 
-    QShortcut *nudgeRight1 = nullptr;
-    QShortcut *nudgeRight2 = nullptr;
-    QShortcut *nudgeLeft = nullptr;
-    QShortcut *rotateLeft = nullptr;
-    QShortcut *rotateRight = nullptr;
-    QShortcut *turnToBearing = nullptr;
-    QShortcut *rotateStop = nullptr;
-
-
-
-
-
-
     void clearRotatorFlags();
-
-
-
     void activateSignalConnections();
     void deactivateSignalConnections();
 signals:
@@ -181,9 +147,4 @@ private slots:
 
 
 };
-
-
-
-
-
 #endif // ROTCONTROLFRAMEBASE_H
