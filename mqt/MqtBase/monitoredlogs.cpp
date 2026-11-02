@@ -118,7 +118,7 @@ void MonitoredLogs::syncStations()
           allStations.append((*s)->name);
 
           // clang complains that snode may leak - but it gets taken over by the tree
-          MonitorTreeNode *snode = new R`outerTreeNode(root, (*s)->name);
+          MonitorTreeNode *snode = new RouterTreeNode(root, (*s)->name);
           for ( auto const &l: QASCONST(s.value()->slotList) )
           {
              /*TreeNode *lnode =*/ new LogTreeNode(snode, l);
