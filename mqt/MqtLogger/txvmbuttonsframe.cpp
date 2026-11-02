@@ -2563,7 +2563,6 @@ TxVoiceMemButton::TxVoiceMemButton(QToolButton *b, TxVmButtonsFrame *tvmbf, int 
 
     vmButton->setMenu(vmMenu);
 
-    connect(shortKey, &QShortcut::activated, this, &TxVoiceMemButton::readActionSelected);
     connect(vmButton, &QToolButton::clicked, this, &TxVoiceMemButton::readActionSelected);
     connect(vmButton, &QToolButton::clicked, this, &TxVoiceMemButton::buttonSelected);
     connect( newAction, &QAction::triggered, this, &TxVoiceMemButton::newActionSelected);

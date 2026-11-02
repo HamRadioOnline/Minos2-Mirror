@@ -40,7 +40,6 @@ public:
     TxVmButtonsFrame *txVmButtonsFrame;
     QToolButton* vmButton;
     QMenu* vmMenu;
-    QShortcut* shortKey;
 
     QAction* newAction;
     QAction* editAction;
