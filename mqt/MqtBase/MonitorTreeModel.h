@@ -8,30 +8,30 @@ class MonitoredLog;
 
 
 //=============================================================================================
-enum NodeType{entRoot, entRouter, entLog};
-class TreeNode: public QObject
+enum MonitorNodeType{entRoot, entRouter, entLog};
+class MonitorTreeNode: public QObject
 {
-    NodeType ntype;
+    MonitorNodeType ntype;
 protected:
     QString NodeName;
     QString hintString;
     int childNo;
-    TreeNode *parentItem;
+    MonitorTreeNode *parentItem;
     QSharedPointer< MonitoredLog> mlog;
 
 public:
-    TreeNode(NodeType sn, TreeNode *parent, QString name);
-    TreeNode(NodeType sn, TreeNode *parent, QSharedPointer< MonitoredLog> log);
-    virtual ~TreeNode();
+    MonitorTreeNode(MonitorNodeType sn, MonitorTreeNode *parent, QString name);
+    MonitorTreeNode(MonitorNodeType sn, MonitorTreeNode *parent, QSharedPointer< MonitoredLog> log);
+    virtual ~MonitorTreeNode();
 
-    virtual NodeType GetNodeType() const
+    virtual MonitorNodeType GetNodeType() const
     {
         return ntype;
     }
-    QVector<TreeNode *> nodes;
+    QVector<MonitorTreeNode *> nodes;
     int childNumber() const;
 
-    int find( const TreeNode *t ) const;
+    int find( const MonitorTreeNode *t ) const;
 
     void clear();
 
@@ -45,8 +45,8 @@ public:
     }
     virtual QString data( int column ) = 0;
 
-    TreeNode *parent();
-    TreeNode *child( int number );
+    MonitorTreeNode *parent();
+    MonitorTreeNode *child( int number );
     int childCount() const;
     QSharedPointer< MonitoredLog> getLog()
     {
@@ -57,28 +57,28 @@ public:
 //        mlog = l;
 //    }
 };
-class RootTreeNode:public TreeNode
+class RootTreeNode:public MonitorTreeNode
 {
 public:
-    RootTreeNode():TreeNode(entRoot, nullptr, "Root")
+    RootTreeNode():MonitorTreeNode(entRoot, nullptr, "Root")
     {
 
     }
     virtual QString data( int column );
 };
-class RouterTreeNode:public TreeNode
+class RouterTreeNode:public MonitorTreeNode
 {
 public:
-    RouterTreeNode(TreeNode *parent, QString name):TreeNode(entRouter, parent, name)
+    RouterTreeNode(MonitorTreeNode *parent, QString name):MonitorTreeNode(entRouter, parent, name)
     {
     }
     virtual QString data( int column );
 };
-class LogTreeNode:public TreeNode
+class LogTreeNode:public MonitorTreeNode
 {
     Q_OBJECT
 public:
-    LogTreeNode(TreeNode *parent,QSharedPointer< MonitoredLog> log):TreeNode(entLog, parent, log)
+    LogTreeNode(MonitorTreeNode *parent,QSharedPointer< MonitoredLog> log):MonitorTreeNode(entLog, parent, log)
     {
     }
     virtual QString data( int column );
@@ -87,11 +87,11 @@ class MonitorTreeModel: public QAbstractItemModel
 {
     Q_OBJECT
 
-    TreeNode *rootData;
+    MonitorTreeNode *rootData;
 public:
     MonitorTreeModel();
     ~MonitorTreeModel() override;
-    void setRoot(  TreeNode *root );
+    void setRoot(  MonitorTreeNode *root );
     void clear();
 
     QVariant data( const QModelIndex &index, int role ) const Q_DECL_OVERRIDE;
@@ -103,7 +103,7 @@ public:
 
     int rowCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
     int columnCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
-    TreeNode *getItem( const QModelIndex &index ) const;
+    MonitorTreeNode *getItem( const QModelIndex &index ) const;
 };
 
 #endif // MONITORTREEMODEL_H
