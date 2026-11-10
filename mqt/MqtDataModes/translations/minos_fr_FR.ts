@@ -74,29 +74,29 @@
 <context>
     <name>EngineConfigure</name>
     <message>
-        <location filename="../engineconfigure.ui" line="58"/>
-        <location filename="../engineconfigure.ui" line="154"/>
+        <location filename="../engineconfigure.ui" line="76"/>
+        <location filename="../engineconfigure.ui" line="166"/>
         <source>Receive</source>
         <translation>Recevoire</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="72"/>
-        <location filename="../engineconfigure.ui" line="168"/>
+        <location filename="../engineconfigure.ui" line="90"/>
+        <location filename="../engineconfigure.ui" line="180"/>
         <source>Transmit</source>
         <translation>Transmettre</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="241"/>
-        <location filename="../engineconfigure.ui" line="269"/>
-        <location filename="../engineconfigure.ui" line="306"/>
-        <location filename="../engineconfigure.ui" line="334"/>
-        <location filename="../engineconfigure.ui" line="371"/>
-        <location filename="../engineconfigure.ui" line="443"/>
+        <location filename="../engineconfigure.ui" line="247"/>
+        <location filename="../engineconfigure.ui" line="275"/>
+        <location filename="../engineconfigure.ui" line="312"/>
+        <location filename="../engineconfigure.ui" line="340"/>
+        <location filename="../engineconfigure.ui" line="377"/>
+        <location filename="../engineconfigure.ui" line="449"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="33"/>
+        <location filename="../engineconfigure.ui" line="51"/>
         <source>MMVARI/1</source>
         <translation>MMVARI/1</translation>
     </message>
@@ -106,121 +106,121 @@
         <translation>Configurer les applications de décodage</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="47"/>
-        <location filename="../engineconfigure.ui" line="248"/>
-        <location filename="../engineconfigure.ui" line="313"/>
-        <location filename="../engineconfigure.ui" line="392"/>
-        <location filename="../engineconfigure.ui" line="464"/>
-        <location filename="../engineconfigure.ui" line="510"/>
+        <location filename="../engineconfigure.ui" line="65"/>
+        <location filename="../engineconfigure.ui" line="254"/>
+        <location filename="../engineconfigure.ui" line="319"/>
+        <location filename="../engineconfigure.ui" line="398"/>
+        <location filename="../engineconfigure.ui" line="470"/>
+        <location filename="../engineconfigure.ui" line="516"/>
         <source>Enable 1</source>
         <translation>Activer 1</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="86"/>
+        <location filename="../engineconfigure.ui" line="104"/>
         <source>PTT port</source>
         <translation>Port PTT</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="98"/>
-        <location filename="../engineconfigure.ui" line="194"/>
+        <location filename="../engineconfigure.ui" line="116"/>
+        <location filename="../engineconfigure.ui" line="206"/>
         <source>RTS</source>
         <translation>RTS</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="108"/>
-        <location filename="../engineconfigure.ui" line="204"/>
+        <location filename="../engineconfigure.ui" line="123"/>
+        <location filename="../engineconfigure.ui" line="213"/>
         <source>DTR</source>
         <translation>DTR</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="136"/>
+        <location filename="../engineconfigure.ui" line="148"/>
         <source>MMVARI/2</source>
         <translation>MMVARI/2</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="143"/>
-        <location filename="../engineconfigure.ui" line="276"/>
-        <location filename="../engineconfigure.ui" line="341"/>
-        <location filename="../engineconfigure.ui" line="413"/>
-        <location filename="../engineconfigure.ui" line="485"/>
-        <location filename="../engineconfigure.ui" line="517"/>
+        <location filename="../engineconfigure.ui" line="155"/>
+        <location filename="../engineconfigure.ui" line="282"/>
+        <location filename="../engineconfigure.ui" line="347"/>
+        <location filename="../engineconfigure.ui" line="419"/>
+        <location filename="../engineconfigure.ui" line="491"/>
+        <location filename="../engineconfigure.ui" line="523"/>
         <source>Enable 2</source>
         <translation>Activer 2</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="182"/>
+        <location filename="../engineconfigure.ui" line="194"/>
         <source>PTT Port</source>
         <translation>Port PTT</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="231"/>
+        <location filename="../engineconfigure.ui" line="237"/>
         <source>MMTTY/1</source>
         <translation>MMTTY/1</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="259"/>
+        <location filename="../engineconfigure.ui" line="265"/>
         <source>MMTTY/2</source>
         <translation>MMTTY/2</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="296"/>
+        <location filename="../engineconfigure.ui" line="302"/>
         <source>2Tone/1</source>
         <translation>2Ton/1</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="324"/>
+        <location filename="../engineconfigure.ui" line="330"/>
         <source>2Tone/2</source>
         <translation>2Ton/2</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="361"/>
+        <location filename="../engineconfigure.ui" line="367"/>
         <source>Gritty</source>
         <translation>Gritty</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="382"/>
-        <location filename="../engineconfigure.ui" line="454"/>
+        <location filename="../engineconfigure.ui" line="388"/>
+        <location filename="../engineconfigure.ui" line="460"/>
         <source>Port 1</source>
         <translation>Port 1</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="403"/>
-        <location filename="../engineconfigure.ui" line="475"/>
+        <location filename="../engineconfigure.ui" line="409"/>
+        <location filename="../engineconfigure.ui" line="481"/>
         <source>Port 2</source>
         <translation>Port 2</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="433"/>
+        <location filename="../engineconfigure.ui" line="439"/>
         <source>FLDigi</source>
         <translation>FLDigi</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="503"/>
+        <location filename="../engineconfigure.ui" line="509"/>
         <source>Test</source>
         <translation>Tester</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="542"/>
+        <location filename="../engineconfigure.ui" line="556"/>
         <source>Sender</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="552"/>
+        <location filename="../engineconfigure.ui" line="566"/>
         <source>RTTY</source>
         <translation>RTTY</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="562"/>
+        <location filename="../engineconfigure.ui" line="576"/>
         <source>BPSK</source>
         <translation>BPSK</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="585"/>
+        <location filename="../engineconfigure.ui" line="599"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../engineconfigure.ui" line="592"/>
+        <location filename="../engineconfigure.ui" line="606"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>

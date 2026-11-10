@@ -176,7 +176,7 @@
     </message>
     <message>
         <location filename="../clustermainwindow.cpp" line="126"/>
-        <location filename="../clustermainwindow.cpp" line="3053"/>
+        <location filename="../clustermainwindow.cpp" line="3054"/>
         <source>Minos Cluster Server</source>
         <translation type="unfinished"></translation>
     </message>
@@ -287,38 +287,38 @@ Do you want to enter\change your details?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../clustermainwindow.cpp" line="1893"/>
+        <location filename="../clustermainwindow.cpp" line="1894"/>
         <source>No spots will be sent to the log - please check one of the boxes!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../clustermainwindow.cpp" line="1924"/>
+        <location filename="../clustermainwindow.cpp" line="1925"/>
         <source>Sending command - Not logged in  - %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../clustermainwindow.cpp" line="2380"/>
+        <location filename="../clustermainwindow.cpp" line="2381"/>
         <source>Cluster %1 User Command Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../clustermainwindow.cpp" line="2381"/>
+        <location filename="../clustermainwindow.cpp" line="2382"/>
         <source>Do you really want to clear cluster %1 user command number:%2?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../clustermainwindow.cpp" line="3053"/>
+        <location filename="../clustermainwindow.cpp" line="3054"/>
         <source>Minos Cluster
 Copyright D Balharrie G8FKH/M0DGB 2016 - 2020</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../clustermainwindow.cpp" line="3059"/>
+        <location filename="../clustermainwindow.cpp" line="3060"/>
         <source>Cluster Node User Command Shortcut Keys</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../clustermainwindow.cpp" line="3060"/>
+        <location filename="../clustermainwindow.cpp" line="3061"/>
         <source>VHF/UHF User Commands
 
 Send Cmd

@@ -176,7 +176,7 @@
     </message>
     <message>
         <location filename="../clustermainwindow.cpp" line="126"/>
-        <location filename="../clustermainwindow.cpp" line="3053"/>
+        <location filename="../clustermainwindow.cpp" line="3054"/>
         <source>Minos Cluster Server</source>
         <translation>Minos: Serveur de Cluster</translation>
     </message>
@@ -253,35 +253,35 @@ Voulez-vous saisir \ modifier vos coordonnées?</translation>
 </translation>
     </message>
     <message>
-        <location filename="../clustermainwindow.cpp" line="1893"/>
+        <location filename="../clustermainwindow.cpp" line="1894"/>
         <source>No spots will be sent to the log - please check one of the boxes!</source>
         <translation>Rien ne sera envoyé au journal, sélectionner une option SVP!</translation>
     </message>
     <message>
-        <location filename="../clustermainwindow.cpp" line="2380"/>
+        <location filename="../clustermainwindow.cpp" line="2381"/>
         <source>Cluster %1 User Command Clear</source>
         <translatorcomment>Is this all commands?</translatorcomment>
         <translation>Effacer commande(s?) utilisateur du cluster %1</translation>
     </message>
     <message>
-        <location filename="../clustermainwindow.cpp" line="2381"/>
+        <location filename="../clustermainwindow.cpp" line="2382"/>
         <source>Do you really want to clear cluster %1 user command number:%2?</source>
         <translation>Effacer commande utilisateur: %2 du cluster %1 ?</translation>
     </message>
     <message>
-        <location filename="../clustermainwindow.cpp" line="3053"/>
+        <location filename="../clustermainwindow.cpp" line="3054"/>
         <source>Minos Cluster
 Copyright D Balharrie G8FKH/M0DGB 2016 - 2020</source>
         <translation>Minos Cluster
 Copyright D Balharrie G8FKH/M0DGB 2016 - 2020 {8F?} {0D?} {2016 ?}</translation>
     </message>
     <message>
-        <location filename="../clustermainwindow.cpp" line="3059"/>
+        <location filename="../clustermainwindow.cpp" line="3060"/>
         <source>Cluster Node User Command Shortcut Keys</source>
         <translation>Raccourci de commande utilisateur du nœud de cluster</translation>
     </message>
     <message>
-        <location filename="../clustermainwindow.cpp" line="3060"/>
+        <location filename="../clustermainwindow.cpp" line="3061"/>
         <source>VHF/UHF User Commands
 
 Send Cmd
@@ -354,7 +354,7 @@ C - Effacer cmd
         <translation>handleCmdFile: Fichier de commandes vide %1</translation>
     </message>
     <message>
-        <location filename="../clustermainwindow.cpp" line="1924"/>
+        <location filename="../clustermainwindow.cpp" line="1925"/>
         <source>Sending command - Not logged in  - %1</source>
         <translation>L&apos;envoi de Command  - Non connecté - %1</translation>
     </message>
