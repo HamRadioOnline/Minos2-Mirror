@@ -28,7 +28,7 @@ branches and merged to master when ready.
 So now 
 
 cd Minos2
-git checkout Mqt_Release_2.8.x.x
+git checkout Mqt_Release_2.8.2.x
 
 Install hamlib 4.7.0 32 bit from https://sourceforge.net/projects/hamlib/files/hamlib/ into a directory under C:\projects`
 (it has to be in the correct position relative to Minos, or the build won't find the corect files).

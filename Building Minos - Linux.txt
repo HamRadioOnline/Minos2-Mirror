@@ -45,7 +45,7 @@ git clone git://git.code.sf.net/p/minos/minos Minos2
 Then, so that you get the latest release rather than the "bleeding edge" source code
 
 cd Minos2
-git checkout Mqt_Release_2.8.x.x
+git checkout Mqt_Release_2.8.2.x
 
 # tools.sh is a script that installs all the pre-requisites that may not already be installed.
 # it includes those required for Hamlib as well.
