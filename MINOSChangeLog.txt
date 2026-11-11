@@ -47,3 +47,19 @@ Bug fix for B8 bonuses (2.8.1.0)
 2300/2320 bugfix in bandlist.xml
 
 Concept of settings groups; "new contest" now included in the about box, including contest set and app set.
+
+post 2.8.2.1000 Beta
+
+Bugfixes, especially with Airscout and KST
+
+Option to hide worked stations in bandmap
+
+post 2.8.2.3000 Beta
+ 
+More bug fixes
+
+UDP integration with SA6FAX locator lookup ( https://sa6fax.se/software/ )
+
+Make F keys, Rotator and Rig control hotkeys, active from any LOGGER frame
+
+2.8.2.3000 Beta
