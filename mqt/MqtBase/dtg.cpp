@@ -24,6 +24,10 @@ QString TDTToCanonical(QString d )
    QString s = dt.toString( "yyyyMMddHHmm" );
    return s;
 }
+dtg::dtg()
+{
+
+}
 dtg::dtg( bool now ): baddtg(true)
 {
     if ( now )

@@ -36,7 +36,7 @@ public:
 signals:
     void sendFreqControl(Frequency f);
 private slots:
-    void fKey(BaseContestLog *c, int key, int carr);
+    void fKey(BaseContestLog *c, bool ctrl, int key);
     void sandPChanged(BaseContestLog *c, bool sandp);
     void fButtonClicked();
     void on_stopButton_clicked();

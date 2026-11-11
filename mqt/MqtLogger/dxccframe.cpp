@@ -201,9 +201,15 @@ void DXCCFrame::reInitialiseCountries()
 void DXCCFrame::scrollToCountry( const QString &bp, bool makeVisible )
 {
     if (makeVisible)
+    {
+        model.scrolledCountry = bp;
         proxyModel.scrolledCountry = bp;
+    }
     else
+    {
+        model.scrolledCountry.clear();
         proxyModel.scrolledCountry.clear();
+    }
    doScrollToCountry();
 }
 
@@ -251,6 +257,15 @@ QVariant DXCCGridModel::data( const QModelIndex &index, int role ) const
         }
         if (role == Qt::TextAlignmentRole)
             return Qt::AlignLeft;
+        if (role == Qt::BackgroundRole)
+        {
+            QSharedPointer<CountryEntry> ce = MultLists::getMultLists() ->getCountryList()[index.row()];
+            QString bp = ce->getBasePrefix();
+            if (bp == scrolledCountry)
+            {
+                return static_cast< QColor> ( 0x00FF80C0 ).lighter(135);        // Pink(ish)
+            }
+        }
     }
     return QVariant();
 }

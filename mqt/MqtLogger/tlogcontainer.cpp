@@ -317,6 +317,21 @@ TLogContainer::TLogContainer(QWidget *parent) :
 
     BandMapSpotDB::startDB();
 
+    for (int i = 0; i < 12; i++)
+    {
+        QShortcut *logFKeyQShortcut = new QShortcut(QKeySequence(Qt::Key_F1 + i), this);
+        connect(logFKeyQShortcut, &QShortcut::activated, this, &TLogContainer::FKeyTriggered);
+        //connect(logFKeyQShortcut, &QShortcut::activatedAmbiguously, this, &TLogContainer::FKeyTriggered);
+        QShortcut *logCFKeyQShortcut = new QShortcut(QKeySequence(Qt::CTRL | (Qt::Key_F1 + i)), this);
+        connect(logCFKeyQShortcut, &QShortcut::activated, this, &TLogContainer::FKeyTriggered);
+        //connect(logCFKeyQShortcut, &QShortcut::activatedAmbiguously, this, &TLogContainer::FKeyTriggered);
+
+        // we may never use this...
+        FKeyShortcuts.append(logFKeyQShortcut);
+        FKeyShortcuts.append(logCFKeyQShortcut);
+    }
+
+
 }
 TLogContainer::~TLogContainer()
 {
@@ -349,6 +364,26 @@ TLogContainer::~TLogContainer()
 
     delete serialTVSw;
     delete n1mmBroadcast;
+}
+void TLogContainer::FKeyTriggered()
+{
+    QShortcut *t = dynamic_cast<QShortcut *>(sender());
+    if (t)
+    {
+        bool ctrl = false;
+        QKeySequence k = t->key();
+        QString s = k.toString();
+        if (s.contains("Ctrl+", Qt::CaseInsensitive))
+        {
+            ctrl = true;
+            s = s.mid(5);
+        }
+        s = s.mid(1);
+        int key = toInt(s);
+        BaseContestLog * ct = TContestApp::getContestApp()->getCurrentContest();
+
+        MinosLoggerEvents::SendRawFKey(ct, ctrl, key);
+    }
 }
 
 bool TLogContainer::eventFilter(QObject *obj, QEvent *event)
@@ -2332,6 +2367,7 @@ void TLogContainer::preloadLists( )
     slotlst.sort();
 
     QStringList pathlst;
+    bool rewriteNeeded = false;
     for ( int i = 0; i < slotlst.count(); i++ )
     {
         // get each value
@@ -2347,15 +2383,18 @@ void TLogContainer::preloadLists( )
         int slotno = slotlst[i].toInt() - 1;
         if ( slotno >= 0 )
         {
-            addListSlot( this, pathlst[ i ], i, true );
+            if (!addListSlot( this, pathlst[ i ], i, true ))
+            {
+                rewriteNeeded = true;
+            }
         }
     }
     TContestApp::getContestApp() ->listsPreloadBundle.endGroup();
 
-    TContestApp::getContestApp() ->writeListsList();
+    TContestApp::getContestApp() ->writeListsList(rewriteNeeded);
 }
 
-void TLogContainer::addListSlot( QWidget * /*p*/, const QString &fname, int slotno, bool preload )
+bool TLogContainer::addListSlot( QWidget * /*p*/, const QString &fname, int slotno, bool preload )
 {
     // openFile ends up calling ContactList::initialise which then
     // calls TContestApp::insertList
@@ -2381,8 +2420,9 @@ void TLogContainer::addListSlot( QWidget * /*p*/, const QString &fname, int slot
         }
     }
 
-    TContestApp::getContestApp() ->writeListsList();
+    TContestApp::getContestApp() ->writeListsList(false);
     enableActions();
+    return list != nullptr;
 }
 
 void TLogContainer::ListOpenActionExecute()

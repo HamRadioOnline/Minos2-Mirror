@@ -141,6 +141,7 @@ private:
     Frequency curFreq;
 
     QMenu* spotsMenu = nullptr;
+    QAction* callsignAction = nullptr;
     QAction* markSpotAction = nullptr;
     QAction* unMarkSpotAction = nullptr;
     QAction* freqAction = nullptr;
@@ -155,6 +156,7 @@ private:
     QAction* clearClusterSpotsAction = nullptr;
 
     QMenu* contextSpotsMenu = nullptr;
+    QAction* contextSpotsMenu_callsignAction = nullptr;
     QAction* contextSpotsMenu_markSpotAction = nullptr;
     QAction* contextSpotsMenu_unMarkSpotAction = nullptr;
     QAction* contextMoveFreqAction = nullptr;
@@ -212,6 +214,8 @@ private:
     void doMemorySelected(QSharedPointer<ClusterSpotData> sd);
     void doClearSpotSelected(QSharedPointer<ClusterSpotData> sd);
     void doClearClusterSpotsSelected();
+    void checkAction(QAction *act);
+    void checkContextAction(QAction *act);
 protected:
 
     void keyPressEvent(QKeyEvent *event) override;
@@ -275,6 +279,8 @@ private slots:
 
      void on_searchUnworkedHF_clicked();
      void on_searchUnworkedLF_clicked();
+
+     void on_filterWorked_stateChanged(int arg1);
 
  public slots:
      void on_AfterLogContact(BaseContestLog *c, QSharedPointer<BaseContact>);

@@ -94,13 +94,18 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../kstasactiveframe.ui" line="35"/>
+        <location filename="../kstasactiveframe.ui" line="22"/>
         <source>AS Band</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../kstasactiveframe.ui" line="45"/>
         <source>AS Active</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../kstasactiveframe.ui" line="52"/>
+        <source>AS Connected</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -233,12 +238,18 @@ when user selected</source>
     </message>
     <message>
         <location filename="../kstcallsframe.ui" line="204"/>
+        <location filename="../kstcallsframe.cpp" line="206"/>
         <source>Send to Logger</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../kstcallsframe.cpp" line="125"/>
+        <location filename="../kstcallsframe.cpp" line="126"/>
         <source>Active</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../kstcallsframe.cpp" line="210"/>
+        <source>Send %1 to Logger</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -438,7 +449,7 @@ when user selected</source>
     </message>
     <message>
         <location filename="../kstmainwindow.cpp" line="151"/>
-        <location filename="../kstmainwindow.cpp" line="801"/>
+        <location filename="../kstmainwindow.cpp" line="807"/>
         <source>Connect</source>
         <translation type="unfinished"></translation>
     </message>
@@ -508,37 +519,37 @@ when user selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../kstmainwindow.cpp" line="707"/>
+        <location filename="../kstmainwindow.cpp" line="713"/>
         <source>Exit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../kstmainwindow.cpp" line="791"/>
+        <location filename="../kstmainwindow.cpp" line="797"/>
         <source>Disconnect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../kstmainwindow.cpp" line="1432"/>
+        <location filename="../kstmainwindow.cpp" line="1442"/>
         <source>Set Back</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../kstmainwindow.cpp" line="1436"/>
+        <location filename="../kstmainwindow.cpp" line="1446"/>
         <source>Set Away</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../kstmainwindow.cpp" line="1774"/>
+        <location filename="../kstmainwindow.cpp" line="1784"/>
         <source>KST Test data Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../kstmainwindow.cpp" line="1775"/>
+        <location filename="../kstmainwindow.cpp" line="1785"/>
         <source>All Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../kstmainwindow.cpp" line="1778"/>
+        <location filename="../kstmainwindow.cpp" line="1788"/>
         <source>KST Client log files Files</source>
         <translation type="unfinished"></translation>
     </message>

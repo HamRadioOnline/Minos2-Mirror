@@ -40,7 +40,6 @@ public:
     TxVmButtonsFrame *txVmButtonsFrame;
     QToolButton* vmButton;
     QMenu* vmMenu;
-    QShortcut* shortKey;
 
     QAction* newAction;
     QAction* editAction;
@@ -235,8 +234,7 @@ private slots:
     void onRepeatPauseTimerTimeout();
     void onVmStopClicked();
     void onMsgDurTimerTimeout();
-    void fKey(BaseContestLog *c, int e, int);
-
+    void fKey(BaseContestLog *c, bool ctl, int e);
 
     void onRemoteConfigChanged();
     void onRemoteKeyerStarted(int key);

@@ -57,7 +57,6 @@ QString QSOLogFrame::getFKeyLabel(int n)
         }
     }
 }
-
 QSOLogFrame::QSOLogFrame(QWidget *parent) :
     MinosPanel(parent)
     , ui(new Ui::QSOLogFrame)
@@ -79,6 +78,8 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::SA6FAXLoc, this, &QSOLogFrame::onSA6FAXLoc);
+    connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::rawFKey, this, &QSOLogFrame::onRawFKey);
     connect(ui->ModeButton, &QToolButton::clicked, this,&QSOLogFrame::onModeButtonClicked);
 
     TContestApp::getContestApp() ->getBoolDisplayProfile( edpExpertMode, expert );
@@ -117,6 +118,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
         theirSentLabelString = tr("Sent by Them");
         ui->theirSentLabel->setText("<b>" + theirSentLabelString);
     }
+    ui->locXferButton->setText(tr("______ %1").arg(getFKeyLabel(11)));
     ui->MatchXferButton->setText(tr("Match Xfer%1").arg(getFKeyLabel(12)));
 
     ui->BrgSt->setFixedSize(ui->BrgSt->size());
@@ -374,6 +376,25 @@ bool QSOLogFrame::eventFilter(QObject *obj, QEvent *event)
 
    return false;
 }
+
+int QSOLogFrame::getMarkOffset() const
+{
+    return markOffset;
+}
+void QSOLogFrame::onRawFKey(BaseContestLog *c, bool ctrl, int Key)
+{
+    if (c == contest)
+    {
+        if ( ((ctrl && altFKeys) || (!ctrl && !altFKeys))
+                 && ( Key == 1 || Key == 2 || Key == 3
+                    || Key == 4 || Key == 5 || Key == 6
+                    || Key == 11 || Key == 12) )
+        {
+            setActiveControl( Key, ctrl );
+            raise();
+        }
+    }
+}
 bool QSOLogFrame::doKeyPressEvent( QKeyEvent* event )
 {
     if (!event)
@@ -381,10 +402,14 @@ bool QSOLogFrame::doKeyPressEvent( QKeyEvent* event )
 
     int Key = event->key();
 
+    if (Key == Qt::Key_Control)
+    {
+        return false;
+    }
     Qt::KeyboardModifiers mods = event->modifiers();
     bool shift = mods & Qt::ShiftModifier;
     bool ctrl = mods & Qt::ControlModifier;
-    bool alt = mods & Qt::AltModifier;
+    //bool alt = mods & Qt::AltModifier;
 
     bool hasFocus = false;
     if (Key == Qt::Key_Return || Key == Qt::Key_Enter ||Key == Qt::Key_Tab)
@@ -446,27 +471,6 @@ bool QSOLogFrame::doKeyPressEvent( QKeyEvent* event )
         QMetaObject::invokeMethod(ui->GJVCancelButton, "clicked", Qt::QueuedConnection);
         raise();
         return true;
-    }
-    else if ( ((ctrl && altFKeys) || (!ctrl && !altFKeys))
-              && ( Key == Qt::Key_F1 || Key == Qt::Key_F2 || Key == Qt::Key_F3
-                   || Key == Qt::Key_F4 || Key == Qt::Key_F5 || Key == Qt::Key_F6
-                   || Key == Qt::Key_F12) )
-    {
-        if (setActiveControl( &Key, mods ))
-        {
-            raise();
-            return true;
-        }
-    }
-
-    if (!shift && !alt && ((ctrl && !altFKeys) || (!ctrl && altFKeys)))
-    {
-        if (Key >= Qt::Key_F1 && Key <= Qt::Key_F12)
-        {
-            // key may be for keyer or Digi Macro use
-            MinosLoggerEvents::SendFKey(contest, event->key(), markOffset);
-            return true;
-        }
     }
     bool doReturn = false;
     if ( ( Key == Qt::Key_Insert ) && !shift && !ctrl )
@@ -1080,6 +1084,7 @@ void QSOLogFrame::doGJVOKButton_clicked()
           else
              selectField( nextf );
        }
+
        return;
     }
     else
@@ -1133,6 +1138,8 @@ void QSOLogFrame::doGJVOKButton_clicked()
         MinosLoggerEvents::SendUpdateStats(contest);
         sortUnfilledCatchupTime();
     }
+
+    contest->checkSameTime(catchup);
     return;
 
 }
@@ -1230,17 +1237,11 @@ void QSOLogFrame::rxDMWord(QString rxWord, int markFreq)
 
 void QSOLogFrame::DMKey(int key)
 {
-    if (key == Qt::Key_Return)
-    {
-
-    }
-    else if (key >= Qt::Key_F1 && key <= Qt::Key_F12)
+    if (key >= 1 && key <= 12)
     {
         // key may be for keyer or Digi Macro use
-        MinosLoggerEvents::SendFKey(contest, key, markOffset);
-        return;
+        MinosLoggerEvents::SendRawFKey(contest, !altFKeys, key);
     }
-
 }
 bool QSOLogFrame::dlgForced()
 {
@@ -1387,7 +1388,27 @@ void QSOLogFrame::on_GJVCancelButton_clicked()
 {
     doGJVCancelButton_clicked();
 }
-
+void QSOLogFrame::on_locXferButton_clicked()
+{
+    // transfer loc from SA6FAX response
+    ui->LocFrame->getTextEditEdit()->setText(SA6FAXLoc);
+    ui->LocFrame->getTextEditEdit()->setFocus();
+}
+void QSOLogFrame::onSA6FAXLoc(QString id)
+{
+    //pick up on loc from SA6FAX
+    if (id == LogContainer->n1mmBroadcast->lastResponse.id)
+    {
+        QString ourCall = ui->CallsignFrame->getTextEditEdit()->text();
+        QString matchedCall = LogContainer->n1mmBroadcast->lastResponse.matchedCall;
+        ui->locXferButton->setText(tr("______ %1").arg(getFKeyLabel(11)));
+        if (ourCall == matchedCall)
+        {
+            SA6FAXLoc = LogContainer->n1mmBroadcast->lastResponse.locator;
+            ui->locXferButton->setText(QString("%1 %2").arg(SA6FAXLoc, getFKeyLabel(11)));
+        }
+    }
+}
 void QSOLogFrame::on_MatchXferButton_clicked()
 {
     MinosLoggerEvents::SendXferPressed(contest, baseName);
@@ -1480,45 +1501,38 @@ void QSOLogFrame::do_mouseDoubleClickEvent(QObject *w)
 
 
 
-bool QSOLogFrame::setActiveControl(int *Key , Qt::KeyboardModifiers mods)
+void QSOLogFrame::setActiveControl(int Key , bool ctrl)
 {
-    bool ctrl = mods & Qt::ControlModifier;
-
     if ((altFKeys && ctrl) || !(altFKeys || ctrl))
     {
-        switch ( *Key )
+        switch ( Key )
         {
-        case Qt::Key_F1:
+        case 1:
             selectField( ui->CallsignFrame->getTextEditEdit() );
-            *Key = 0;
-            return true;
-        case Qt::Key_F2:
+            break;
+        case 2:
             selectField( ui->RSTTxFrame->getTextEditEdit() );
-            *Key = 0;
-            return true;
-        case Qt::Key_F3:
+            break;
+        case 3:
             selectField( ui->RSTRxFrame->getTextEditEdit() );
-            *Key = 0;
-            return true;
-        case Qt::Key_F4:
+            break;
+        case 4:
             selectField( ui->SerRxFrame->getTextEditEdit() );
-            *Key = 0;
-            return true;
-        case Qt::Key_F5:
+            break;
+        case 5:
             selectField( ui->LocFrame->getTextEditEdit() );
-            *Key = 0;
-            return true;
-        case Qt::Key_F6:
+            break;
+        case 6:
             selectField( ui->QTHFrame->getTextEditEdit() );
-            *Key = 0;
-            return true;
-        case Qt::Key_F12:
+            break;
+        case 11:
+            on_locXferButton_clicked();
+            break;
+        case 12:
             MinosLoggerEvents::SendXferPressed(contest, baseName);
-            *Key = 0;
-            return true;
+            break;
         }
     }
-    return false;
 }
 //---------------------------------------------------------------------------
 void QSOLogFrame::getScreenEntry()
@@ -4302,4 +4316,5 @@ bool QSOLogFrame::getSandP()
 {
     return ui->SandPrb->isChecked();
 }
+
 

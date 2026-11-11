@@ -90,7 +90,7 @@ EngineWindow::EngineWindow(QWidget *parent)
     fButtons << ui->F1Button << ui->F2Button << ui->F3Button << ui->F4Button << ui->F5Button << ui->F6Button;
     fButtons << ui->F7Button << ui->F8Button << ui->F9Button << ui->F10Button << ui->F11Button << ui->F12Button;
 
-    int i = Qt::Key_F1;
+    int i = 1;
     for (auto b: QASCONST(fButtons))
     {
         b->setProperty("KeyNo", i++);
@@ -809,7 +809,7 @@ bool EngineWindow::doKeyPressEvent( QKeyEvent* event )
 
     if (Key >= Qt::Key_F1 && Key <= Qt::Key_F12)
     {
-        fKey(Key);
+        fKey(Key - Qt::Key_F1 + 1);
         return true;
     }
     if (Key == Qt::Key_Escape)

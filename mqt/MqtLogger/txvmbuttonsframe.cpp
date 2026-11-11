@@ -29,18 +29,6 @@ const int CW_FREE_TEXT_BUTTON_NUMBER = 13;
 
 const int ERROR_MSG_TIMEOUT_DURATION = 20000;
 
-const QStringList vmButtonShortCutKeys = {
-                                    "Shift+F1", "Shift+F2",
-                                    "Shift+F3", "Shift+F4",
-                                    "Shift+F5", "Shift+F6",
-                                    "Shift+F7", "Shift+F8",
-                                    "Shift+F9", "Shift+F10",
-                                    "Shift+F11", "Shift+F12",
-                                };
-
-//const char * vmStopButtonShortCutKey = "Shift+F10";
-
-
 TxVmButtonsFrame::TxVmButtonsFrame(QWidget *parent) :
     MinosPanel(parent),
     ui(new Ui::TxVmButtonsFrame),
@@ -66,7 +54,7 @@ TxVmButtonsFrame::TxVmButtonsFrame(QWidget *parent) :
     connect(extKeyerConnectTimer, &QTimer::timeout, this, &TxVmButtonsFrame::onExtConnectTimer);
     connect(LogContainer->sendDM, &TSendDM::keyerReport, this, &TxVmButtonsFrame::onExtConnectTimer);
 
-    connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::fKey, this, &TxVmButtonsFrame::fKey);
+    connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::rawFKey, this, &TxVmButtonsFrame::fKey);
     connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::SandPChanged, this, &TxVmButtonsFrame::sandPChanged);
     //connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::modeChange, this, &TxVmButtonsFrame::onModeChange);
 
@@ -1010,7 +998,7 @@ void TxVmButtonsFrame::editActionSelected(int buttonNumber)
         }
         else if ((voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl]))
         {
-            logMessage(QString("editActionSelected - cwRigControl - selectedRadio = %1, isCwMemTypeAvail = %2").arg(selectedRadio.getLocalName()).arg(isCwMemTypeAvail(selectedRadio) ? "True" : "False"));
+            logMessage(QString("editActionSelected - cwRigControl - selectedRadio = %1, isCwMemTypeAvail = %2").arg(selectedRadio.getLocalName(), isCwMemTypeAvail(selectedRadio) ? "True" : "False"));
         }
 
 
@@ -1479,7 +1467,7 @@ void TxVmButtonsFrame::setRunButtonText(const int buttonNumber, const QString na
 
 void TxVmButtonsFrame::onMsgDurTimerTimeout()
 {
-    if (buttonNumSent >= 0)
+    if (buttonNumSent >= 0 && buttonNumSent < vmKeyParamList.size())
     {
         if (vmKeyParamList[buttonNumSent].getVmDuration() > 0
             || selectedEomType == voiceKeyerCommon::VoiceCwKeyerEomTypes::CAT
@@ -1612,7 +1600,7 @@ void TxVmButtonsFrame::setPttEnabled(bool state, PubSubName psn)
     }
 
 
-    logMessage(QString("setPttEnabled = %1, radio = %2").arg(state ? "Enabled" : "Disabled").arg(psn.getLocalName()));
+    logMessage(QString("setPttEnabled = %1, radio = %2").arg(state ? "Enabled" : "Disabled", psn.getLocalName()));
 
     RadioDetails rd;
     if (allRadioDetails.contains(psn))
@@ -1777,7 +1765,7 @@ void TxVmButtonsFrame::setRigVoiceKeyerSupportStopFlag(bool supportStopCmd, PubS
         return;
     }
 
-    logMessage(QString("setRigVoiceKeyerSupportStopFlag = %1, radio = %2").arg(supportStopCmd ? "Yes" : "No").arg(psn.getLocalName()));
+    logMessage(QString("setRigVoiceKeyerSupportStopFlag = %1, radio = %2").arg(supportStopCmd ? "Yes" : "No", psn.getLocalName()));
 
     RadioDetails rd;
     if (allRadioDetails.contains(psn))
@@ -1819,7 +1807,7 @@ void TxVmButtonsFrame::setRigCwKeyerSupportStopFlag(bool supportStopCmd, PubSubN
     }
 
 
-    logMessage(QString("setRigCwKeyerSupportStopFlag = %1, radio = %2").arg(supportStopCmd ? "Yes" : "No").arg(psn.getLocalName()));
+    logMessage(QString("setRigCwKeyerSupportStopFlag = %1, radio = %2").arg(supportStopCmd ? "Yes" : "No", psn.getLocalName()));
 
 
     RadioDetails rd;
@@ -1861,7 +1849,7 @@ void TxVmButtonsFrame::setRigModel(QString rigModel, PubSubName psn)
         return;
     }
 
-    logMessage(QString("setRigModel = %1, radio = %2").arg(rigModel).arg(psn.getLocalName()));
+    logMessage(QString("setRigModel = %1, radio = %2").arg(rigModel, psn.getLocalName()));
 
 
     RadioDetails rd;
@@ -2327,29 +2315,38 @@ void TxVmButtonsFrame::sandPChanged(BaseContestLog *c, bool s)
 
 
 
-void TxVmButtonsFrame::fKey(BaseContestLog *c, int key, int /*carrier*/)
+void TxVmButtonsFrame::fKey(BaseContestLog *c, bool ctrl, int key)
 {
     // FKey event received by log frame (or ctrl/FKey)
-
-    if (c && ct == c && (isVoiceMode() ||
-        voiceKeyerType == keyerTypes[VoiceKeyerId::PcCwKeyer] ||
-        voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl]))
+    if ( c && c == ct)
     {
-        int mem = key - Qt::Key_F1;
-        if (mem > 10)
-        {
+        bool altFKeys = false;
+        TContestApp::getContestApp() ->getBoolDisplayProfile( edpAlternateFKeys, altFKeys );
 
-        }
-        else if (mem == 10)
+        if (ctrl == altFKeys)
         {
-            onVmStopClicked();
+            // altFKeys means that Tx buttons don't have ctrl
+            return;
         }
-        else
+        if (isVoiceMode() ||
+            voiceKeyerType == keyerTypes[VoiceKeyerId::PcCwKeyer] ||
+            voiceKeyerType == keyerTypes[VoiceKeyerId::CW_RigControl])
         {
-            readActionSelected(mem);
+            int mem = key - 1;
+            if (mem > 10)
+            {
+
+            }
+            else if (mem == 10)
+            {
+                onVmStopClicked();
+            }
+            else
+            {
+                readActionSelected(mem);
+            }
         }
     }
-
 }
 
 void TxVmButtonsFrame::setMode(const QString m)
@@ -2558,8 +2555,6 @@ TxVoiceMemButton::TxVoiceMemButton(QToolButton *b, TxVmButtonsFrame *tvmbf, int 
     vmButton->setFocusPolicy(Qt::NoFocus);
     vmButton->setFixedHeight(vmButton->sizeHint().height());
 
-    shortKey = new QShortcut(QKeySequence(vmButtonShortCutKeys[memNo]), vmButton);
-
     newAction = new QAction(tr("&New"),vmButton);
     editAction = new QAction(tr("&Edit"), vmButton);
     vmMenu->addAction(newAction);
@@ -2568,7 +2563,6 @@ TxVoiceMemButton::TxVoiceMemButton(QToolButton *b, TxVmButtonsFrame *tvmbf, int 
 
     vmButton->setMenu(vmMenu);
 
-    connect(shortKey, &QShortcut::activated, this, &TxVoiceMemButton::readActionSelected);
     connect(vmButton, &QToolButton::clicked, this, &TxVoiceMemButton::readActionSelected);
     connect(vmButton, &QToolButton::clicked, this, &TxVoiceMemButton::buttonSelected);
     connect( newAction, &QAction::triggered, this, &TxVoiceMemButton::newActionSelected);

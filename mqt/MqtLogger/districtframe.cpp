@@ -166,9 +166,15 @@ void DistrictFrame::reInitialiseDistricts()
 void DistrictFrame::scrollToDistrict( const QString &cd, bool makeVisible )
 {
     if (makeVisible)
+    {
+        model.scrolledDistrict = cd;
         proxyModel.scrolledDistrict = cd;
+    }
     else
+    {
+        model.scrolledDistrict.clear();
         proxyModel.scrolledDistrict.clear();
+    }
 
     doScrollToDistrict();
 }
@@ -196,11 +202,6 @@ void DistrictGridModel::initialise( )
 }
 QVariant DistrictGridModel::data( const QModelIndex &index, int role ) const
 {
-
-    if (role == Qt::BackgroundRole)
-    {
-        return QVariant();
-    }
     if (role == Qt::TextAlignmentRole)
         return Qt::AlignLeft;
 
@@ -213,6 +214,17 @@ QVariant DistrictGridModel::data( const QModelIndex &index, int role ) const
             disp = MultLists::getMultLists() ->getDistListText( cd, DistrictTreeColumns[ index.column() ].fieldId, ct, band );
         }
         return disp;
+    }
+    if (role == Qt::BackgroundRole)
+    {
+        if (ct)
+        {
+            QString cd = MultLists::getMultLists() ->getDistList()[index.row()]->districtCode;
+            if (cd == scrolledDistrict)
+            {
+                return static_cast< QColor> ( 0x00FF80C0 ).lighter(135);        // Pink(ish)
+            }
+        }
     }
     return QVariant();
 }

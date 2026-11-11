@@ -110,7 +110,7 @@ void MonitoredLogs::syncStations()
 
        QStringList allStations = autoStations;
 
-       TreeNode *root = new RootTreeNode();
+       MonitorTreeNode *root = new RootTreeNode();
        for ( auto s = RemoteLogs::getRemoteLogs()->stationList.begin();
                     s != RemoteLogs::getRemoteLogs()->stationList.end();
                     s++ )
@@ -118,7 +118,7 @@ void MonitoredLogs::syncStations()
           allStations.append((*s)->name);
 
           // clang complains that snode may leak - but it gets taken over by the tree
-          TreeNode *snode = new RouterTreeNode(root, (*s)->name);
+          MonitorTreeNode *snode = new RouterTreeNode(root, (*s)->name);
           for ( auto const &l: QASCONST(s.value()->slotList) )
           {
              /*TreeNode *lnode =*/ new LogTreeNode(snode, l);
@@ -174,7 +174,7 @@ void MonitoredLogs::autoSyncChanged(int)
 void MonitoredLogs::onMonitorTree_doubleClicked(const QModelIndex &index)
 {
     // apply double click to node MonitorTreeClickNode
-    TreeNode * sel = static_cast< TreeNode *>(index.internalPointer());
+    MonitorTreeNode * sel = static_cast< MonitorTreeNode *>(index.internalPointer());
 
     if (!sel)
     {

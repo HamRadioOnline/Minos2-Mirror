@@ -28,6 +28,7 @@ class DistrictGridModel: public QAbstractItemModel
         QSharedPointer<HtmlDelegate> delegate ;
 
         BaseContestLog *ct;
+        QString scrolledDistrict;
         QString band;
 
         QVector<QSharedPointer<DistrictEntry> > districts;

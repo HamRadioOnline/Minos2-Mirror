@@ -1577,7 +1577,8 @@ void ClusterMainWindow::purgeOldRepeatSpots(QVector<QSharedPointer<ClusterSpotDa
 
     int listSizeAfterRemoval = spotsList.size();
     int numberPurged = listInitalSize - listSizeAfterRemoval;
-    trace(QString("Repeat Spot list start size = %1, list size after purge = %2, number of spots purged = %3").arg(QString::number(listInitalSize)).arg(QString::number(listSizeAfterRemoval).arg(QString::number(numberPurged))));
+    trace(QString("Repeat Spot list start size = %1, list size after purge = %2, number of spots purged = %3")
+              .arg(QString::number(listInitalSize), QString::number(listSizeAfterRemoval), QString::number(numberPurged)));
 }
 
 

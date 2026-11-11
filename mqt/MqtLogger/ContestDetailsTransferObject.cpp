@@ -14,17 +14,19 @@ void ContestDetailsTransferObject::validateLoc( )
     else
         locValid = false;
 
-    Locator nloc;
-    nloc.setLoc(myloc.getLoc().left(4) + "MM");
-    nloc.validate( ode, odn );
-    if ( nloc.getValRes() == LOC_OK )
+    if (myloc.getValRes() != ERR_LOC_RANGE)
     {
-        locValid = true;
-        myloc.setValRes(LOC_OK);
+        Locator nloc;
+        nloc.setLoc(myloc.getLoc().left(4) + "MM");
+        nloc.validate( ode, odn );
+        if ( nloc.getValRes() == LOC_OK )
+        {
+            locValid = true;
+            myloc.setValRes(LOC_OK);
+        }
+        else
+            locValid = false;
     }
-    else
-        locValid = false;
-
 }
 void ContestDetailsTransferObject::initialiseINI()
 {

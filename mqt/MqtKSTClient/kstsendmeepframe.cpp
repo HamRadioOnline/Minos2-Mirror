@@ -147,15 +147,15 @@ void KSTSendMeepFrame::on_meepButton_clicked()
 }
 void KSTSendMeepFrame::on_callEdit_textChanged(const QString & /*arg1*/)
 {
-    setDefaultButton(nullptr);
+    setMeepDefaultButton(nullptr);
 }
 void KSTSendMeepFrame::on_msgEdit_textChanged(const QString &/*arg1*/)
 {
-    setDefaultButton(nullptr);
+    setMeepDefaultButton(nullptr);
 }
-void KSTSendMeepFrame::setDefaultButton(QPushButton *d)
+void KSTSendMeepFrame::setMeepDefaultButton(QPushButton *d)
 {
-    mainWindow->kstCallsFrame->setDefaultButton(false);
+    mainWindow->kstCallsFrame->setXferDefaultButton(false);
     if (d)
     {
         ui->meepButton->setDefault(false);

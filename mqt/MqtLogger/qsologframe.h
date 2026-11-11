@@ -45,7 +45,7 @@ public:
     bool unfilled = false;
     QString sentExchange;
 
-    bool setActiveControl( int *Key, Qt::KeyboardModifiers mods );
+    void setActiveControl(int Key, bool ctrl );
     void clearCurrentField();
     void lgTraceerr( int err );
 
@@ -107,6 +107,8 @@ public:
     void DMKey(int key);
     bool getSandP();
     void setCallPlaceholder(QString call);
+    int getMarkOffset() const;
+
 private:
     ScreenContact *partialContact; // contact being edited on screen
     virtual bool eventFilter(QObject *obj, QEvent *event) override;
@@ -116,7 +118,7 @@ private:
     QString baseName;
     QString oldloc;
     bool locValid;
-
+    QString SA6FAXLoc;
     bool oldTimeOK;
     QString timerSS;
 
@@ -328,6 +330,7 @@ private slots:
     void on_GJVOKButton_clicked();
     void on_GJVForceButton_clicked();
     void on_GJVCancelButton_clicked();
+    void on_locXferButton_clicked();
     void on_MatchXferButton_clicked();
     void onQTHEdit_textChanged(const QString &arg1);
     void onCallsignEdit_textChanged(const QString &arg1);
@@ -369,6 +372,8 @@ private slots:
     void on_SandPrb_clicked();
     void onContestBandChanged(BaseContestLog *c);
     void appStateChanged(Qt::ApplicationState state);
+    void onSA6FAXLoc(QString id);
+    void onRawFKey(BaseContestLog *c, bool ctrl, int key);
 public slots:
     void setXferEnabled(bool s, BaseContestLog *c, QString basename);
 

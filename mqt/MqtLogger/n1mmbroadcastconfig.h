@@ -27,6 +27,7 @@ private:
 
     ConfigurationOption contactsSelect;
     ConfigurationOption extCSSelect;
+    ConfigurationOption extSA6FAXCSSelect;
     ConfigurationOption extSpotsSelect;
     ConfigurationOption ADIFSelect;
 

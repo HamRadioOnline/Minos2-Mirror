@@ -47,6 +47,7 @@ BandmapClientFrame::BandmapClientFrame(QWidget *parent):
     bandmapView->move(-100, -100);
     bandmapView->resize(1, 1);
     bandmapView->setFilterSettings(&filterSettings);
+    ui->filterWorked->setChecked(filterSettings.getHideWorkedStationsFlag());
 
     bandmapView->bandmapDataModel = bandmapDataModel;
 
@@ -77,6 +78,8 @@ BandmapClientFrame::BandmapClientFrame(QWidget *parent):
     actionInObject = new BMP_MouseInObject(this, this);
     spotsMenu->installEventFilter(actionInObject);
 
+    callsignAction = new QAction("placeholder", this);
+    callsignAction->setEnabled(false);
     markSpotAction = new QAction(tr("M&ark Spot"), this);
     unMarkSpotAction = new QAction(tr("&Unmark Spot"), this);
     freqAction = new QAction(tr("Set &Freq"), this);
@@ -90,6 +93,7 @@ BandmapClientFrame::BandmapClientFrame(QWidget *parent):
     clearAllSpotsAction = new QAction(tr("Clear All Spots"), this);
     clearClusterSpotsAction = new QAction(tr("Clear Cluster Spots"), this);
 
+    spotsMenu->addAction(callsignAction);
     spotsMenu->addAction(markSpotAction);
     spotsMenu->addAction(unMarkSpotAction);
     spotsMenu->addAction(freqAction);
@@ -126,6 +130,8 @@ BandmapClientFrame::BandmapClientFrame(QWidget *parent):
     connect( clearClusterSpotsAction, &QAction::triggered, this, &BandmapClientFrame::on_clearClusterSpotsActionSelected );
 
     contextSpotsMenu = new QMenu(this);
+    contextSpotsMenu_callsignAction = new QAction("placeholder");
+    contextSpotsMenu_callsignAction->setEnabled(false);
     contextSpotsMenu_markSpotAction = new QAction(tr("M&ark Spot"), this);
     contextSpotsMenu_unMarkSpotAction = new QAction(tr("&Unmark Spot"), this);
     contextMoveFreqAction = new QAction(tr("Move spot to current frequency"));
@@ -135,6 +141,7 @@ BandmapClientFrame::BandmapClientFrame(QWidget *parent):
     contextSpotsMenu_memoryAction = new QAction(tr("Send &Memory"), this);
     contextSpotsMenu_clearSpotAction = new QAction(tr("Clear &Spot"), this);
 
+    contextSpotsMenu->addAction(contextSpotsMenu_callsignAction);
     contextSpotsMenu->addAction(contextSpotsMenu_markSpotAction);
     contextSpotsMenu->addAction(contextSpotsMenu_unMarkSpotAction);
     contextSpotsMenu->addAction(contextMoveFreqAction);
@@ -334,9 +341,39 @@ void BandmapClientFrame::on_bandmapLimitsChanged()
     setContest(ct);
 }
 // this is for the Tool button Action Menu
+
+void BandmapClientFrame::checkAction(QAction * act/*, QString text*/)
+{
+    QSharedPointer<ClusterSpotData> spot = bandmapView->getSelectedSpotDataPtr();
+    if (spot)
+    {
+        act->setVisible(true);
+    }
+    else
+    {
+        act->setVisible(false);
+    }
+}
 void BandmapClientFrame::onMenuShow()
 {
     traceMsg(QString("Action Menu Selected - ViewRowNum %1").arg(bandmapView->getSelectedSpotViewRowNum()));
+    QSharedPointer<ClusterSpotData> spot = bandmapView->getSelectedSpotDataPtr();
+    QString call;
+    if (spot)
+    {
+        call = spot->getDxCallStr();
+    }
+    callsignAction->setText(call);
+    checkAction(callsignAction);
+    checkAction(markSpotAction);
+
+    checkAction(unMarkSpotAction);
+    checkAction(freqAction);
+    checkAction(bearingAction);
+    checkAction(logAction);
+    checkAction(memoryAction);
+    checkAction(clearSpotAction);
+
 }
 
 
@@ -677,11 +714,26 @@ void BandmapClientFrame::on_readZoomLevelActionSelected()
 }
 // end of actions and context actions
 //============================================================================
+void BandmapClientFrame::checkContextAction(QAction * act)
+{
+    QSharedPointer<ClusterSpotData> spot = contextMenuSelectedSpotData;
+    if (spot)
+    {
+        act->setVisible(true);
+    }
+    else
+    {
+        act->setVisible(false);
+    }
+}
+
+//============================================================================
 void BandmapClientFrame::on_contextMenuSelected(const QPoint& pos, const QPoint& mapP)
 {
     int viewRowNum = bandmapView->isClickInRegionOfSpot(mapP);
     traceMsg(QString("Context Menu Selected - ViewRowNum %1").arg(viewRowNum));
 
+    QString call;
     if (viewRowNum != NO_SELECTED_ROWNUM)
     {
         contextMenuSelectedSpotData = bandmapView->getSpotData(viewRowNum);
@@ -692,13 +744,30 @@ void BandmapClientFrame::on_contextMenuSelected(const QPoint& pos, const QPoint&
         }
         else
         {
-            QString call = contextMenuSelectedSpotData->getDxCallStr();
+            call = contextMenuSelectedSpotData->getDxCallStr();
             traceMsg(QString("Context Menu Selected - call %1").arg(call));
 
         }
-        QPoint globalPos = ui->bandmapGraphicsView->viewport()->mapToGlobal( pos );
-        contextSpotsMenu->popup(globalPos);
     }
+    else
+    {
+        contextMenuSelectedSpotData.reset();
+    }
+    // this all of the actions; if off a spot the popup doesn't happen
+    contextSpotsMenu_callsignAction->setText(call);
+    checkContextAction(contextSpotsMenu_callsignAction);
+    checkContextAction(contextSpotsMenu_markSpotAction);
+    checkContextAction(contextSpotsMenu_unMarkSpotAction);
+    checkContextAction(contextMoveFreqAction);
+    checkContextAction(contextSpotsMenu_freqAction);
+    checkContextAction(contextSpotsMenu_bearingAction);
+    checkContextAction(contextSpotsMenu_logAction);
+    checkContextAction(contextSpotsMenu_memoryAction);
+    checkContextAction(contextSpotsMenu_clearSpotAction);
+
+
+    QPoint globalPos = ui->bandmapGraphicsView->viewport()->mapToGlobal( pos );
+    contextSpotsMenu->popup(globalPos);
 }
 //============================================================================
 
@@ -711,6 +780,7 @@ void BandmapClientFrame::ShowFilter()
         ft = tr("Filter %1").arg(filterSettings.getDistanceFilter());
     }
     ui->filterText->setText(ft);
+    ui->filterWorked->setChecked(filterSettings.getHideWorkedStationsFlag());
 }
 
 void BandmapClientFrame::setContest(BaseContestLog *c)
@@ -2190,3 +2260,10 @@ void BandmapClientFrame::on_searchUnworkedHF_clicked()
     bool locs = ui->locatorscb->isChecked();
     bandmapView-> onNextUnworkedSpot(true, locs);
 }
+void BandmapClientFrame::on_filterWorked_stateChanged(int /*arg1*/)
+{
+    filterSettings.setHideWorkedStationsFlag(ui->filterWorked->isChecked());
+    ct->saveBandmapFilter(filterSettings);
+    bandmapView->bandmapUpdate(true);
+}
+

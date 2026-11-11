@@ -151,54 +151,64 @@ void RotControlFrameBase::setupShortcuts(QWidget *shortcutParent)
         return;
 
     // Nudge Right - Ctrl++
-    nudgeRight1 = new QShortcut(QKeySequence("Ctrl++"), shortcutParent);
     if (auto btn = getnudgeRightObject())
     {
+        QShortcut *nudgeRight1 = new QShortcut(QKeySequence("Ctrl++"), shortcutParent);
+        nudgeRight1->setContext(Qt::ApplicationShortcut);
         connect(nudgeRight1, &QShortcut::activated, btn, &QToolButton::click);
     }
 
 
     // Nudge Right - Ctrl+= (also "+")
-    nudgeRight2 = new QShortcut(QKeySequence("Ctrl+="), shortcutParent);
     if (auto btn = getnudgeRightObject())
     {
+        QShortcut *nudgeRight2 = new QShortcut(QKeySequence("Ctrl+="), shortcutParent);
+        nudgeRight2->setContext(Qt::ApplicationShortcut);
         connect(nudgeRight2, &QShortcut::activated, btn, &QToolButton::click);
     }
 
 
     // Nudge Left - Ctrl+-
-    nudgeLeft = new QShortcut(QKeySequence::ZoomOut, shortcutParent);
     if (auto btn = getnudgeLeftObject())
-    connect(nudgeLeft, &QShortcut::activated, btn, &QToolButton::click);
+    {
+        QShortcut *nudgeLeft = new QShortcut(QKeySequence::ZoomOut, shortcutParent);
+        nudgeLeft->setContext(Qt::ApplicationShortcut);
+        connect(nudgeLeft, &QShortcut::activated, btn, &QToolButton::click);
+    }
 
     // Rotate Left - e.g., custom defined macro ROTATE_CCW_KEY
-    rotateLeft = new QShortcut(QKeySequence(ROTATE_CCW_KEY), shortcutParent);
     if (auto btn = getRotateLeftObject())
     {
+        QShortcut *rotateLeft = new QShortcut(QKeySequence(ROTATE_CCW_KEY), shortcutParent);
+        rotateLeft->setContext(Qt::ApplicationShortcut);
         connect(rotateLeft, &QShortcut::activated, btn, &QToolButton::click);
     }
 
 
     // Rotate Right
-    rotateRight = new QShortcut(QKeySequence(ROTATE_CW_KEY), shortcutParent);
     if (auto btn = getRotateRightObject())
     {
+        QShortcut *rotateRight = new QShortcut(QKeySequence(ROTATE_CW_KEY), shortcutParent);
+        rotateRight->setContext(Qt::ApplicationShortcut);
         connect(rotateRight, &QShortcut::activated,  btn, &QToolButton::click);
     }
 
 
     // Turn to bearing
-    turnToBearing = new QShortcut(QKeySequence(ROTATE_TURN_KEY), shortcutParent);
     if (auto btn = getRotateButtonObject())
     {
+        QShortcut *turnToBearing = new QShortcut(QKeySequence(ROTATE_TURN_KEY), shortcutParent);
+        turnToBearing->setContext(Qt::ApplicationShortcut);
        connect(turnToBearing, &QShortcut::activated,  btn, &QToolButton::click);
+        //connect(turnToBearing, &QShortcut::activatedAmbiguously,  btn, &QToolButton::click);
     }
 
 
     // Stop
-    rotateStop = new QShortcut(QKeySequence(ROTATE_STOP_KEY), shortcutParent);
     if (auto btn = getStopRotateObject())
     {
+        QShortcut *rotateStop = new QShortcut(QKeySequence(ROTATE_STOP_KEY), shortcutParent);
+        rotateStop->setContext(Qt::ApplicationShortcut);
         connect(rotateStop, &QShortcut::activated,  btn, &QToolButton::click);
     }
 
@@ -309,7 +319,7 @@ void RotControlFrameBase::onRotate_clicked()
     }
     else
     {
-        traceMsg(QString("On Rotate:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False").arg(rotFrameData.getRotError() ? "True" : "False"));
+        traceMsg(QString("On Rotate:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False", rotFrameData.getRotError() ? "True" : "False"));
     }
 
 
@@ -329,7 +339,8 @@ void RotControlFrameBase::onNudgeLeft_clicked()
     }
     else
     {
-        traceMsg(QString("NudgeLeft:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False").arg(rotFrameData.getRotError() ? "True" : "False"));
+        traceMsg(QString("NudgeLeft:Rotconnected = %1, RotError = %2")
+                     .arg(rotFrameData.getRotConnected() ? "True" : "False", rotFrameData.getRotError() ? "True" : "False"));
     }
 }
 
@@ -347,7 +358,7 @@ void RotControlFrameBase::onNudgeRight_clicked()
     }
     else
     {
-        traceMsg(QString("NudgeRight:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False").arg(rotFrameData.getRotError() ? "True" : "False"));
+        traceMsg(QString("NudgeRight:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False", rotFrameData.getRotError() ? "True" : "False"));
     }
 
 }
@@ -357,7 +368,7 @@ void RotControlFrameBase::onRotateLeft_clicked()
 
     if (!rotFrameData.getRotConnected() || rotFrameData.getRotError())
     {
-        traceMsg(QString("On Rotate Left:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False").arg(rotFrameData.getRotError() ? "True" : "False"));
+        traceMsg(QString("On Rotate Left:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False", rotFrameData.getRotError() ? "True" : "False"));
         return;
     }
 
@@ -410,7 +421,7 @@ void RotControlFrameBase::onRotateRight_clicked()
 
     if (!rotFrameData.getRotConnected() || rotFrameData.getRotError())
     {
-        traceMsg(QString("On Rotate Right:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False").arg(rotFrameData.getRotError() ? "True" : "False"));
+        traceMsg(QString("On Rotate Right:Rotconnected = %1, RotError = %2").arg(rotFrameData.getRotConnected() ? "True" : "False", rotFrameData.getRotError() ? "True" : "False"));
         return;
     }
 

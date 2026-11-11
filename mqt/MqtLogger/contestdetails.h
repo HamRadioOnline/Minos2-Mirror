@@ -57,7 +57,7 @@ private:
    void setModes();
    void refreshOps();
    void enableControls();
-   QWidget * getDetails( );
+   QWidget * getDetails(bool onExec);
 
    void doCloseEvent();
 

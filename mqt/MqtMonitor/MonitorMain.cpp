@@ -394,7 +394,7 @@ void MonitorMain::on_monitorTimeout()
 void MonitorMain::onMonitorTree_clicked(const QModelIndex &index)
 {
     // select the correct tab
-    TreeNode * sel = static_cast< TreeNode *>(index.internalPointer());
+    MonitorTreeNode * sel = static_cast< MonitorTreeNode *>(index.internalPointer());
 
     if (!sel)
     {

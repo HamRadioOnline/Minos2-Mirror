@@ -3,24 +3,24 @@
 #include "MonitorTreeModel.h"
 
 //=============================================================================================
-TreeNode::TreeNode(NodeType sn, TreeNode *parent, QString name):
-    ntype(sn), NodeName(name), parentItem(parent), mlog(nullptr)
+MonitorTreeNode::MonitorTreeNode(MonitorNodeType sn, MonitorTreeNode *parent, QString name):
+    ntype(sn), NodeName(name), parentItem(parent)
 {
     if (parent)
         parent->nodes.push_back(this);
 }
-TreeNode::TreeNode(NodeType sn, TreeNode *parent, QSharedPointer<MonitoredLog> log):
+MonitorTreeNode::MonitorTreeNode(MonitorNodeType sn, MonitorTreeNode *parent, QSharedPointer<MonitoredLog> log):
     ntype(sn), NodeName(log->getDisplayName()), hintString(log->getPublishedName()), parentItem(parent),
     mlog(log)
 {
     if (parent)
         parent->nodes.push_back(this);
 }
-TreeNode:: ~TreeNode()
+MonitorTreeNode:: ~MonitorTreeNode()
 {
     clear();
 }
-int TreeNode::find( const TreeNode *t ) const
+int MonitorTreeNode::find( const MonitorTreeNode *t ) const
 {
     int i = 0;
     for ( auto v : nodes )
@@ -32,21 +32,21 @@ int TreeNode::find( const TreeNode *t ) const
     return 0;
 }
 
-TreeNode *TreeNode::parent()
+MonitorTreeNode *MonitorTreeNode::parent()
 {
     return parentItem;
 }
 
-TreeNode *TreeNode::child( int number )
+MonitorTreeNode *MonitorTreeNode::child( int number )
 {
     return nodes[ number ];
 }
 
-int TreeNode::childCount() const
+int MonitorTreeNode::childCount() const
 {
     return nodes.size();
 }
-int TreeNode::childNumber() const
+int MonitorTreeNode::childNumber() const
 {
     if ( parentItem )
     {
@@ -54,7 +54,7 @@ int TreeNode::childNumber() const
     }
     return 0;
 }
-void TreeNode::clear()
+void MonitorTreeNode::clear()
 {
     for ( auto const &tn: QASCONST(nodes) )
     {
@@ -106,7 +106,7 @@ void MonitorTreeModel::clear()
 
     endResetModel();
 }
-void MonitorTreeModel::setRoot(  TreeNode *root )
+void MonitorTreeModel::setRoot(  MonitorTreeNode *root )
 {
     beginResetModel();
     delete rootData;
@@ -117,7 +117,7 @@ void MonitorTreeModel::setRoot(  TreeNode *root )
 
 int MonitorTreeModel::columnCount( const QModelIndex & parent  ) const
 {
-    TreeNode *parentItem = getItem( parent );
+    MonitorTreeNode *parentItem = getItem( parent );
     if (parentItem && parentItem->GetNodeType() == entRouter)
         return 2;
 
@@ -131,13 +131,13 @@ QVariant MonitorTreeModel::data( const QModelIndex &index, int role ) const
 
     if ( role == Qt::DisplayRole )
     {
-        TreeNode *item = getItem( index );
+        MonitorTreeNode *item = getItem( index );
 
         return item->data( index.column() );
     }
     if (role == Qt::ToolTipRole)
     {
-        TreeNode *item = getItem( index );
+        MonitorTreeNode *item = getItem( index );
 
         return item->hint();
     }
@@ -174,11 +174,11 @@ QModelIndex MonitorTreeModel::index( int row, int column, const QModelIndex &par
     if ( parent.isValid() && parent.column() != 0 )
         return QModelIndex();
 
-    TreeNode *parentItem = getItem( parent );
+    MonitorTreeNode *parentItem = getItem( parent );
 
     if ( parentItem && row < parentItem->childCount() && row >= 0 )
     {
-        TreeNode * childItem = parentItem->child( row );
+        MonitorTreeNode * childItem = parentItem->child( row );
         if ( childItem )
             return createIndex( row, column, childItem );
     }
@@ -189,8 +189,8 @@ QModelIndex MonitorTreeModel::parent( const QModelIndex &index ) const
     if ( !index.isValid() )
         return QModelIndex();
 
-    TreeNode *childItem = getItem( index );
-    TreeNode *parentItem = childItem->parent();
+    MonitorTreeNode *childItem = getItem( index );
+    MonitorTreeNode *parentItem = childItem->parent();
 
     if ( parentItem == rootData )
         return QModelIndex();
@@ -199,18 +199,18 @@ QModelIndex MonitorTreeModel::parent( const QModelIndex &index ) const
 }
 int MonitorTreeModel::rowCount( const QModelIndex &parent ) const
 {
-    TreeNode * parentItem = getItem( parent );
+    MonitorTreeNode * parentItem = getItem( parent );
 
     if ( parentItem )
         return parentItem->childCount();
 
     return 0;
 }
-TreeNode *MonitorTreeModel::getItem( const QModelIndex &index ) const
+MonitorTreeNode *MonitorTreeModel::getItem( const QModelIndex &index ) const
 {
     if ( index.isValid() )
     {
-        TreeNode * item = static_cast<TreeNode *>( index.internalPointer() );
+        MonitorTreeNode * item = static_cast<MonitorTreeNode *>( index.internalPointer() );
         if ( item )
             return item;
     }

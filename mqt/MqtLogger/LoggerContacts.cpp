@@ -27,7 +27,7 @@ void ContestContact::setDirty()
 static void catmult( QString &multbuff, const QString &text, int limit = 255 )
 {
    multbuff += "*";
-   multbuff += text.left(limit );
+   multbuff += QStringView(text).left(limit );
    multbuff += "* ";
 }
 void ContestContact::getPrintFileText( QString &sdest, short maxlen )

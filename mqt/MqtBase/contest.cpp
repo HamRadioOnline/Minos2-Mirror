@@ -8,6 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #include <QHostInfo>
 #include <cmath>
+#include "MShowMessageDlg.h"
 #include "QtUtils.h"
 #include "calcs.h"
 #include "contacts.h"
@@ -322,23 +323,26 @@ LocSquare *BaseContestLog::getLocSquare(const QString &band, const Locator &loc)
     QString numbers;
 
     QString sloc = loc.getLoc().mid(0, 4);
-
-    letters = sloc.left(2);
-    numbers = sloc.mid(2, 2);
-
     LocSquare *ls = nullptr;
-    if ( letters[ 0 ].isLetter() && letters[ 1 ].isLetter() )
+
+    if (sloc.size() == 4)
     {
-        LocSquare lss( letters );
-        MapKeyWrapper<LocSquare> wlsk(&lss);
-        if (!locs[band].llist.contains(wlsk))
+        letters = sloc.left(2);
+        numbers = sloc.mid(2, 2);
+
+        if ( letters[ 0 ].isLetter() && letters[ 1 ].isLetter() )
         {
-            LocSquare *lsi = new LocSquare ( letters );
-            MapKeyWrapper<LocSquare> wlsk(lsi);
-            MapWrapper<LocSquare> wls(lsi);
-            locs[band].llist.insert ( wlsk, wls );
+            LocSquare lss( letters );
+            MapKeyWrapper<LocSquare> wlsk(&lss);
+            if (!locs[band].llist.contains(wlsk))
+            {
+                LocSquare *lsi = new LocSquare ( letters );
+                MapKeyWrapper<LocSquare> wlsk(lsi);
+                MapWrapper<LocSquare> wls(lsi);
+                locs[band].llist.insert ( wlsk, wls );
+            }
+            ls = locs[band].llist[wlsk].wt.data();
         }
-        ls = locs[band].llist[wlsk].wt.data();
     }
     return ls;
 }
@@ -1077,6 +1081,11 @@ void BaseContestLog::scanContest( )
    {
       currentOp1.setValue( curop1 );
    }
+
+   for(auto &m:qsoTimeMap)
+   {
+       m.count = 0;
+   }
 }
 void BaseContestLog::getScoresTo(ContestScore &cs, QDateTime limit)
 {
@@ -1204,33 +1213,70 @@ class Period
         {}
 };
 
+void BaseContestLog::checkSameTime(bool catchup)
+{
+    dtg lastdtg;
+    int dtgCount = 0;
+    for (auto p = ctList.end() - 1; p != ctList.begin(); p--)
+    {
+        QSharedPointer<BaseContact> nct = p->wt;
+
+        if (!nct->timeOff.isBadDtg() )
+        {
+            if (!lastdtg.isBadDtg())
+            {
+                if (lastdtg == nct->timeOff)
+                {
+                    dtgCount++;
+                    if (dtgCount >= (catchup?3:10))
+                    {
+                        QString tmMess = tr("You had %1 QSOs in the last active minute").arg(dtgCount);
+                        if (catchup)
+                        {
+                            mShowMessage(tmMess + "\n" + tr("In catchup mode you must correct the time for each QSO"),
+                                         nullptr);
+                        }
+                        else
+                        {
+                            mShowMessage(tmMess + "\n" + tr("This is unlikely!"),
+                                         nullptr);
+                        }
+                        return;
+                    }
+                    continue;
+                }
+            }
+            lastdtg = nct->timeOff;
+        }
+    }
+}
 void BaseContestLog::getOpTime(QString &otBuff, SHOWOPERATINGTIME sot)
 {
     // scan qsoTimeMap
 
-    if (sot == otNone)
-    {
+    if (sot == otNone) {
         otBuff.clear();
         return;
     }
     QVector<Period> periods;
 
     int minGap = 60;
-    if (sot == otIARU)
-    {
+    if (sot == otIARU) {
         minGap = 120;
     }
 
-    QDateTime  contestStart = CanonicalToTDT(DTGStart.getValue());
-    QDateTime  contestEnd = CanonicalToTDT(DTGEnd.getValue());
- //   qint64 fromContestStart = contestStart.secsTo(QDateTime::currentDateTime());
+    QDateTime contestStart = CanonicalToTDT(DTGStart.getValue());
+    QDateTime contestEnd = CanonicalToTDT(DTGEnd.getValue());
+    //   qint64 fromContestStart =
+    //   contestStart.secsTo(QDateTime::currentDateTime());
 
     QDateTime now = QDateTime::currentDateTimeUtc();
-    if(now < contestStart || now > contestEnd)
-    {
+    if (now < contestStart || now > contestEnd) {
         now = contestEnd;
     }
-    const int contestMinutes =  static_cast<int>((contestStart.secsTo(now) + 59)/60);    // round up so we include this minute
+    const int contestMinutes =
+        static_cast<int>((contestStart.secsTo(now) + 59) /
+                                                60); // round up so we include this minute
 
     int gap = 0;
     int cur = 0;
@@ -1241,62 +1287,53 @@ void BaseContestLog::getOpTime(QString &otBuff, SHOWOPERATINGTIME sot)
 
     int i = 0;
 
-    while ( i < contestMinutes )
-    {
+    while (i < contestMinutes) {
 
-        while ( i < contestMinutes && qsoTimeMap[ i ].count )
-        {
-            if ( curStart < 0 )
-            {
+        while (i < contestMinutes && qsoTimeMap[i].count) {
+            if (curStart < 0) {
                 curStart = i;
             }
             cur++;
 
             i++;
         }
-        while ( i < contestMinutes && !qsoTimeMap[ i ].count )
-        {
-            if ( gapStart < 0 )
-            {
+        while (i < contestMinutes && !qsoTimeMap[i].count) {
+            if (gapStart < 0) {
                 gapStart = i;
             }
             gap++;
             i++;
         }
 
-        if ( gapStart > 0 && gap > 0 && gap < minGap && i < contestMinutes )
-        {
+        if (gapStart > 0 && gap > 0 && gap < minGap && i < contestMinutes) {
             // include gap into operate time
             gapStart = -1;
             cur += gap;
 
             gap = 0;
-            if ( i < contestMinutes )
+            if (i < contestMinutes)
                 continue;
         }
 
-        if ( cur )
-        {
+        if (cur) {
             Period p;
             p.isGap = false;
             p.length = cur;
             p.startMinute = curStart;
 
-            periods.push_back ( p );
+            periods.push_back(p);
 
-            if (cur > maxGapLen)
-            {
+            if (cur > maxGapLen) {
                 maxGapLen = cur;
                 maxGapOffset = periods.length() - 1;
             }
         }
-        if ( gap )
-        {
+        if (gap) {
             Period p;
             p.isGap = true;
             p.length = gap;
             p.startMinute = gapStart;
-            periods.push_back ( p );
+            periods.push_back(p);
         }
         gap = 0;
         cur = 0;
@@ -1306,38 +1343,38 @@ void BaseContestLog::getOpTime(QString &otBuff, SHOWOPERATINGTIME sot)
 
     int operatingTime = 0;
     int lastGapLength = 0;
-    for ( QVector<Period>::iterator i = periods.begin(); i != periods.end(); i++ )
-    {
-        int startMinute = ( *i ).startMinute;
-        int length = ( *i ).length;
+    for (QVector<Period>::iterator i = periods.begin(); i != periods.end(); i++) {
+        int startMinute = (*i).startMinute;
+        int length = (*i).length;
 
-        if ( ( *i ).isGap && startMinute == 0 )
-        {
-            continue;   // don't show leading gap
+        if ((*i).isGap && startMinute == 0) {
+            continue; // don't show leading gap
         }
-        if ( ( *i ).isGap && i == ( periods.end() - 1 ) )
-        {
+        if ((*i).isGap && i == (periods.end() - 1)) {
             lastGapLength = (*i).length;
-            if (now != contestEnd)
-            {
-                lastGapLength -= 1;    // as the current minute shouldn't be included when in contest
+            if (now != contestEnd) {
+                lastGapLength -=
+                    1; // as the current minute shouldn't be included when in contest
             }
-            continue;   // don't show trailing gap
+            continue; // don't show trailing gap
         }
 
-        // if IARU we have to look for the largest gap >= 120 mins, and disallow the rest
-        if ( ! ( *i ).isGap || (sot == otIARU && (i - periods.begin()) != maxGapOffset))
-        {
+        // if IARU we have to look for the largest gap >= 120 mins, and disallow the
+        // rest
+        if (!(*i).isGap ||
+            (sot == otIARU && (i - periods.begin()) != maxGapOffset)) {
             operatingTime += length;
         }
     }
-    int oh = operatingTime/60;
-    int om = operatingTime%60;
-    int gh = lastGapLength/60;
-    int gm = lastGapLength%60;
-    otBuff = QString("op time %1:%2 gap %3:%4").arg(oh).arg(om, 2, 10, QLatin1Char('0')).arg(gh).arg(gm, 2, 10, QLatin1Char('0'));
-
-
+    int oh = operatingTime / 60;
+    int om = operatingTime % 60;
+    int gh = lastGapLength / 60;
+    int gm = lastGapLength % 60;
+    otBuff = QString("op time %1:%2 gap %3:%4")
+                 .arg(oh)
+                 .arg(om, 2, 10, QLatin1Char('0'))
+                 .arg(gh)
+                 .arg(gm, 2, 10, QLatin1Char('0'));
 }
 
 //============================================================

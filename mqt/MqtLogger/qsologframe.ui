@@ -990,6 +990,13 @@ to</string>
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="locXferButton">
+       <property name="text">
+        <string notr="true">Loc Xfer F11</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="MatchXferButton">
        <property name="focusPolicy">
         <enum>Qt::NoFocus</enum>

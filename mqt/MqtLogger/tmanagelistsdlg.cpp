@@ -1,3 +1,4 @@
+#include "QtUtils.h"
 #include "fileutils.h"
 #include "regsettings.h"
 #include "ContestApp.h"
@@ -45,12 +46,13 @@ void TManageListsDlg::accept()
 void TManageListsDlg::DrawList()
 {
     QString currList;
+    ListSlotList &lists = TContestApp::getContestApp() ->listSlotList;
     int nlists = TContestApp::getContestApp() ->getListSlotCount();
     QList<QTableWidgetItem *> items = ui->ListsListBox->selectedItems();
     if (nlists && items.count() > 0)
     {
         int slotno = items[0]->data(Qt::UserRole).toInt();
-        QSharedPointer<ListSlot> cs(TContestApp::getContestApp() ->listSlotList[ slotno ]);
+        QSharedPointer<ListSlot> cs(lists[ slotno ]);
         if (cs && cs->slot)
             currList = cs->slot->name;
     }
@@ -62,9 +64,9 @@ void TManageListsDlg::DrawList()
    int row = 0;
    int toSelect = 0;
 
-   for ( auto const &l: QASCONST(TContestApp::getContestApp() ->listSlotList) )
+   for ( auto const &l: QASCONST(lists) )
    {
-      if ( l&& l->slot )
+      if ( l && l->slot )
       {
           ui->ListsListBox->setRowCount(row + 1);
 
@@ -154,7 +156,7 @@ void TManageListsDlg::on_moveUpButton_clicked()
        TContestApp::getContestApp() ->listSlotList[ sm1 ] = cs;
        cs->slotno = sm1;
 
-       TContestApp::getContestApp() ->writeListsList();
+       TContestApp::getContestApp() ->writeListsList(false);
 
         ui->ListsListBox->selectRow(tno - 1);
 
@@ -181,7 +183,7 @@ void TManageListsDlg::on_moveDownButton_clicked()
        TContestApp::getContestApp() ->listSlotList[ sp1 ] = cs;
        cs->slotno = sp1;
 
-       TContestApp::getContestApp() ->writeListsList();
+       TContestApp::getContestApp() ->writeListsList(false);
 
        ui->ListsListBox->selectRow(tno + 1);
 

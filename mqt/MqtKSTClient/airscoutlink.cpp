@@ -292,7 +292,11 @@ void AirScoutLink::onReadyRead()
                                       askNearest(-1);
                                   }
                                   , 50
-                                  );                }
+                                  );
+
+                    // stop the timer getting in before the delayed action
+                    ASTimer.start(mainWindow->getASTimeout() * 1000);
+                }
                 else
                 {
                     //trace ("assetPathInProgress = false;");
@@ -362,6 +366,8 @@ void AirScoutLink::onReadyRead()
                     }
                     , 200
                     );
+                    // stop the timer getting in before the delayed action
+                    ASTimer.start(mainWindow->getASTimeout() * 1000);
                 }
             }
 

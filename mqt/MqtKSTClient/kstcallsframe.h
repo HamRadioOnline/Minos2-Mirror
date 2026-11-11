@@ -21,6 +21,7 @@ class KSTCallsFrame : public MinosPanel
 public:
     KstCallGridModel kstCallModel;
     KstCallGridSortFilterModel kstCallFilterModel;
+    QSharedPointer<KstUser> selectedUser;
 
     explicit KSTCallsFrame(QWidget *parent = nullptr);
     ~KSTCallsFrame();
@@ -30,7 +31,7 @@ public:
     void setServices(QStringList services);
 
     void acChanged(QSharedPointer<KstUser> user);
-    void setDefaultButton(bool s);
+    void setXferDefaultButton(bool s);
     void setFilter(Callsign &c);
     void showAircout(bool s);
 private slots:

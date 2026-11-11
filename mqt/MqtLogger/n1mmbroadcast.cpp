@@ -1,3 +1,8 @@
+#include <QJsonDocument>
+#include <QJsonParseError>
+#include <QJsonObject>
+#include <QJsonArray>
+
 #include <QHostInfo>
 #include <cmath>
 #include "MinosLoggerEvents.h"
@@ -6,6 +11,7 @@
 #include "contest.h"
 #include "contacts.h"
 #include "LoggerContest.h"
+#include "MTrace.h"
 
 #include "n1mmbroadcast.h"
 
@@ -16,6 +22,9 @@ N1MMBroadcast::N1MMBroadcast()
     connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::callsignLookup, this, &N1MMBroadcast::callsignLookup);
 
     connect(&MinosLoggerEvents::mle, &MinosLoggerEvents::broadcastSpots, this, &N1MMBroadcast::dxSpots);
+
+    connect (&bc, &QIODevice::readyRead, this, &N1MMBroadcast::pending_datagrams);
+
 }
 bool N1MMBroadcast::setAddress(QString addr, QHostAddress &host)
 {
@@ -77,6 +86,24 @@ void N1MMBroadcast::configure()
     {
         setAddress(extCSAddr, extCSHost);
     }
+
+    TContestApp::getContestApp() ->loggerBundle.getBoolProfile( elpextSA6FAXCSSelect, extSA6FAXCSSelect );
+    TContestApp::getContestApp() ->loggerBundle.getStringProfile( elpextSA6FAXCSAddr, extSA6FAXCSAddr );
+    TContestApp::getContestApp() ->loggerBundle.getIntProfile( elpextSA6FAXCSPort, temp );
+    extSA6FAXCSPort = static_cast<quint16>(temp);
+    if (extSA6FAXCSAddr.isEmpty())
+    {
+        extSA6FAXCSAddr = "127.0.0.1";
+    }
+    if (extSA6FAXCSPort == 0)
+    {
+        extSA6FAXCSPort = 12061;
+    }
+    if (extSA6FAXCSSelect)
+    {
+        setAddress(extSA6FAXCSAddr, extSA6FAXCSHost);
+    }
+
     TContestApp::getContestApp() ->loggerBundle.getBoolProfile( elpextSpotsSelect, spotsSelect );
     TContestApp::getContestApp() ->loggerBundle.getStringProfile( elpextSpotsAddr, spotsAddr );
     TContestApp::getContestApp() ->loggerBundle.getIntProfile( elpextSpotsPort, temp );
@@ -227,8 +254,45 @@ void N1MMBroadcast::callsignLookup(BaseContestLog *c, QString call)
         bc.writeDatagram(stanza.toUtf8(), extCSHost, extCSPort);
  //       trace("callsignLookup Datagram written " + stanza);
     }
+    if (extSA6FAXCSSelect && !extSA6FAXCSHost.isNull())
+    {
+        static int id = 0;
+        QString stanza = QString("{\"type\":\"lookup\",\"id\":\"%1\",\"call\":\"%2\"}")
+                        .arg(QString::number(++id), call);
+        int written = bc.writeDatagram(stanza.toUtf8(), extSA6FAXCSHost, extSA6FAXCSPort);
+        trace(QString("SA6FAX callsignLookup Datagram %1 bytes written %2").arg(written).arg(stanza));
+    }
 }
+void N1MMBroadcast::pending_datagrams ()
+{
+    // Minos can send a UTF-8 JSON request like this:
+    // {"type":"lookup","id":"123","call":"G0GJV"}
+    // Locator Lookup replies to the sender's UDP port with something like:
+    // {"type":"lookup_result","version":1,"id":"123","call":"G0GJV",
+    // "found":true,"locator":"JO00AA","confidence":95,"matched_call":"G0GJV"
+    // ,"observations":25,"fallback":false}
 
+
+
+    while (bc.hasPendingDatagrams ())
+    {
+        QByteArray datagram;
+        int l = static_cast<int>(bc.pendingDatagramSize ());
+        datagram.resize (l);
+        QHostAddress sender_address;
+        unsigned short sender_port;
+        if (0 <= bc.readDatagram (datagram.data (), datagram.size (), &sender_address, &sender_port))
+        {
+            trace(QString(datagram));
+            //parse_message (sender_address, sender_port, datagram);
+
+            lastResponse.parse(QString(datagram));
+            QString id = lastResponse.id;
+            MinosLoggerEvents::SendSA6FAXLoc(id);
+        }
+    }
+
+}
 QString makeTag(const QString &tag, const QString &arg)
 {
     QString temp = "<" + tag + ">" +  escapeXML(arg) + "</" + tag + ">\n";
@@ -428,4 +492,56 @@ QString N1MMBroadcast::genSpotsStanza(QSharedPointer<ClusterSpotData> spotMsg, b
             + "</spot>\n";
 
     return xml;
+}
+// class SA6FAXResponse
+// {
+// public:
+//     QString resp;
+//     bool found = false;
+//     int confidence = 0;
+//     QString call;
+//     QString matchedCall;
+//     QString id;
+//     QString locator;
+
+//     SA6FAXResponse();
+//     SA6FAXResponse(QString resp);
+//     SA6FAXResponse(const SA6FAXResponse& rhs);
+// };
+SA6FAXResponse::SA6FAXResponse()
+{
+
+}
+
+SA6FAXResponse::SA6FAXResponse(QString resp)
+{
+    parse(resp);
+}
+
+bool SA6FAXResponse::parse(QString s)
+{
+    // {"type":"lookup_result","version":1,"id":"123","call":"G0GJV",
+    // "found":true,"locator":"JO00AA","confidence":95,"matched_call":"G0GJV"
+    // ,"observations":25,"fallback":false}
+    QJsonParseError err;
+    QJsonDocument json = QJsonDocument::fromJson(s.toUtf8(), &err);
+    if (!err.error)
+    {
+        if( json.isObject())
+        {
+            QJsonObject robj = json.object();
+            resp = robj.value("type").toString();
+            if (resp == "lookup_result")
+            {
+                id = robj.value("id").toString();
+                call = robj.value("call").toString();
+                found = robj.value("found").toBool();
+                locator = robj.value("locator").toString();
+                confidence = robj.value("confidence").toInt();
+                matchedCall = robj.value("matched_call").toString();
+                return true;
+            }
+        }
+    }
+    return false;
 }
