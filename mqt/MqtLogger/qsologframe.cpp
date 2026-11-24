@@ -262,7 +262,7 @@ QSOLogFrame::QSOLogFrame(QWidget *parent) :
     on_ShowOperators();
     on_QSOMargins();
     checkQRZClusterBandmapShowing();
-
+    ui->locXferButton->setEnabled(false);
     connect(qApp,&QApplication::applicationStateChanged, this, &QSOLogFrame::appStateChanged);
 }
 void QSOLogFrame::appStateChanged(Qt::ApplicationState state)
@@ -1407,6 +1407,7 @@ void QSOLogFrame::onSA6FAXLoc(QString id)
             SA6FAXLoc = LogContainer->n1mmBroadcast->lastResponse.locator;
             ui->locXferButton->setText(QString("%1 %2").arg(SA6FAXLoc, getFKeyLabel(11)));
         }
+        ui->locXferButton->setEnabled(ui->locXferButton->text()[0] != '_');
     }
 }
 void QSOLogFrame::on_MatchXferButton_clicked()
